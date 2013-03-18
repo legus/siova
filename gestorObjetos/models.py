@@ -83,7 +83,7 @@ class Espec_lom(models.Model):
                                 max_length=100, null=True, default="text/plain")
     """Tamaño del objeto en megabytes."""
     lc3_tamano=models.DecimalField(help_text='Tamaño del objeto en megabytes.',
-                                    verbose_name="Tamaño", max_digits=50, decimal_places=2, null=False, editable=False)
+                                    verbose_name="Tamaño", max_digits=50, decimal_places=2, null=False, default="10", editable=False)
     """URL que se usa para acceder al Objeto."""
     lc3_ubicacion=models.CharField(max_length=500, null=True, default="url", editable=False, verbose_name="ubicación")
     """Capacidades técnicas requeridas para usar este objeto."""
