@@ -3,6 +3,7 @@ import os
 import uuid
 from django.db import models
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User
 import siova.lib.Archivos as mod_archivo
 import siova.lib.Opciones as opc
 
@@ -26,6 +27,21 @@ class Repositorio(models.Model):
 
     def __unicode__(self):
         return self.nombre
+
+class Autor (models.Model):
+    """
+    Modelo que permite representar a los autores del :model:'siova.Objeto'
+    """
+
+    """Nombres del Autor del Objeto."""
+    nombres = models.CharField(help_text="Nombres del Autor del Objeto.", verbose_name='Nombres', max_length=100, null=False)
+    """Apellidos del Autor del Objeto."""
+    apellidos = models.CharField(help_text="apellidos del Autor del Objeto.", verbose_name='Apellidos', max_length=100, null=False)
+    """Campo para el rol que representa el usuario en el objeto."""
+    rol = models.CharField(help_text="Papel que juega en la creación del Objeto", verbose_name='Rol', max_length=100, default="Autor")
+    def __unicode__(self):
+        return self.nombres
+
 
 class Espec_lom(models.Model):
     """
@@ -56,7 +72,8 @@ class Espec_lom(models.Model):
     """La edición del objeto."""
     lc2_version=models.CharField(help_text='La edición del objeto', verbose_name="Versión", max_length=50, default="1.0")
 
-    #Autores
+    """Relación a los :model:'siova.Autor' para definir etiquetas asociadas al objeto"""
+    lc2_autores=models.ManyToManyField(Autor)
 
     """Fecha en que el objeto es creado."""
     lc2_version=models.DateTimeField(help_text='Fecha en que el objeto es creado', verbose_name="Fecha de Creación", auto_now_add=True)
