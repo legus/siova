@@ -42,7 +42,33 @@ class Autor (models.Model):
     def __unicode__(self):
         return self.nombres
 
+class RutaCategoria(models.Model):
+    """Modelo para la creación de las categorías de la ruta taxonómica tomada de las
+        áreas de conocimiento del ministerio de Educación nacional"""
 
+    """Nombre para la categoría"""
+    nombre_cat=models.CharField(help_text="Nombres de la categoría.", verbose_name='Categoría', max_length=100, null=False)
+    """Relación recursiva para indentificar cuando hay categorías dentro de otras categorías"""
+    parent_cat=models.ForeignKey('self', null=True, blank=True, related_name='+')
+    def __unicode__(self):
+        if self.parent_cat:
+            return ' | '.join([self.parent_cat.nombre_cat,  self.nombre_cat, ])
+        else:
+            return self.nombre_cat
+
+class RutaTaxonomica(models.Model):
+    """Modelo para la creación de las rutas taxonómica tomada de las
+        áreas de conocimiento del ministerio de Educación nacional"""
+
+    """Nombre para la ruta"""
+    nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=100, null=False)
+    """Descripción de la ruta taxonómica"""
+    descr_ruta=models.TextField(help_text="Descripción de la Categoría.", verbose_name='Descripción', null=True)
+    """Relación a la :model:'siova.RutaCategoria' para determinar la categoría padre"""
+    categoria=models.ForeignKey(RutaCategoria)
+    def __unicode__(self):
+        return self.nombre_ruta
+        
 class Espec_lom(models.Model):
     """
     Modelo que representa la especificación asociada a cada :model:'siova.Objeto' en el sistema.
@@ -58,7 +84,7 @@ class Espec_lom(models.Model):
     lc1_descripcion=models.TextField(help_text='Descripción Textual del contenido del objeto', verbose_name="Descripción", null=False)
     
     """Relación a las :model:'siova.PalabraClave' para definir etiquetas asociadas al objeto"""
-    lc1_palabras_claves=models.ManyToManyField(PalabraClave)
+    palabras_claves=models.ManyToManyField(PalabraClave)
 
     """Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado."""
     lc1_cobertura=models.TextField(help_text='Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado',
@@ -73,10 +99,10 @@ class Espec_lom(models.Model):
     lc2_version=models.CharField(help_text='La edición del objeto', verbose_name="Versión", max_length=50, default="1.0")
 
     """Relación a los :model:'siova.Autor' para definir etiquetas asociadas al objeto"""
-    lc2_autores=models.ManyToManyField(Autor)
+    autores=models.ManyToManyField(Autor)
 
     """Fecha en que el objeto es creado."""
-    lc2_version=models.DateTimeField(help_text='Fecha en que el objeto es creado', verbose_name="Fecha de Creación", auto_now_add=True)
+    lc2_fecha=models.DateTimeField(help_text='Fecha en que el objeto es creado', verbose_name="Fecha de Creación", auto_now_add=True)
     
     """Tipo de Datos técnico, tipo MIME Types. http://www.iana.org/assignments/media-types/index.html."""
     lc3_formato=models.CharField(help_text='Tipo de datos. Ejp: video/mpeg, text/html, image/jpg', verbose_name="Formato",
@@ -114,7 +140,8 @@ class Espec_lom(models.Model):
     lc6_uso_educativo=models.TextField(help_text='Anotación sobre el uso educativo del objeto',
                                     verbose_name="Uso Educativo", null=True)
 
-    #RutaTaxonómica
+    """Campo que representa la categoría o Ruta Taxonómica del :model:'siova.Objeto'"""
+    ruta_taxonomica=models.ForeignKey(RutaTaxonomica)
     def __unicode__(self):
         return self.lc1_titulo
 
