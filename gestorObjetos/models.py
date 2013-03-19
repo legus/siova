@@ -42,32 +42,23 @@ class Autor (models.Model):
     def __unicode__(self):
         return self.nombres
 
-class RutaCategoria(models.Model):
-    """Modelo para la creación de las categorías de la ruta taxonómica tomada de las
-        áreas de conocimiento del ministerio de Educación nacional"""
 
-    """Nombre para la categoría"""
-    nombre_cat=models.CharField(help_text="Nombres de la categoría.", verbose_name='Categoría', max_length=100, null=False)
-    """Relación recursiva para indentificar cuando hay categorías dentro de otras categorías"""
+class RutaCategoria(models.Model):
+    """Modelo para la creación de las rutas taxonómica de categorías tomada de las
+        áreas de conocimiento del ministerio de Educación nacional. cada categoría puede
+        a su vez contener otras categorías"""
+
+    """Nombre para la ruta de Categoría"""
+    nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=150, null=False)
+    """Descripción de la ruta taxonómica"""
+    descr_ruta=models.TextField(help_text="Descripción de la Categoría.", verbose_name='Descripción', null=True)
+    """Relación a la :model:'siova.RutaCategoria' para determinar si tiene una categoría padre"""
     parent_cat=models.ForeignKey('self', null=True, blank=True, related_name='+')
     def __unicode__(self):
         if self.parent_cat:
-            return ' | '.join([self.parent_cat.nombre_cat,  self.nombre_cat, ])
+            return ' | '.join([self.parent_cat.nombre_ruta,  self.nombre_ruta, ])
         else:
-            return self.nombre_cat
-
-class RutaTaxonomica(models.Model):
-    """Modelo para la creación de las rutas taxonómica tomada de las
-        áreas de conocimiento del ministerio de Educación nacional"""
-
-    """Nombre para la ruta"""
-    nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=100, null=False)
-    """Descripción de la ruta taxonómica"""
-    descr_ruta=models.TextField(help_text="Descripción de la Categoría.", verbose_name='Descripción', null=True)
-    """Relación a la :model:'siova.RutaCategoria' para determinar la categoría padre"""
-    categoria=models.ForeignKey(RutaCategoria)
-    def __unicode__(self):
-        return self.nombre_ruta
+            return self.nombre_ruta
         
 class Espec_lom(models.Model):
     """
@@ -141,7 +132,7 @@ class Espec_lom(models.Model):
                                     verbose_name="Uso Educativo", null=True)
 
     """Campo que representa la categoría o Ruta Taxonómica del :model:'siova.Objeto'"""
-    ruta_taxonomica=models.ForeignKey(RutaTaxonomica)
+    ruta_categoria=models.ForeignKey(RutaCategoria)
     def __unicode__(self):
         return self.lc1_titulo
 
