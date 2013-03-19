@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='es'>
+	<head>
+		<meta charset='utf-8'>
+		<title>SIOVA - {% block titulo %}{% endblock %}</title>
+		<link rel="stylesheet" href='{{STATIC_URL}}css/estilo.css'>
+		<link rel="shortcut icon" href='{{STATIC_URL}}img/icono.png'>
+		<script src="{{STATIC_URL}}js/prefixfree.min.js"></script>
+		<script src='{{STATIC_URL}}js/jquery-1.9.1.min.js'></script>
+	</head>
+	<body>
+		<header>
+			<h1>{% block encabezado %}{% endblock %}</h1>
+			<nav class="menu" id="menuPrincipal">
+				<ul>
+					{% block itemMenu %}{% endblock %}
+				</ul>
+			</nav>
+			<nav class="menu" id="menuUsuario">
+				<ul>
+					{% block itemMenuUs %}{% endblock %}
+				</ul>
+			</nav>
+		</header>
+		<section id="contenido">
+			<section class="contenido">
+				{% block contenidoIzq %}{% endblock %}
+			</section>
+			<section class="contenido">
+				{% block contenidoDer %}{% endblock %}
+			</section>
+		</section>
+		<footer>
+			<hr>
+			<p>Sistema de Información para la gestión de Objetos de Aprendizaje, utilizando LOM como esquema de metadatos</p>
+			<p id="autores">Integrantes: Leidy Johanna Reyes Ruiz - Gustavo Adolfo Gómez Gómez</p>
+			<p>Unisangil &copy</p>
+			<p>2013</p>
+		</footer>
+	</body>
+</html>

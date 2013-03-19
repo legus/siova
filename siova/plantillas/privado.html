@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %} Bienvenido, {{usuario.username|capfirst}} {% endblock %}
+{% block encabezado %}
+	Bienvenido, {{usuario.username|capfirst}}
+	<div id="user+">{{usuario.rol}}</div>
+	{% block itemMenuUs %} <a href="/cerrar">Salir</a> {% endblock %}
+{% endblock %}
+{% block contenidoIzq %}
+	<ul>		
+	  {% for rep in repo %}
+	  <li>{{rep.nombre|title}}</li>
+	  {% empty %}
+	  <li>No hay repositorios registrados aún.</li>
+	  {% endfor %}
+	</ul>
+{% endblock %}

@@ -14,4 +14,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^ingresar/$','gestorObjetos.views.ingresar'),
+    url(r'^privado/$','gestorObjetos.views.privado'),
+    url(r'^cerrar/$', 'gestorObjetos.views.cerrar'),
 )
