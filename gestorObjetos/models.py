@@ -158,3 +158,9 @@ class Objeto(models.Model):
 
     def __unicode__(self):
         return self.espec_lom.lc1_titulo
+
+"""Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema"""
+User.add_to_class('rol', models.CharField(help_text='Rol que identifica la participación del :model:"User" en el sistema',
+                                    verbose_name='Rol de Usuario', max_length=4, choices=opc.get_roles(), default=opc.get_roles()[0][0]))
+"""Adición de método para la relación con la :model:'siova.RutaCategoria'"""
+User.add_to_class('ruta_categoria', models.ForeignKey(RutaCategoria, null=True, blank=True))

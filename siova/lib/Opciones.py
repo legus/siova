@@ -62,3 +62,18 @@ def get_nivel_interactividad():
 		(MUYALTO, 'Muy Alto'),
 	)
 	return NIVEL_INTERACTIVIDAD_CHOICES
+
+def get_roles():
+	REST = 'rest'
+	RDOC = 'rdoc'
+	RADM = 'radm'
+	RVIS = 'rvis'
+	RREV = 'rrev'
+	ROLE_CHOICES = (
+		(REST, 'Estudiante'),
+		(RDOC, 'Docente'),
+		(RADM, 'Administrador'),
+		(RVIS, 'Visitante'),
+		(RREV, 'Revisor'),
+	)
+	return ROLE_CHOICES
