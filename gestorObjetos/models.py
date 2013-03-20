@@ -11,7 +11,7 @@ import siova.lib.Opciones as opc
 
 class PalabraClave(models.Model):
     """
-    Modelo que representa las palabras claves que se pueden asocia a cada :model:'siova.Espec_lom'
+    Modelo que representa las palabras claves que se pueden asocia a cada :model:'siova.EspecificacionLOM'
     """
     palabra_clave=models.CharField(help_text='Palabra que describe el Objeto', verbose_name="Palabra Clave", max_length=50, null=True)
     def __unicode__(self):
@@ -68,7 +68,7 @@ class RutaCategoria(models.Model):
         else:
             return self.nombre_ruta
         
-class Espec_lom(models.Model):
+class EspecificacionLOM(models.Model):
     """
     Modelo que representa la especificación asociada a cada :model:'siova.Objeto' en el sistema.
     """
@@ -159,7 +159,7 @@ class Objeto(models.Model):
     archivo = models.FileField(help_text='Archivo a Subir', verbose_name='Archivo', upload_to=mod_archivo.get_file_path, storage=mod_archivo.get_file_storage())
 
     """Atributo que relaciona uno a uno el objeto con su respectiva especificación LOM"""
-    espec_lom = models.OneToOneField(Espec_lom)
+    espec_lom = models.OneToOneField(EspecificacionLOM)
 
     """Atributo que relaciona al objeto con un :model:'siova.Repositorio'."""
     repositorio = models.ForeignKey(Repositorio)
@@ -180,6 +180,8 @@ class UserProfile(models.Model):
     ruta_categoria = models.ForeignKey(RutaCategoria, null=True, blank=True)
     """relación directa al usuario"""
     user = models.ForeignKey(User, unique=True)
+
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
         
 
 """Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema

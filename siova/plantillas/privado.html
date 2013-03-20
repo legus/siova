@@ -2,15 +2,21 @@
 {% block titulo %} Bienvenido, {{usuario.username|capfirst}} {% endblock %}
 {% block encabezado %}
 	Bienvenido, {{usuario.username|capfirst}}
-	<div id="user+">{{usuario.rol}}</div>
-	{% block itemMenuUs %} <a href="/cerrar">Salir</a> {% endblock %}
 {% endblock %}
+{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
 {% block contenidoIzq %}
-	<ul>		
-	  {% for rep in repo %}
-	  <li>{{rep.nombre|title}}</li>
-	  {% empty %}
-	  <li>No hay repositorios registrados aún.</li>
-	  {% endfor %}
+	<ul>
+		{% for rep in repos %}
+			<li><a href="/repositorio/{{rep.id}}">{{rep.nombre|title}}</a></li>
+		<ul>
+			{% for obj in objetos %}
+				{% if obj.repositorio == rep %}
+					<li><a href="objetos/{{obj.id}}">{{obj}}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		{% empty %}
+			<li>No hay repositorios registrados aún.</li>
+		{% endfor %}
 	</ul>
 {% endblock %}
