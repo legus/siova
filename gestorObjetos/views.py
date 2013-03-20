@@ -15,7 +15,7 @@ def ingresar(request):
 		Vista que permite realizar el respectivo inicio de sesión para los Usuarios del sistema
 	"""
 	if not request.user.is_anonymous():
-		if request.user.rol == "radm":
+		if request.user.get_profile().rol == "radm":
 			return HttpResponseRedirect('/admin')
 		else:
 			return HttpResponseRedirect('/privado')
@@ -28,7 +28,7 @@ def ingresar(request):
 			if acceso is not None:
 				if acceso.is_active:
 					login(request, acceso)
-					if request.user.rol == "radm":
+					if request.user.get_profile().rol == "radm":
 						return HttpResponseRedirect('/admin')
 					else:
 						return HttpResponseRedirect('/privado')

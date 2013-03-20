@@ -4,6 +4,8 @@ import uuid
 from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
+from django.contrib import admin
 import siova.lib.Archivos as mod_archivo
 import siova.lib.Opciones as opc
 
@@ -24,6 +26,8 @@ class Repositorio(models.Model):
     nombre = models.CharField(help_text='Nombre que identifica al repositorio', verbose_name='Nombre del Repositorio', max_length=200,null=False,unique=True)
     """campo que permite determinar si el repositorio es visible para todos los usuarios o solo para aquellos autorizados"""
     visibilidad = models.BooleanField(help_text='Marca para habilitar el repositorio al público', verbose_name='Visible', default=True)
+    """Relación hacia el :model:'Group' que puede observar los objetos"""
+    grupos = models.ManyToManyField(Group)
 
     def __unicode__(self):
         return self.nombre
@@ -40,7 +44,11 @@ class Autor (models.Model):
     """Campo para el rol que representa el usuario en el objeto."""
     rol = models.CharField(help_text="Papel que juega en la creación del Objeto", verbose_name='Rol', max_length=100, default="Autor")
     def __unicode__(self):
-        return self.nombres
+        return self.nombres+' '+self.apellidos
+
+class AutorAdmin(admin.ModelAdmin):
+    list_display = ('nombres', 'apellidos')
+    list_display_links = ('nombres', 'apellidos')
 
 
 class RutaCategoria(models.Model):
@@ -102,7 +110,7 @@ class Espec_lom(models.Model):
     lc3_tamano=models.DecimalField(help_text='Tamaño del objeto en megabytes.',
                                     verbose_name="Tamaño", max_digits=50, decimal_places=2, null=False, default="10", editable=False)
     """URL que se usa para acceder al Objeto."""
-    lc3_ubicacion=models.CharField(max_length=500, null=True, default="url", editable=False, verbose_name="ubicación")
+    lc3_ubicacion=models.URLField(max_length=300, null=True, default="url", editable=False)
     """Capacidades técnicas requeridas para usar este objeto."""
     lc3_requerimientos=models.TextField(help_text='Capacidades técnicas requeridas para usar este objeto',
                                     verbose_name="Requerimientos", null=True)
@@ -159,8 +167,23 @@ class Objeto(models.Model):
     def __unicode__(self):
         return self.espec_lom.lc1_titulo
 
-"""Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema"""
+
+class UserProfile(models.Model):
+    """
+    Clase UserProfile que premitirá extender las características del :model:'User'
+    """
+
+    """Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema"""
+    rol = models.CharField(help_text='Rol que identifica la participación del :model:"User" en el sistema',
+                            verbose_name='Rol de Usuario', max_length=4, choices=opc.get_roles(), default=opc.get_roles()[0][0])
+    """Adición de método para la relación con la :model:'siova.RutaCategoria"""
+    ruta_categoria = models.ForeignKey(RutaCategoria, null=True, blank=True)
+    """relación directa al usuario"""
+    user = models.ForeignKey(User, unique=True)
+        
+
+"""Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema
 User.add_to_class('rol', models.CharField(help_text='Rol que identifica la participación del :model:"User" en el sistema',
                                     verbose_name='Rol de Usuario', max_length=4, choices=opc.get_roles(), default=opc.get_roles()[0][0]))
-"""Adición de método para la relación con la :model:'siova.RutaCategoria'"""
-User.add_to_class('ruta_categoria', models.ForeignKey(RutaCategoria, null=True, blank=True))
+Adición de método para la relación con la :model:'siova.RutaCategoria
+User.add_to_class('ruta_categoria', models.ForeignKey(RutaCategoria, null=True, blank=True))"""
