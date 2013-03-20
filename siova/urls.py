@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^ingresar/$','gestorObjetos.views.ingresar'),
-    url(r'^privado/$','gestorObjetos.views.privado'),
     url(r'^cerrar/$', 'gestorObjetos.views.cerrar'),
+    url(r'^privado/$','gestorObjetos.views.privado'),
+    url(r'^objeto/(?P<id_objeto>\d)$','gestorObjetos.views.objeto'),
 )

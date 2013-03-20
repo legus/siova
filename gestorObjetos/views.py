@@ -61,6 +61,15 @@ def privado(request):
 	return render_to_response('privado.html',{'usuario':request.user, 'repos':repositorios, 'objetos':objetos},context_instance=RequestContext(request))
 
 @login_required(login_url='/ingresar')
+def objeto(request, id_objeto):
+	"""
+	En esta vista se desplegarán la información del Objeto seleccionado
+	"""
+	obj=Objeto.objects.get(pk=id_objeto)
+	return render_to_response('objeto.html',{'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom},context_instance=RequestContext(request))
+
+
+@login_required(login_url='/ingresar')
 def cerrar(request):
 	"""
 	Vista que permite cerrar sesión de manera segura en el sistema.

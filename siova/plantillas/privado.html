@@ -7,11 +7,11 @@
 {% block contenidoIzq %}
 	<ul>
 		{% for rep in repos %}
-			<li><a href="/repositorio/{{rep.id}}">{{rep.nombre|title}}</a></li>
+			<li>{{rep.nombre|title}}</li>
 		<ul>
 			{% for obj in objetos %}
 				{% if obj.repositorio == rep %}
-					<li><a href="objetos/{{obj.id}}">{{obj}}</a></li>
+					<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
 				{% endif %}
 			{% endfor %}
 		</ul>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block titulo %} Objeto, {{obj|capfirst}} {% endblock %}
+{% block encabezado %}
+	Objeto, {{obj|capfirst}}
+{% endblock %}
+{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block contenidoIzq %}
+	<dl>
+		<dt>Título</dt>
+		<dd>{{espec.lc1_titulo}}</dd>
+		<dt>Idioma</dt>
+		<dd>{{espec.lc1_idioma}}</dd>
+		<dt>Descripción</dt>
+		<dd>{{espec.lc1_descripcion}}</dd>
+		palabras claves
+		<dt>cobertura</dt>
+		<dd>{{espec.lc1_cobertura}}</dd>
+		<dt>Nivel de Agregación</dt>
+		<dd>{{espec.lc1_nivel_agregacion}}</dd>
+		<dt>Versión</dt>
+		<dd>{{espec.lc2_version}}</dd>
+		Autores
+		<dt>Fecha</dt>
+		<dd>{{espec.lc2_fecha}}</dd>
+		<dt>Formato</dt>
+		<dd>{{espec.lc3_formato}}</dd>
+		<dt>Tamaño</dt>
+		<dd>{{espec.lc3_tamanotitulo}}</dd>
+		<dt>Ubicación</dt>
+		<dd>{{espec.lc3_ubicacion}}</dd>
+		<dt>Requerimientos</dt>
+		<dd>{{espec.lc3_requerimientos}}</dd>
+		<dt>Instrucciones</dt>
+		<dd>{{espec.lc3_instrucciones}}</dd>
+		<dt>Tipo de interactividad</dt>
+		<dd>{{espec.lc4_tipo_inter}}</dd>
+		<dt>Tipo de Recurso</dt>
+		<dd>{{espec.lc4_tipo_rec}}</dd>
+		<dt>Nivel de Interactividad</dt>
+		<dd>{{espec.lc4_nivel_inter}}</dd>
+		<dt>Población</dt>
+		<dd>{{espec.lc4_poblacion}}</dd>
+		<dt>Contexto</dt>
+		<dd>{{espec.lc4_contexto}}</dd>
+		<dt>Derechos de Autor</dt>
+		<dd>{{espec.lc5_derechos}}</dd>
+		<dt>Uso Educativo</dt>
+		<dd>{{espec.lc6_uso_educativo}}</dd>
+		<dt>Categoría</dt>
+		<dd>{{espec.ruta_categoria}}</dd>
+	</dl>
+{% endblock %}
