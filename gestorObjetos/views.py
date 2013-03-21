@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from gestorObjetos.models import Repositorio, Objeto
+from gestorObjetos.models import Repositorio, Objeto, Autor
 
 def ingresar(request):
 	"""
@@ -66,7 +66,7 @@ def objeto(request, id_objeto):
 	En esta vista se desplegarán la información del Objeto seleccionado
 	"""
 	obj=Objeto.objects.get(pk=id_objeto)
-	return render_to_response('objeto.html',{'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom},context_instance=RequestContext(request))
+	return render_to_response('objeto.html',{'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.espec_lom.autores.all(), 'keywords':obj.espec_lom.palabras_claves.all()},context_instance=RequestContext(request))
 
 
 @login_required(login_url='/ingresar')

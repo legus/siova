@@ -12,14 +12,27 @@
 		<dd>{{espec.lc1_idioma}}</dd>
 		<dt>Descripción</dt>
 		<dd>{{espec.lc1_descripcion}}</dd>
-		palabras claves
+		<ul>Palabras Claves
+			{% for k in keywords %}
+				<li>{{k.palabra_clave}}</li>
+			{% empty %}
+			<li>Vacío</li>
+			{% endfor %}
+		</ul>
 		<dt>cobertura</dt>
 		<dd>{{espec.lc1_cobertura}}</dd>
 		<dt>Nivel de Agregación</dt>
 		<dd>{{espec.lc1_nivel_agregacion}}</dd>
 		<dt>Versión</dt>
 		<dd>{{espec.lc2_version}}</dd>
-		Autores
+		<dl>Autores
+			{% for a in autores %}
+				<dt>{{a.nombres}} - {{a.apellidos}}</dt>
+				<dd>{{a.rol}}</dd>
+			{% empty %}
+			<dt>Vacío</dt><dd>Vacío</dd>
+			{% endfor %}
+		</dl>
 		<dt>Fecha</dt>
 		<dd>{{espec.lc2_fecha}}</dd>
 		<dt>Formato</dt>
