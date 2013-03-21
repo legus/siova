@@ -25,7 +25,7 @@ class Repositorio(models.Model):
     """Campo que identifica al repositorio con un nombre"""
     nombre = models.CharField(help_text='Nombre que identifica al repositorio', verbose_name='Nombre del Repositorio', max_length=200,null=False,unique=True)
     """campo que permite determinar si el repositorio es visible para todos los usuarios o solo para aquellos autorizados"""
-    visibilidad = models.BooleanField(help_text='Marca para habilitar el repositorio al público', verbose_name='Visible', default=True)
+    publico = models.BooleanField(help_text='Marca para habilitar el repositorio al público', verbose_name='Visible', default=True)
     """Relación hacia el :model:'Group' que puede observar los objetos"""
     grupos = models.ManyToManyField(Group)
 
@@ -61,10 +61,10 @@ class RutaCategoria(models.Model):
     """Descripción de la ruta taxonómica"""
     descr_ruta=models.TextField(help_text="Descripción de la Categoría.", verbose_name='Descripción', null=True)
     """Relación a la :model:'siova.RutaCategoria' para determinar si tiene una categoría padre"""
-    parent_cat=models.ForeignKey('self', null=True, blank=True, related_name='+')
+    cat_padre=models.ForeignKey('self', null=True, blank=True, related_name='+')
     def __unicode__(self):
-        if self.parent_cat:
-            return ' | '.join([self.parent_cat.nombre_ruta,  self.nombre_ruta, ])
+        if self.cat_padre:
+            return ' | '.join([self.cat_padre.nombre_ruta,  self.nombre_ruta, ])
         else:
             return self.nombre_ruta
         
