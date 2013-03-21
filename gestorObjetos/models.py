@@ -11,7 +11,7 @@ import siova.lib.Opciones as opc
 
 class PalabraClave(models.Model):
     """
-    Modelo que representa las palabras claves que se pueden asocia a cada :model:'siova.EspecificacionLOM'
+    Modelo que representa las palabras claves que se pueden asocia a cada :model:'gestorObjetos.EspecificacionLOM'
     """
     palabra_clave=models.CharField(help_text='Palabra que describe el Objeto', verbose_name="Palabra Clave", max_length=50, null=True)
     def __unicode__(self):
@@ -20,7 +20,7 @@ class PalabraClave(models.Model):
 class Repositorio(models.Model):
 
     """
-    Modelo que representa el repositorio, lugar donde se almacenan los :model:'siova.Objeto'
+    Modelo que representa el repositorio, lugar donde se almacenan los :model:'gestorObjetos.Objeto'
     """
     """Campo que identifica al repositorio con un nombre"""
     nombre = models.CharField(help_text='Nombre que identifica al repositorio', verbose_name='Nombre del Repositorio', max_length=200,null=False,unique=True)
@@ -34,7 +34,7 @@ class Repositorio(models.Model):
 
 class Autor (models.Model):
     """
-    Modelo que permite representar a los autores del :model:'siova.Objeto'
+    Modelo que permite representar a los autores del :model:'gestorObjetos.Objeto'
     """
 
     """Nombres del Autor del Objeto."""
@@ -60,7 +60,7 @@ class RutaCategoria(models.Model):
     nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=150, null=False)
     """Descripción de la ruta taxonómica"""
     descr_ruta=models.TextField(help_text="Descripción de la Categoría.", verbose_name='Descripción', null=True)
-    """Relación a la :model:'siova.RutaCategoria' para determinar si tiene una categoría padre"""
+    """Relación a la :model:'gestorObjetos.RutaCategoria' para determinar si tiene una categoría padre"""
     cat_padre=models.ForeignKey('self', null=True, blank=True, related_name='+')
     def __unicode__(self):
         if self.cat_padre:
@@ -70,10 +70,8 @@ class RutaCategoria(models.Model):
         
 class EspecificacionLOM(models.Model):
     """
-    Modelo que representa la especificación asociada a cada :model:'siova.Objeto' en el sistema.
+    Modelo que representa la especificación asociada a cada :model:'gestorObjetos.Objeto' en el sistema.
     """
-
-    """Atributo que relaciona uno a uno la especificación LOM con su respectivo objeto espec_lom = models.OneToOneField(Espec_lom)"""
 
     """Nombre para el objeto virtual de aprendizaje o recurso digital."""
     lc1_titulo=models.CharField(help_text='Nombre para el objeto', verbose_name='Título', max_length=200, unique=True, null=False)
@@ -81,9 +79,6 @@ class EspecificacionLOM(models.Model):
     lc1_idioma=models.CharField(help_text='Lenguaje predominante en el objeto', verbose_name='Idioma', max_length=100, null=False)
     """Descripción Textual del contenido del objeto."""
     lc1_descripcion=models.TextField(help_text='Descripción Textual del contenido del objeto', verbose_name="Descripción", null=False)
-    
-    """Relación a las :model:'siova.PalabraClave' para definir etiquetas asociadas al objeto"""
-    palabras_claves=models.ManyToManyField(PalabraClave)
 
     """Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado."""
     lc1_cobertura=models.TextField(help_text='Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado',
@@ -96,9 +91,6 @@ class EspecificacionLOM(models.Model):
                                             verbose_name='Nivel de Agregación', max_length=2,choices=opc.get_nivel_agregacion(),default=opc.get_nivel_agregacion()[0][0])
     """La edición del objeto."""
     lc2_version=models.CharField(help_text='La edición del objeto', verbose_name="Versión", max_length=50, default="1.0")
-
-    """Relación a los :model:'siova.Autor' para definir etiquetas asociadas al objeto"""
-    autores=models.ManyToManyField(Autor)
 
     """Fecha en que el objeto es creado."""
     lc2_fecha=models.DateTimeField(help_text='Fecha en que el objeto es creado', verbose_name="Fecha de Creación", auto_now_add=True)
@@ -139,8 +131,6 @@ class EspecificacionLOM(models.Model):
     lc6_uso_educativo=models.TextField(help_text='Anotación sobre el uso educativo del objeto',
                                     verbose_name="Uso Educativo", null=True)
 
-    """Campo que representa la categoría o Ruta Taxonómica del :model:'siova.Objeto'"""
-    ruta_categoria=models.ForeignKey(RutaCategoria)
     def __unicode__(self):
         return self.lc1_titulo
 
@@ -150,7 +140,7 @@ class Objeto(models.Model):
     Modelo que representa al objeto, ya sea un objeto virtual de aprendizaje o un recurso digital.
     """
 
-    """campo que permite determinar si el objeto es visible en el :model:'siova.Repositorio' asociado"""
+    """campo que permite determinar si el objeto es visible en el :model:'gestorObjetos.Repositorio' asociado"""
     publicado = models.BooleanField(help_text='Marca para publicar en repositorio', verbose_name='Publicado', default=False)
     """Atributo que permite identificar si es un objeto virtual de aprendizaje o recurso digital"""
     tipo_obj = models.CharField(help_text='Tipo de Objeto', verbose_name='Tipo de Objeto', max_length=3,choices=opc.get_tipo_obj(),default=opc.get_tipo_obj()[1][0])
@@ -161,8 +151,17 @@ class Objeto(models.Model):
     """Atributo que relaciona uno a uno el objeto con su respectiva especificación LOM"""
     espec_lom = models.OneToOneField(EspecificacionLOM)
 
-    """Atributo que relaciona al objeto con un :model:'siova.Repositorio'."""
+    """Atributo que relaciona al objeto con un :model:'gestorObjetos.Repositorio'."""
     repositorio = models.ForeignKey(Repositorio)
+
+    """Campo que representa la :model:'gestorObjetos.Categoria' o Ruta Taxonómica del :model:'gestorObjetos.Objeto'"""
+    ruta_categoria=models.ForeignKey(RutaCategoria)
+
+    """Relación a los :model:'gestorObjetos.Autor' para definir los autores asociados al objeto"""
+    autores=models.ManyToManyField(Autor)
+
+    """Relación a las :model:'gestorObjetos.PalabraClave' para definir etiquetas asociadas al objeto"""
+    palabras_claves=models.ManyToManyField(PalabraClave)
 
     def __unicode__(self):
         return self.espec_lom.lc1_titulo
@@ -176,7 +175,7 @@ class UserProfile(models.Model):
     """Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema"""
     rol = models.CharField(help_text='Rol que identifica la participación del :model:"User" en el sistema',
                             verbose_name='Rol de Usuario', max_length=4, choices=opc.get_roles(), default=opc.get_roles()[0][0])
-    """Adición de método para la relación con la :model:'siova.RutaCategoria"""
+    """Adición de método para la relación con la :model:'gestorObjetos.RutaCategoria"""
     ruta_categoria = models.ForeignKey(RutaCategoria, null=True, blank=True)
     """relación directa al usuario"""
     user = models.ForeignKey(User, unique=True)

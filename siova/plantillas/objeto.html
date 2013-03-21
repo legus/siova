@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% block titulo %} Objeto, {{obj|capfirst}} {% endblock %}
+{% block titulo %} Objeto: {{objeto|capfirst}} {% endblock %}
 {% block encabezado %}
-	Objeto, {{obj|capfirst}}
+	Objeto: {{objeto|capfirst}}
 {% endblock %}
 {% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
 {% block contenidoIzq %}
@@ -60,6 +60,6 @@
 		<dt>Uso Educativo</dt>
 		<dd>{{espec.lc6_uso_educativo}}</dd>
 		<dt>Categoría</dt>
-		<dd>{{espec.ruta_categoria}}</dd>
+		<dd>{{objeto.ruta_categoria}}</dd>
 	</dl>
 {% endblock %}
