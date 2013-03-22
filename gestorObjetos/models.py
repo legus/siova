@@ -25,7 +25,7 @@ class Repositorio(models.Model):
     """Campo que identifica al repositorio con un nombre"""
     nombre = models.CharField(help_text='Nombre que identifica al repositorio', verbose_name='Nombre del Repositorio', max_length=200,null=False,unique=True)
     """campo que permite determinar si el repositorio es visible para todos los usuarios o solo para aquellos autorizados"""
-    publico = models.BooleanField(help_text='Marca para habilitar el repositorio al público', verbose_name='Visible', default=True)
+    publico = models.BooleanField(help_text='Marca para habilitar el repositorio al público', verbose_name='Público', default=True)
     """Relación hacia el :model:'Group' que puede observar los objetos"""
     grupos = models.ManyToManyField(Group)
 
@@ -58,8 +58,6 @@ class RutaCategoria(models.Model):
 
     """Nombre para la ruta de Categoría"""
     nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=150, null=False)
-    """Descripción de la ruta taxonómica"""
-    descr_ruta=models.TextField(help_text="Descripción de la Categoría.", verbose_name='Descripción', null=True)
     """Relación a la :model:'gestorObjetos.RutaCategoria' para determinar si tiene una categoría padre"""
     cat_padre=models.ForeignKey('self', null=True, blank=True, related_name='+')
     def __unicode__(self):

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %} {{categoria.nombre_ruta|capfirst}} {% endblock %}
+{% block encabezado %}
+	Categoria: {{categoria.nombre_ruta|capfirst}}
+{% endblock %}
+{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block contenidoIzq %}
+	<div>Categoría</div>
+	<ul>
+		{% for obj in objetos %}
+			<li>{{obj|title}}</li>
+		{% empty %}
+			<li>No hay Objetos en esta categoría.</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
