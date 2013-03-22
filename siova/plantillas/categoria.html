@@ -7,8 +7,19 @@
 {% block contenidoIzq %}
 	<div>Categoría</div>
 	<ul>
+		{% for c1 in catn1 %}
+			<li><a href="/categoria/{{c1.id}}">
+				{{c1.nombre_ruta|title}}
+				{% if c1.objeto_set.count != 0 %}
+					({{c1.objeto_set.count}})
+				{% endif %}
+			</a></li>
+		{% endfor %}
+	</ul>
+	<hr>
+	<ul>
 		{% for obj in objetos %}
-			<li>{{obj|title}}</li>
+			<li><a href="/objeto/{{obj.id}}">{{obj|title}}</a></li>
 		{% empty %}
 			<li>No hay Objetos en esta categoría.</li>
 		{% endfor %}

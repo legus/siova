@@ -32,7 +32,7 @@
 			<ul>
 				{% for cn2 in catn2 %}
 					{% if cn2.cat_padre == cn1 %}
-						<li><a href="/categoria/{{cn1.id}}">
+						<li><a href="/categoria/{{cn2.id}}">
 							{{cn2.nombre_ruta}}
 							{% if cn2.objeto_set.count != 0 %}
 								({{cn2.objeto_set.count}})
@@ -41,7 +41,7 @@
 						<ul>
 							{% for cn3 in catn3 %}
 								{% if cn3.cat_padre == cn2 %}
-									<li><a href="/categoria/{{cn1.id}}">
+									<li><a href="/categoria/{{cn3.id}}">
 										{{cn3.nombre_ruta}}
 										{% if cn3.objeto_set.count != 0 %}
 											({{cn3.objeto_set.count}})
@@ -55,4 +55,20 @@
 			</ul>
 		{% endfor %}
 	</ul>
+{% endblock %}
+{% block contenidoDer %}
+	{% if error %}
+        <p style="color: red;">Please submit a search term.</p>
+    {% endif %}
+    <form action="/buscar" method="get">
+        <input type="text" name="q">
+        <input type="submit" value="Buscar">
+    </form>
+    {% if resultado %}
+		<ol>
+		{% for result in resultado %}
+		    <li><a href="/objeto/{{result.id}}">{{result}}</a></li>
+		{% endfor %}
+		</ol>
+	{% endif %}
 {% endblock %}

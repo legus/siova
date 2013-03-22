@@ -86,8 +86,9 @@ def categoria(request, id_categoria):
 	Vista que despliega las sub categorías y objetos pretenecientes a dicha catagoría.
 	"""
 	categoria = RutaCategoria.objects.get(pk=id_categoria)
+	catn1 = list(RutaCategoria.objects.filter(cat_padre=categoria))
 	objetos = categoria.objeto_set.all()
-	return render_to_response('categoria.html',{'usuario':request.user, 'categoria':categoria, 'objetos':objetos},context_instance=RequestContext(request))
+	return render_to_response('categoria.html',{'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1},context_instance=RequestContext(request))
 
 
 @login_required(login_url='/ingresar')
@@ -97,6 +98,14 @@ def objeto(request, id_objeto):
 	"""
 	obj=Objeto.objects.get(pk=id_objeto)
 	return render_to_response('objeto.html',{'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()},context_instance=RequestContext(request))
+
+def buscar(request):
+    if 'q' in request.GET and request.GET['q']:
+        q = request.GET['q']
+        r_obj = Objeto.objects.filter(espec_lom__lc1_titulo__icontains=q)
+        return render_to_response('privado.html', {'resultado': r_obj, 'query': q})
+    else:
+        return render_to_response('privado.html', {'error': True})
 
 
 @login_required(login_url='/ingresar')
