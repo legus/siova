@@ -6,6 +6,7 @@ function arranque(name) {
         qu = $('#q').val();
         $.getJSON("/buscar", { q:qu }, function(json){
             $("#results1").empty();
+            console.log("entro");
             if (json.length != 0) {
                 obj=json.slice(0,(json.length/2));
                 esp=json.slice(json.length/2,json.length);
@@ -14,6 +15,24 @@ function arranque(name) {
                 });
             }else{
                 $("#results1").html('<h3>La búsqueda no arrojó resultados</h3>');
+            }
+        });
+    });
+
+    $('#busqueda').click(function(e) {
+        e.preventDefault();
+        tit = $('#id_lc1_titulo').val();
+        idi = $('#id_lc1_idioma').val();
+        $.getJSON("/busqueda", { tit:tit, idi:idi }, function(json){
+            $("#results2").empty();
+            if (json.length != 0) {
+                obj=json.slice(0,(json.length/2));
+                esp=json.slice(json.length/2,json.length);
+                $.each(obj, function(key,val){
+                    $("#results2").append("<li><a href='/objeto/"+val.pk+"'>"+esp[key]['fields']['lc1_titulo']+"</a></li>");                
+                });
+            }else{
+                $("#results2").html('<h3>La búsqueda no arrojó resultados</h3>');
             }
         });
     });

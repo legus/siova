@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM
+from gestorObjetos.forms import EspecificacionForm
 
 def ingresar(request):
 	"""
@@ -80,7 +81,8 @@ def privado(request):
 					temp=2 #variable temporal sin relevancia en la lógica
 				else:
 					catn3.append(d1)
-	return render_to_response('privado.html',{'usuario':request.user, 'repos':repositorios, 'objetos':objetos, 'catn1':catn1, 'catn2':catn2, 'catn3':catn3},context_instance=RequestContext(request))
+	formulario=EspecificacionForm
+	return render_to_response('privado.html',{'usuario':request.user, 'form':formulario, 'repos':repositorios, 'objetos':objetos, 'catn1':catn1, 'catn2':catn2, 'catn3':catn3},context_instance=RequestContext(request))
 
 @login_required(login_url='/ingresar')
 def categoria(request, id_categoria):
@@ -106,14 +108,31 @@ def buscar(request):
 		q = request.GET['q']
 		spec=[]
 		r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by( 'espec_lom'))
-		for r in r_obj:
+		rob=list(set(r_obj))
+		for r in rob:
 			spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
-		d=r_obj+spec
+		d=rob+spec
 		json_serializer = serializers.get_serializer("json")()
 		data = json_serializer.serialize(d, ensure_ascii=False)
 		return HttpResponse(data, mimetype='application/json')
 	else:
 		return render_to_response('privado.html', {'error': True},context_instance=RequestContext(request))
+
+def busqueda(request):
+	if 'tit' in request.GET and request.GET['tit']:
+		titulo = request.GET['tit']
+	if 'idi' in request.GET and request.GET['idi']:
+		idioma = request.GET['idi']	
+	spec=[]
+	r_obj = list(Objeto.objects.filter( Q( espec_lom__lc1_titulo__exact = titulo ) & Q( espec_lom__lc1_idioma__exact = idioma )))
+	rob=list(set(r_obj))
+	for r in rob:
+		spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
+	d=rob+spec
+	json_serializer = serializers.get_serializer("json")()
+	data = json_serializer.serialize(d, ensure_ascii=False)
+	return HttpResponse(data, mimetype='application/json')
+
 
 @login_required(login_url='/ingresar')
 def cerrar(request):

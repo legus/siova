@@ -21,7 +21,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'siova',
         'USER': 'root', 
-        'PASSWORD': 'siova_virtual',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '', 
     }

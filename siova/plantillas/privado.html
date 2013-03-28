@@ -20,7 +20,7 @@
 			<li>No hay repositorios registrados aún.</li>
 		{% endfor %}
 	</ul>
-	<div class="submenu" id="submenu1">Categorias</div>
+	<div class="submenu" id="submenu2">Categorias</div>
 	<ul>
 		{% for cn1 in catn1 %}
 			<li><a href="/categoria/{{cn1.id}}">
@@ -57,16 +57,33 @@
 	</ul>
 {% endblock %}
 {% block contenidoDer %}
-	{% if error %}
-        <p style="color: red;">Please submit a search term.</p>
-    {% endif %}
-    <!--<form action="/buscar" method="get">-->
+	<div class="busq" id="busq1">Búsqueda Rápida</div>
+	<!--<form action="/buscar" method="get">-->
         <input id="q" type="text" name="q">
         <input id="busca" type="submit" value="Buscar">
     <!--</form>-->
-    <span id="cargando"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
     <div id="results">
     	<ol id="results1">
     	</ol>
 	</div>
+	<div class="busq" id="busq2">Búsqueda Avanzada</div>
+	<form id="formulario" method="get">
+		
+		{{ form.non_field_errors }}
+
+		{{ form.lc1_titulo.errors }}
+		<label for="id_lc1_titulo">Buscar por título:</label>
+        {{ form.lc1_titulo }}
+        <span>(Y)</span>
+        {{ form.lc1_idioma.errors }}
+		<label for="id_lc1_idioma">Buscar por idioma:</label>
+        {{ form.lc1_idioma }}
+
+		<p><input id="busqueda" type="submit" value="Busqueda"/></p>
+	    <div id="resultado">
+	    	<ol id="results2">
+	    	</ol>
+		</div>
+	</form>
+	<span id="cargando"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
 {% endblock %}

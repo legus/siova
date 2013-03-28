@@ -20,5 +20,6 @@ urlpatterns = patterns('',
     url(r'^privado/$','gestorObjetos.views.privado'),
     url(r'^objeto/(?P<id_objeto>\d)$','gestorObjetos.views.objeto'),
     url(r'^buscar/$','gestorObjetos.views.buscar', name='buscar'),
+    url(r'^busqueda/$','gestorObjetos.views.busqueda', name='busqueda'),
     url(r'^categoria/(?P<id_categoria>\d)$','gestorObjetos.views.categoria'),
 )

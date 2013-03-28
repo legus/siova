@@ -47,6 +47,9 @@ class Autor (models.Model):
         return self.nombres+' '+self.apellidos
 
 class AutorAdmin(admin.ModelAdmin):
+    """
+    Esta clase permite desplegar un conjunto de campos concatenados de un modelo, con el fin de mostrarlos así en el backend del administrador.
+    """
     list_display = ('nombres', 'apellidos')
     list_display_links = ('nombres', 'apellidos')
 
