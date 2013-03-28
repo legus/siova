@@ -4,11 +4,13 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria
+from django.db.models import Q
+from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM
 
 def ingresar(request):
 	"""
@@ -100,13 +102,18 @@ def objeto(request, id_objeto):
 	return render_to_response('objeto.html',{'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()},context_instance=RequestContext(request))
 
 def buscar(request):
-    if 'q' in request.GET and request.GET['q']:
-        q = request.GET['q']
-        r_obj = Objeto.objects.filter(espec_lom__lc1_titulo__icontains=q)
-        return render_to_response('privado.html', {'resultado': r_obj, 'query': q})
-    else:
-        return render_to_response('privado.html', {'error': True})
-
+	if 'q' in request.GET and request.GET['q']:
+		q = request.GET['q']
+		spec=[]
+		r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by( 'espec_lom'))
+		for r in r_obj:
+			spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
+		d=r_obj+spec
+		json_serializer = serializers.get_serializer("json")()
+		data = json_serializer.serialize(d, ensure_ascii=False)
+		return HttpResponse(data, mimetype='application/json')
+	else:
+		return render_to_response('privado.html', {'error': True},context_instance=RequestContext(request))
 
 @login_required(login_url='/ingresar')
 def cerrar(request):

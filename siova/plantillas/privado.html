@@ -60,15 +60,13 @@
 	{% if error %}
         <p style="color: red;">Please submit a search term.</p>
     {% endif %}
-    <form action="/buscar" method="get">
-        <input type="text" name="q">
-        <input type="submit" value="Buscar">
-    </form>
-    {% if resultado %}
-		<ol>
-		{% for result in resultado %}
-		    <li><a href="/objeto/{{result.id}}">{{result}}</a></li>
-		{% endfor %}
-		</ol>
-	{% endif %}
+    <!--<form action="/buscar" method="get">-->
+        <input id="q" type="text" name="q">
+        <input id="busca" type="submit" value="Buscar">
+    <!--</form>-->
+    <span id="cargando"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
+    <div id="results">
+    	<ol id="results1">
+    	</ol>
+	</div>
 {% endblock %}
