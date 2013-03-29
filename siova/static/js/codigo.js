@@ -6,7 +6,6 @@ function arranque(name) {
         qu = $('#q').val();
         $.getJSON("/buscar", { q:qu }, function(json){
             $("#results1").empty();
-            console.log("entro");
             if (json.length != 0) {
                 obj=json.slice(0,(json.length/2));
                 esp=json.slice(json.length/2,json.length);
@@ -23,7 +22,13 @@ function arranque(name) {
         e.preventDefault();
         tit = $('#id_lc1_titulo').val();
         idi = $('#id_lc1_idioma').val();
-        $.getJSON("/busqueda", { tit:tit, idi:idi }, function(json){
+        nag = $('#id_lc1_nivel_agregacion').val();
+        fec = $('#id_lc2_fecha').val();
+        tin = $('#id_lc4_tipo_inter').val();
+        tre = $('#id_lc4_tipo_rec').val();
+        nin = $('#id_lc4_nivel_inter').val();
+        der = $('#id_lc5_derechos').val();
+        $.getJSON("/busqueda", { tit:tit, idi:idi, nag:nag, fec:fec, tin:tin, tre:tre, nin:nin, der_der }, function(json){
             $("#results2").empty();
             if (json.length != 0) {
                 obj=json.slice(0,(json.length/2));

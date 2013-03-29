@@ -15,8 +15,8 @@ def get_tipo_obj():
 def get_nivel_agregacion():
     N1 = 'N1'
     N2 = 'N2'
-    N3 = 'N1'
-    N4 = 'N2'
+    N3 = 'N3'
+    N4 = 'N4'
     NIVEL_AGREGACION_CHOICES = (
         (N1, 'Recursos Digitales'),
         (N2, 'Colección de Recursos'),

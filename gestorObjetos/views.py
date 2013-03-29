@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
+import operator
 from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM
 from gestorObjetos.forms import EspecificacionForm
 
@@ -119,12 +120,34 @@ def buscar(request):
 		return render_to_response('privado.html', {'error': True},context_instance=RequestContext(request))
 
 def busqueda(request):
+	qlist = []
 	if 'tit' in request.GET and request.GET['tit']:
 		titulo = request.GET['tit']
+		qlist.append(('espec_lom__lc1_titulo__iexact',titulo))
 	if 'idi' in request.GET and request.GET['idi']:
 		idioma = request.GET['idi']	
+		qlist.append(('espec_lom__lc1_idioma__iexact',idioma))
+	if 'nag' in request.GET and request.GET['nag']:
+		nivel_agregacion = request.GET['nag']	
+		qlist.append(('espec_lom__lc1_nivel_agregacion__exact',nivel_agregacion))
+	if 'fec' in request.GET and request.GET['fec']:
+		fecha = request.GET['fec']	
+		qlist.append(('espec_lom__lc2_fecha__exact',fecha))
+	if 'tin' in request.GET and request.GET['tin']:
+		tipo_interactividad = request.GET['tin']	
+		qlist.append(('espec_lom__lc4_tipo_inter__exact',tipo_interactividad))
+	if 'tre' in request.GET and request.GET['tre']:
+		tipo_recurso = request.GET['tre']	
+		qlist.append(('espec_lom__lc4_tipo_rec__exact',tipo_recurso))
+	if 'nin' in request.GET and request.GET['nin']:
+		nivel_interactividad = request.GET['nin']
+		qlist.append(('espec_lom__lc4_nivel_inter__exact',nivel_interactividad))
+	if 'der' in request.GET and request.GET['der']:
+		derechos = request.GET['der']
+		qlist.append(('espec_lom__lc5_derechos',derechos))
 	spec=[]
-	r_obj = list(Objeto.objects.filter( Q( espec_lom__lc1_titulo__exact = titulo ) & Q( espec_lom__lc1_idioma__exact = idioma )))
+	q=[Q(x) for x in qlist]
+	r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)))
 	rob=list(set(r_obj))
 	for r in rob:
 		spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
@@ -133,6 +156,12 @@ def busqueda(request):
 	data = json_serializer.serialize(d, ensure_ascii=False)
 	return HttpResponse(data, mimetype='application/json')
 
+@login_required(login_url='/ingresar')
+def docObjeto(request):
+	"""
+	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá crear/modificar/eliminar objetos
+	"""
+	
 
 @login_required(login_url='/ingresar')
 def cerrar(request):

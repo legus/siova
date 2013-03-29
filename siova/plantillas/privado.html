@@ -3,6 +3,11 @@
 {% block encabezado %}
 	Bienvenido, {{usuario.username|capfirst}}
 {% endblock %}
+{% block itemMenu %}
+	{% if usuario.profile.rol = 'rdoc' %}
+		<li><a href="/{{usuario.profile.rol}}">Objetos</a></li>
+	{% endif %}
+{% endblock %}
 {% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
 {% block contenidoIzq %}
 	<div class="submenu" id="submenu1">Repositorios</div>
@@ -78,6 +83,25 @@
         {{ form.lc1_idioma.errors }}
 		<label for="id_lc1_idioma">Buscar por idioma:</label>
         {{ form.lc1_idioma }}
+        <span>(Y)</span>
+        {{ form.lc1_nivel_agregacion.errors }}
+		<label for="id_lc1_nivel_agregacion">Buscar por nivel de agregación:</label>
+        {{ form.lc1_nivel_agregacion }}
+        <span>(Y)</span>
+        <label for="id_fecha">Buscar por fecha de publicación:</label>
+        {{ form.fecha }}
+        <span>(Y)</span>
+        <label for="id_lc4_tipo_inter">Buscar por Tipo de Interactividad:</label>
+        {{ form.lc4_tipo_inter }}
+        <span>(Y)</span>
+        <label for="id_lc4_tipo_rec">Buscar por Tipo de Recurso:</label>
+        {{ form.lc4_tipo_rec }}
+        <span>(Y)</span>
+        <label for="id_lc4_nivel_inter">Buscar por Nivel de Interactividad:</label>
+        {{ form.lc4_nivel_inter }}
+        <span>(Y)</span>
+        <label for="id_lc5_derechos">Buscar por Derechos de Uso:</label>
+        {{ form.derechos }}
 
 		<p><input id="busqueda" type="submit" value="Busqueda"/></p>
 	    <div id="resultado">
@@ -85,5 +109,5 @@
 	    	</ol>
 		</div>
 	</form>
-	<span id="cargando"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
+	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>
 {% endblock %}
