@@ -194,6 +194,28 @@ def docObjeto(request):
 
 	return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores},context_instance=RequestContext(request))
 
+@login_required(login_url='/ingresar')
+def crearAutor(request):
+	"""
+	Vista de acceso al usuario con rol de Docente, que le permite crear autores para los objetos.
+	"""
+	laut=[]
+	if 'naut' in request.GET and request.GET['naut']:
+		nombre = request.GET['naut']
+	if 'aaut' in request.GET and request.GET['aaut']:
+		apellido = request.GET['aaut']	
+	if 'raut' in request.GET and request.GET['raut']:
+		rol = request.GET['raut']
+	else:
+		rol="Autor"
+	objAutor,creado=Autor.objects.get_or_create(nombres=nombre, apellidos=apellido, rol=rol)
+	if not creado: #Si ya existe el Autor se obvia el proceso de guardarlo en la bd
+		objAutor.save() #se guarda el Autor en la bd
+	laut.append(objAutor)
+	json_serializer = serializers.get_serializer("json")()
+	data = json_serializer.serialize(laut, ensure_ascii=False)
+	return HttpResponse(data, mimetype='application/json')
+
 
 @login_required(login_url='/ingresar')
 def cerrar(request):

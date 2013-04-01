@@ -19,5 +19,5 @@ class cEspecificacionForm(ModelForm):
 class ObjetosForm(ModelForm):
 	class Meta:
 		model=Objeto
-		exclude = ('espec_lom',)
+		exclude = ('espec_lom','autores',)
 	palabras_claves = forms.CharField(max_length=500, required=False)

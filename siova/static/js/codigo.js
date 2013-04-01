@@ -41,6 +41,21 @@ function arranque(name) {
             }
         });
     });
+
+    $('#btn_agr').click(function(e) {
+        naut = $('#au_name').val();
+        aaut = $('#au_last').val();
+        raut = $('#au_rol').val();
+        $.getJSON("/crearAutor", { naut:naut, aaut:aaut, raut:raut }, function(json){
+            if (json.length != 0) {
+                $.each(json, function(key,val){
+                    $("#autores").append("<li>"+json[key]['fields']['nombres']+"</li>");
+                });
+            }else{
+                $("#autores").append("<li>error</li>");
+            }
+        });
+    });
 }
 
 $(document).ajaxStart(function() {
