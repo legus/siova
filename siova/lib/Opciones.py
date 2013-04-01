@@ -3,6 +3,32 @@
 Funciones para el manejo de las opciones
 """
 
+def get_idiomas():
+	ESP = 'sp'
+	ENG = 'en'
+	FRA = 'fr'
+	ITA = 'it'
+	JAP = 'ja'
+	POR = 'pt'
+	RUS = 'ru'
+	SUI = 'sv'
+	ALE = 'de'
+	CHI = 'zh'
+
+	IDIOMA_CHOICES = (
+		(ESP, 'Español'),
+		(ENG, 'Inglés'),
+		(FRA, 'Francés'),
+		(ITA, 'Italiano'),
+		(JAP, 'Japonés'),
+		(POR, 'Portugués'),
+		(RUS, 'Ruso'),
+		(SUI, 'Suizo'),
+		(ALE, 'Alemán'),
+		(CHI, 'Chino'),
+	)
+	return IDIOMA_CHOICES
+
 def get_tipo_obj():
 	OVA = 'ova'
 	RECURSO = 'rda'
@@ -62,6 +88,35 @@ def get_nivel_interactividad():
 		(MUYALTO, 'Muy Alto'),
 	)
 	return NIVEL_INTERACTIVIDAD_CHOICES
+
+def get_tipo_recurso():
+	LEC = 'plain/text'
+	WEB = 'application/xhtml'
+	PDF = 'application/pdf'
+	ZIP = 'application/zip'
+	IMG = 'image/jpeg'
+	AUD = 'audio/mpeg'
+	MPG = 'video/mpeg'
+	MP4 = 'video/mp4'
+	WMV = 'video/x-ms-wmv'
+	QUT = 'video/quicktime'
+	FLV = 'video/x-flv'
+	ANI = 'application/x-shockwave-flash'
+	TIPO_RECURSO_CHOICES = (
+		(LEC, 'Lectura'),
+		(WEB, 'Página Web'),
+		(PDF, 'Lectura/PDF'),
+		(ZIP, 'Empaquetado'),
+		(IMG, 'Imagen/Gráfico/Illustración'),
+		(AUD, 'Audio'),
+		(MPG, 'Video/mpg'),
+		(MP4, 'Video/mp4'),
+		(WMV, 'Video/wmv'),
+		(QUT, 'Video/mov'),
+		(FLV, 'Video/flv'),
+		(ANI, 'Animación'),
+	)
+	return TIPO_RECURSO_CHOICES
 
 def get_roles():
 	REST = 'rest'

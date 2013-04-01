@@ -1,6 +1,7 @@
 $(document).on("ready", arranque);
 
 function arranque(name) {
+    $( "#id_lc2_fecha" ).datepicker({ dateFormat: "yy/mm/dd" });
     $('#busca').click(function(e) {
         e.preventDefault();
         qu = $('#q').val();
@@ -27,8 +28,7 @@ function arranque(name) {
         tin = $('#id_lc4_tipo_inter').val();
         tre = $('#id_lc4_tipo_rec').val();
         nin = $('#id_lc4_nivel_inter').val();
-        der = $('#id_lc5_derechos').val();
-        $.getJSON("/busqueda", { tit:tit, idi:idi, nag:nag, fec:fec, tin:tin, tre:tre, nin:nin, der_der }, function(json){
+        $.getJSON("/busqueda", { tit:tit, idi:idi, nag:nag, fec:fec, tin:tin, tre:tre, nin:nin }, function(json){
             $("#results2").empty();
             if (json.length != 0) {
                 obj=json.slice(0,(json.length/2));

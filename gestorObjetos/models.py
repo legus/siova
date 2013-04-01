@@ -13,7 +13,10 @@ class PalabraClave(models.Model):
     """
     Modelo que representa las palabras claves que se pueden asocia a cada :model:'gestorObjetos.EspecificacionLOM'
     """
-    palabra_clave=models.CharField(help_text='Palabra que describe el Objeto', verbose_name="Palabra Clave", max_length=50, null=True)
+    palabra_clave=models.CharField(help_text='Palabra que describe el Objeto', verbose_name="Palabra Clave", max_length=50, unique=True)
+    class Meta:
+        verbose_name = "Palabra Clave"
+        verbose_name_plural = "Palabras Clave"
     def __unicode__(self):
         return self.palabra_clave
 
@@ -43,6 +46,8 @@ class Autor (models.Model):
     apellidos = models.CharField(help_text="apellidos del Autor del Objeto.", verbose_name='Apellidos', max_length=100, null=False)
     """Campo para el rol que representa el usuario en el objeto."""
     rol = models.CharField(help_text="Papel que juega en la creación del Objeto", verbose_name='Rol', max_length=100, default="Autor")
+    class Meta:
+        verbose_name_plural = "Autores"
     def __unicode__(self):
         return self.nombres+' '+self.apellidos
 
@@ -63,6 +68,9 @@ class RutaCategoria(models.Model):
     nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=150, null=False)
     """Relación a la :model:'gestorObjetos.RutaCategoria' para determinar si tiene una categoría padre"""
     cat_padre=models.ForeignKey('self', null=True, blank=True, related_name='+')
+    class Meta:
+        verbose_name = "Categoría"
+        verbose_name_plural = "Categorías"
     def __unicode__(self):
         if self.cat_padre:
             return ' | '.join([self.cat_padre.nombre_ruta,  self.nombre_ruta, ])
@@ -77,7 +85,7 @@ class EspecificacionLOM(models.Model):
     """Nombre para el objeto virtual de aprendizaje o recurso digital."""
     lc1_titulo=models.CharField(help_text='Nombre para el objeto', verbose_name='Título', max_length=200, unique=True, null=False)
     """Lenguaje primario o lenguajes predominante en el objeto y que se utiliza para comunicarse con el usuario."""
-    lc1_idioma=models.CharField(help_text='Lenguaje predominante en el objeto', verbose_name='Idioma', max_length=100, null=False)
+    lc1_idioma=models.CharField(help_text='Lenguaje predominante en el objeto', verbose_name='Idioma', max_length=2,choices=opc.get_idiomas(),default=opc.get_idiomas()[0][0])
     """Descripción Textual del contenido del objeto."""
     lc1_descripcion=models.TextField(help_text='Descripción Textual del contenido del objeto', verbose_name="Descripción", null=False)
 
@@ -96,14 +104,16 @@ class EspecificacionLOM(models.Model):
     """Fecha en que el objeto es creado."""
     lc2_fecha=models.DateTimeField(help_text='Fecha en que el objeto es creado', verbose_name="Fecha de Creación", auto_now_add=True)
     
-    """Tipo de Datos técnico, tipo MIME Types. http://www.iana.org/assignments/media-types/index.html."""
+    """Tipo de Datos técnico, tipo MIME Types. http://www.iana.org/assignments/media-types/index.html.
     lc3_formato=models.CharField(help_text='Tipo de datos. Ejp: video/mpeg, text/html, image/jpg', verbose_name="Formato",
                                 max_length=100, null=True, default="text/plain")
-    """Tamaño del objeto en megabytes."""
+    
+    Tamaño del objeto en megabytes.
     lc3_tamano=models.DecimalField(help_text='Tamaño del objeto en megabytes.',
                                     verbose_name="Tamaño", max_digits=50, decimal_places=2, null=False, default="10", editable=False)
-    """URL que se usa para acceder al Objeto."""
-    lc3_ubicacion=models.URLField(max_length=300, null=True, default="url", editable=False)
+    URL que se usa para acceder al Objeto
+    lc3_ubicacion=models.URLField(max_length=300, null=True, default="url", editable=False)"""
+    
     """Capacidades técnicas requeridas para usar este objeto."""
     lc3_requerimientos=models.TextField(help_text='Capacidades técnicas requeridas para usar este objeto',
                                     verbose_name="Requerimientos", null=True)
@@ -114,8 +124,8 @@ class EspecificacionLOM(models.Model):
     lc4_tipo_inter=models.CharField(help_text="Modo predominante del aprendizaje que aplica este objeto: Activo(Aprender Haciendo, induce al estudiante a tomar acción), Expositivo(Aprendizaje Pasivo, el trabajo del aprendiz consiste en aboserber información).",
                                     verbose_name="Tipo de Interactividad", max_length=3,choices=opc.get_tipo_interactividad(),default=opc.get_tipo_interactividad()[1][0])
     """Tipo de recurso de aprendizaje."""
-    lc4_tipo_rec=models.CharField(help_text="Tipo de recurso de aprendizaje. Ejp: Ejercicio, Simulación, audio, figura, lectura",
-                                    verbose_name="Tipo de Recurso de Aprendizaje", max_length=50, null=True)
+    lc4_tipo_rec=models.CharField(help_text="Tipo de recurso de aprendizaje.",
+                                    verbose_name="Tipo de Recurso de Aprendizaje", max_length=50, null=True,choices=opc.get_tipo_recurso(),default=opc.get_tipo_recurso()[0][0])
     """Grado de interactividad que predomina en el objeto."""
     lc4_nivel_inter=models.CharField(help_text="Grado de interactividad que predomina en el objeto.(Muy Bajo, Bajo, Medio, Alto y Muy Alto)",
                                     verbose_name="Nivel de Interactividad", max_length=3,choices=opc.get_nivel_interactividad(),default=opc.get_nivel_interactividad()[0][0])
@@ -163,6 +173,9 @@ class Objeto(models.Model):
 
     """Relación a las :model:'gestorObjetos.PalabraClave' para definir etiquetas asociadas al objeto"""
     palabras_claves=models.ManyToManyField(PalabraClave)
+
+    """Relación al :model:'User' para determinar el creador del objeto"""
+    creador = models.ForeignKey(User, blank=True, null=True, default=1)
 
     def __unicode__(self):
         return self.espec_lom.lc1_titulo

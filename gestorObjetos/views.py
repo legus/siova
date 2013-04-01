@@ -11,8 +11,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 import operator
-from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM
-from gestorObjetos.forms import EspecificacionForm
+from django.contrib import messages
+from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM, PalabraClave
+from gestorObjetos.forms import EspecificacionForm, cEspecificacionForm, ObjetosForm
 
 def ingresar(request):
 	"""
@@ -142,13 +143,10 @@ def busqueda(request):
 	if 'nin' in request.GET and request.GET['nin']:
 		nivel_interactividad = request.GET['nin']
 		qlist.append(('espec_lom__lc4_nivel_inter__exact',nivel_interactividad))
-	if 'der' in request.GET and request.GET['der']:
-		derechos = request.GET['der']
-		qlist.append(('espec_lom__lc5_derechos',derechos))
 	spec=[]
 	q=[Q(x) for x in qlist]
 	r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)))
-	rob=list(set(r_obj))
+	rob=list(set(r_obj))#Eliminar duplicados de la lista
 	for r in rob:
 		spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
 	d=rob+spec
@@ -161,7 +159,41 @@ def docObjeto(request):
 	"""
 	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá crear/modificar/eliminar objetos
 	"""
-	
+	errores = False
+	if request.method == 'POST':
+		formularioEsp = cEspecificacionForm(request.POST)
+		formularioObj = ObjetosForm(request.POST, request.FILES)
+		if formularioEsp.is_valid():#si es válido el formularo de especificaciónLOM
+			esp=formularioEsp.save()#se guarda la especificaciónLOM primero
+			if formularioObj.is_valid():#si el válido el objeto
+				pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
+				f=formularioObj.save(commit=False)#se guarda un instancia temporañ
+				f.espec_lom = esp # se asocia el objeto con su especificaciónLOM
+				f.creador=request.user # Se asocia el objeto con el usuario que lo crea
+				f.save() # se guarda el objeto en la base de datos.
+				if ',' in pc: #si hay comas en las palabras claves
+					lpc=[x.strip() for x in pc.split(',')] # se utilizan las palabras claves como una lista de palabras separadas sin comas ni espacios
+				else:
+					lpc=[x.strip() for x in pc.split()] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
+				for l in lpc:
+					p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
+					if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
+						p.save() #se guarda la palabra clave en la bd
+					f.palabras_claves.add(p) # se añade cada palabra clave al objeto
+				messages.add_message(request, messages.SUCCESS, 'Objeto Agregado Exitosamente')
+				formularioObj=ObjetosForm()
+				formularioEsp=cEspecificacionForm()
+			else:
+				errores=True
+		else:
+			errores = True
+	else:
+		formularioObj=ObjetosForm()
+		formularioEsp=cEspecificacionForm()
+	objetos = Objeto.objects.filter(creador=request.user.id)
+
+	return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores},context_instance=RequestContext(request))
+
 
 @login_required(login_url='/ingresar')
 def cerrar(request):

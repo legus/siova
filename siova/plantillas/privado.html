@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block titulo %} Bienvenido, {{usuario.username|capfirst}} {% endblock %}
 {% block encabezado %}
-	Bienvenido, {{usuario.username|capfirst}}
+	Bienvenido, {{usuario.first_name|capfirst}}
 {% endblock %}
 {% block itemMenu %}
 	{% if usuario.profile.rol = 'rdoc' %}
@@ -99,9 +99,6 @@
         <span>(Y)</span>
         <label for="id_lc4_nivel_inter">Buscar por Nivel de Interactividad:</label>
         {{ form.lc4_nivel_inter }}
-        <span>(Y)</span>
-        <label for="id_lc5_derechos">Buscar por Derechos de Uso:</label>
-        {{ form.derechos }}
 
 		<p><input id="busqueda" type="submit" value="Busqueda"/></p>
 	    <div id="resultado">
