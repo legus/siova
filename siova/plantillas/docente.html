@@ -28,7 +28,13 @@
         {% if errores %}
                 <h4>Hay un errror con el formulario</h4>
         {% endif%}
+        {% if l_errores %}
+            {% for err in l_errores %}
+                <h4><strong>{{err}}</strong></h4>
+            {% endfor %}
+        {% endif%}
 	<form id="formulario" method="post" enctype="multipart/form-data" action="">{% csrf_token %}	
+
 		{{ formEsp.non_field_errors }}
         {{ formEsp.lc1_titulo.errors }}
         <label for="id_lc1_titulo">Título:</label>
@@ -96,18 +102,16 @@
         {{ formObj.ruta_categoria.errors }}
         <label for="id_ruta_categoria">Categoria:</label>
         {{ formObj.ruta_categoria }}
-        <form id="formCrearAutor" method="get">
-            <ul id="autores">
-                
-            </ul>
+            <ul id="autores"></ul>
+            <span id="error"></span>
             <p>
                 <label for="au_name">Nombre Autor:</label><input id="au_name" type="text"/>
                 <label for="au_last">Apellidos Autor:</label><input id="au_last" type="text"/>
-                <label for="au_rol">Rol Autor:</label><input id="au_rol" type="text"/>
+                <label for="au_rol">Rol Autor:</label><input id="au_rol" value="Autor" type="text"/>
                 <div class="btn_peq" id="btn_agr">+</div>
             </p>
-        </form>
         {{ formObj.palabras_claves.errors }}
+        <input id="autores1" name="autores1" type="hidden"/>
         <label for="id_palabras_claves">Palabras Claves:</label>
         {{ formObj.palabras_claves }}
                 

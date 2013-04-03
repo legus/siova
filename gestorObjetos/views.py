@@ -159,40 +159,59 @@ def docObjeto(request):
 	"""
 	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá crear/modificar/eliminar objetos
 	"""
-	errores = False
-	if request.method == 'POST':
-		formularioEsp = cEspecificacionForm(request.POST)
-		formularioObj = ObjetosForm(request.POST, request.FILES)
-		if formularioEsp.is_valid():#si es válido el formularo de especificaciónLOM
-			esp=formularioEsp.save()#se guarda la especificaciónLOM primero
-			if formularioObj.is_valid():#si el válido el objeto
-				pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
-				f=formularioObj.save(commit=False)#se guarda un instancia temporañ
-				f.espec_lom = esp # se asocia el objeto con su especificaciónLOM
-				f.creador=request.user # Se asocia el objeto con el usuario que lo crea
-				f.save() # se guarda el objeto en la base de datos.
-				if ',' in pc: #si hay comas en las palabras claves
-					lpc=[x.strip() for x in pc.split(',')] # se utilizan las palabras claves como una lista de palabras separadas sin comas ni espacios
-				else:
-					lpc=[x.strip() for x in pc.split()] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
-				for l in lpc:
-					p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
-					if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
-						p.save() #se guarda la palabra clave en la bd
-					f.palabras_claves.add(p) # se añade cada palabra clave al objeto
-				messages.add_message(request, messages.SUCCESS, 'Objeto Agregado Exitosamente')
-				formularioObj=ObjetosForm()
-				formularioEsp=cEspecificacionForm()
-			else:
-				errores=True
-		else:
-			errores = True
-	else:
-		formularioObj=ObjetosForm()
-		formularioEsp=cEspecificacionForm()
 	objetos = Objeto.objects.filter(creador=request.user.id)
+	gruposu = request.user.groups.all()
+	errores = False
+	error1 = False
+	l_errores=[]
+	if request.method == 'POST':
+		if not request.POST.get('autores1'):
+			l_errores.append('No incluiste autores al objeto.')
+			error1=True
+		if not request.POST.get('palabras_claves'):
+			l_errores.append('No incluiste palabras claves al objeto.')
+			error1=True
+		l_autores = request.POST.getlist('autores1')
+		formularioEsp = cEspecificacionForm(request.POST)
+		formularioObj = ObjetosForm(gruposu, request.POST, request.FILES)
+		if not error1:
+			if formularioEsp.is_valid():#si es válido el formularo de especificaciónLOM
+				if formularioObj.is_valid():#si el válido el objeto
+					esp=formularioEsp.save()#se guarda la especificaciónLOM primero
+					pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
+					f=formularioObj.save(commit=False)#se guarda un instancia temporañ
+					f.espec_lom = esp # se asocia el objeto con su especificaciónLOM
+					f.creador=request.user # Se asocia el objeto con el usuario que lo crea
+					f.save() # se guarda el objeto en la base de datos.
+					if ',' in pc: #si hay comas en las palabras claves
+						lpc=[x.strip() for x in pc.split(',')] # se utilizan las palabras claves como una lista de palabras separadas sin comas ni espacios
+					else:
+						lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
+					for l in lpc:
+						p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
+						if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
+							p.save() #se guarda la palabra clave en la bd
+						f.palabras_claves.add(p) # se añade cada palabra clave al objeto
+					for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
+						stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
+						for st in stri: # se recorre cada autor
+							s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
+							aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
+							if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
+								aut.save() #se guarda el autor en la bd
+							f.autores.add(aut) # se añade al campo manytomany con Autores.
+					messages.add_message(request, messages.SUCCESS, 'Objeto Agregado Exitosamente')
+					formularioObj=ObjetosForm(gruposu)
+					formularioEsp=cEspecificacionForm()
+				else:
+					errores=True
+			else:
+				errores = True
+	else:
+		formularioObj=ObjetosForm(gruposu)
+		formularioEsp=cEspecificacionForm()
 
-	return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores},context_instance=RequestContext(request))
+	return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
 
 @login_required(login_url='/ingresar')
 def crearAutor(request):
@@ -209,7 +228,7 @@ def crearAutor(request):
 	else:
 		rol="Autor"
 	objAutor,creado=Autor.objects.get_or_create(nombres=nombre, apellidos=apellido, rol=rol)
-	if not creado: #Si ya existe el Autor se obvia el proceso de guardarlo en la bd
+	if creado: #Si ya existe el Autor se obvia el proceso de guardarlo en la bd
 		objAutor.save() #se guarda el Autor en la bd
 	laut.append(objAutor)
 	json_serializer = serializers.get_serializer("json")()

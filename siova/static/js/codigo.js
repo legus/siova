@@ -1,6 +1,7 @@
 $(document).on("ready", arranque);
 
 function arranque(name) {
+    var autores=[]
     $( "#id_lc2_fecha" ).datepicker({ dateFormat: "yy/mm/dd" });
     $('#busca').click(function(e) {
         e.preventDefault();
@@ -43,19 +44,61 @@ function arranque(name) {
     });
 
     $('#btn_agr').click(function(e) {
+        $("#error").css('display','none');
         naut = $('#au_name').val();
         aaut = $('#au_last').val();
         raut = $('#au_rol').val();
-        $.getJSON("/crearAutor", { naut:naut, aaut:aaut, raut:raut }, function(json){
-            if (json.length != 0) {
-                $.each(json, function(key,val){
-                    $("#autores").append("<li>"+json[key]['fields']['nombres']+"</li>");
-                });
+        if(naut.length>0 & aaut.length>0 & raut.length>0){
+            var flag = false;
+            $( "li" ).each(function( index ) {
+                var t = $(this).text().split(" ");
+                flag=validar(t,naut,aaut,raut);
+            });
+            if(flag){
+                $("#error").html("Autor ya existe");
+                $("#error").fadeIn();
             }else{
-                $("#autores").append("<li>error</li>");
+                $("#autores").append('<li id="autors'+naut+aaut+raut+'">'+ naut+' '+aaut+' - '+raut+'</li>');
+                $("#autors"+naut+aaut+raut).append(function() {
+                    return $('<span class="autori" id="'+naut+aaut+raut+'"> (-) </span>').click(function() {
+                        var e=$(this).context.id;
+                        $("#autors"+e).remove();
+                    });
+                });
+                var a = naut+" "+aaut+" "+raut;
+                autores.push(a);
+                $('#au_name').val("");
+                $('#au_last').val("");
+                $('#au_rol').val("");
+                $('#autores1').val(autores);
             }
-        });
+        }else{
+            $("#error").html("Debes digitar todos los campos del Autor");
+            $("#error").fadeIn();
+        }
     });
+}
+
+function validar(ar,nam,las,rol) {
+    var b1=false;
+    var b2=false;
+    var b3=false;
+    for (var i = 0; i < ar.length; i++) {
+        if(ar[i]==nam){
+            b1=true;
+        }
+        if(ar[i]==las){
+            b2=true;
+        }
+        if(ar[i]==rol){
+            b3=true;
+        }        
+    }
+    if(b1 & b2 & b3){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 $(document).ajaxStart(function() {
@@ -82,47 +125,3 @@ function getCookie(name) {
 }
 var csrftoken = getCookie('csrftoken');
 //console.log(csrftoken)
-
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-//function sameOrigin(url) {
-    // test that a given url is a same-origin URL
-    // url could be relative or scheme relative or absolute
-//    var host = document.location.host; // host + port
-//    var protocol = document.location.protocol;
-//    var sr_origin = '//' + host;
-//    var origin = protocol + sr_origin;
-    // Allow absolute or scheme relative URLs to same origin
-//    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
-//        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
-        // or any other URL that isn't scheme relative or absolute i.e relative.
-//        !(/^(\/\/|http:|https:).*/.test(url));
-//}
-
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-
-
-/* Ajax and formFields erros*/
-function apply_form_field_error(fieldname, error) {
-    var input = $("#id_" + fieldname),
-        container = $("#div_id_" + fieldname),
-        error_msg = $("<span />").addClass("help-inline ajax-error").text(error[0]);
-
-    container.addClass("error");
-    error_msg.insertAfter(input);
-}
-
-function clear_form_field_errors(form) {
-    $(".ajax-error", $(form)).remove();
-    $(".error", $(form)).removeClass("error");
-}

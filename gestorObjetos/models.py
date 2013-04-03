@@ -8,7 +8,6 @@ from django.contrib.auth.models import Group
 from django.contrib import admin
 import siova.lib.Archivos as mod_archivo
 import siova.lib.Opciones as opc
-
 class PalabraClave(models.Model):
     """
     Modelo que representa las palabras claves que se pueden asocia a cada :model:'gestorObjetos.EspecificacionLOM'
@@ -91,7 +90,7 @@ class EspecificacionLOM(models.Model):
 
     """Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado."""
     lc1_cobertura=models.TextField(help_text='Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado',
-                                    verbose_name="Cobertura", null=False)
+                                    verbose_name="Cobertura", null=True)
     """
     Granularidad Funcional del objeto. N1: recursos digitales, N2:colección de recursos. ejp: lección,
     N3: Colección de lecciones. ejp: cursos, N4: ejp:conjunto de cursos.
@@ -116,9 +115,9 @@ class EspecificacionLOM(models.Model):
     
     """Capacidades técnicas requeridas para usar este objeto."""
     lc3_requerimientos=models.TextField(help_text='Capacidades técnicas requeridas para usar este objeto',
-                                    verbose_name="Requerimientos", null=True)
+                                    verbose_name="Requerimientos", null=True, blank=True)
     """Descripción de cómo instalar este objeto."""
-    lc3_instrucciones=models.TextField(help_text='Descripción de cómo instalar este objeto.', verbose_name="Instrucciones", null=True)
+    lc3_instrucciones=models.TextField(help_text='Descripción de cómo instalar este objeto.', verbose_name="Instrucciones", null=True, blank=True)
     
     """Modo predominante del aprendizaje que aplica este objeto."""
     lc4_tipo_inter=models.CharField(help_text="Modo predominante del aprendizaje que aplica este objeto: Activo(Aprender Haciendo, induce al estudiante a tomar acción), Expositivo(Aprendizaje Pasivo, el trabajo del aprendiz consiste en aboserber información).",
@@ -131,16 +130,16 @@ class EspecificacionLOM(models.Model):
                                     verbose_name="Nivel de Interactividad", max_length=3,choices=opc.get_nivel_interactividad(),default=opc.get_nivel_interactividad()[0][0])
     """Descripción de los Usarios para los cuales este objeto fue diseñado."""
     lc4_poblacion=models.TextField(help_text='Descripción de los Usarios para los cuales este objeto fue diseñado.',
-                                    verbose_name="Población", null=True)
+                                    verbose_name="Población", null=True, blank=True)
     """Principal ambiente en el cual este objeto es utilizado."""
     lc4_contexto=models.CharField(help_text="Principal ambiente en el cual este objeto es utilizado.",
-                                    verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0])
+                                    verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0], null=True, blank=True)
     """Comentarios sobre las condiciones de uso de este objeto."""
     lc5_derechos=models.TextField(help_text='condiciones de uso de este objeto. Ejp: CreativeCommons',
                                     verbose_name="Derechos de Uso", null=False)
     """Se proveen comentarios sobre el uso educativo del objeto."""
     lc6_uso_educativo=models.TextField(help_text='Anotación sobre el uso educativo del objeto',
-                                    verbose_name="Uso Educativo", null=True)
+                                    verbose_name="Uso Educativo", null=True, blank=True)
 
     def __unicode__(self):
         return self.lc1_titulo
