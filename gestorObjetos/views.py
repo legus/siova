@@ -13,7 +13,7 @@ from django.db.models import Q
 import operator
 from django.contrib import messages
 from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM, PalabraClave
-from gestorObjetos.forms import EspecificacionForm, cEspecificacionForm, ObjetosForm
+from gestorObjetos.forms import EspecificacionForm, cEspecificacionForm, ObjetosForm, cObjetosForm
 
 def ingresar(request):
 	"""
@@ -93,7 +93,8 @@ def categoria(request, id_categoria):
 	"""
 	categoria = RutaCategoria.objects.get(pk=id_categoria)
 	catn1 = list(RutaCategoria.objects.filter(cat_padre=categoria))
-	objetos = categoria.objeto_set.all()
+	#objetos = categoria.objeto_set.filter()
+	objetos = Objeto.objects.filter(repositorio__grupos=request.user.groups.all())
 	return render_to_response('categoria.html',{'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1},context_instance=RequestContext(request))
 
 
@@ -166,10 +167,13 @@ def docObjeto(request):
 	l_errores=[]
 	if request.method == 'POST':
 		if not request.POST.get('autores1'):
-			l_errores.append('No incluiste autores al objeto.')
+			l_errores.append('No incluyó autores al objeto.')
 			error1=True
 		if not request.POST.get('palabras_claves'):
-			l_errores.append('No incluiste palabras claves al objeto.')
+			l_errores.append('No incluyó palabras claves al objeto.')
+			error1=True
+		if not request.POST.get('repositorio'):
+			l_errores.append('No seleccionó repositorio.. si no hay repositorios asociados, consulte a un administrador del sistema para agregar alguno.')
 			error1=True
 		l_autores = request.POST.getlist('autores1')
 		formularioEsp = cEspecificacionForm(request.POST)
@@ -179,9 +183,11 @@ def docObjeto(request):
 				if formularioObj.is_valid():#si el válido el objeto
 					esp=formularioEsp.save()#se guarda la especificaciónLOM primero
 					pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
+					re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
 					f=formularioObj.save(commit=False)#se guarda un instancia temporañ
 					f.espec_lom = esp # se asocia el objeto con su especificaciónLOM
 					f.creador=request.user # Se asocia el objeto con el usuario que lo crea
+					f.repositorio=re
 					f.save() # se guarda el objeto en la base de datos.
 					if ',' in pc: #si hay comas en las palabras claves
 						lpc=[x.strip() for x in pc.split(',')] # se utilizan las palabras claves como una lista de palabras separadas sin comas ni espacios
@@ -212,6 +218,67 @@ def docObjeto(request):
 		formularioEsp=cEspecificacionForm()
 
 	return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
+
+@login_required(login_url='/ingresar')
+def editObjeto(request,id_objeto):
+	"""
+	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá modificar objetos
+	"""
+	error1 = False
+	errores = False
+	l_errores=[]
+	gruposu = request.user.groups.all()
+	obj=Objeto.objects.get(pk=id_objeto)
+	esp=obj.espec_lom
+	l_autores = request.POST.getlist('autores1')
+	autores = obj.autores.all()
+	if request.method == 'POST':
+		if not request.POST.get('autores1'):
+			l_errores.append('No incluyó autores al objeto.')
+			error1=True
+		if not request.POST.get('palabras_claves'):
+			l_errores.append('No incluyó palabras claves al objeto.')
+			error1=True
+		formularioEsp = cEspecificacionForm(request.POST, instance=esp)
+		formularioObj = cObjetosForm(request.user, obj, request.POST, request.FILES, instance=obj)
+		if not error1:
+			if formularioEsp.is_valid() & formularioObj.is_valid():
+				formularioEsp.save()
+				pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
+				re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
+				f=formularioObj.save(commit=False)#se guarda un instancia temporal
+				lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
+				for l in lpc:
+					p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
+					if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
+						p.save() #se guarda la palabra clave en la bd
+					f.palabras_claves.add(p) # se añade cada palabra clave al objeto
+				for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
+					stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
+					for st in stri: # se recorre cada autor
+						s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
+						aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
+						if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
+							aut.save() #se guarda el autor en la bd
+						f.autores.add(aut) # se añade al campo manytomany con Autores.
+				f.repositorio=re
+				f.save()
+				messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
+				return HttpResponseRedirect('/privado')
+			else:
+				errores=True
+	else:
+		formularioEsp = cEspecificacionForm(instance=esp)
+		formularioObj = cObjetosForm(request.user, obj, instance=obj)
+	return render_to_response('editObjeto.html',{'objeto':obj,'usuario':request.user,'formObj':formularioObj,'formEsp':formularioEsp,'autores':autores,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
+
+
+@login_required(login_url='/ingresar')
+def editObjeto(request,id_objeto):
+	"""
+	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá eliminar objetos
+	"""
+	
 
 @login_required(login_url='/ingresar')
 def crearAutor(request):

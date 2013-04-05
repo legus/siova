@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block titulo %} Objeto: {{objeto|capfirst}} {% endblock %}
+{% block encabezado %}
+    Objeto: {{objeto|capfirst}}
+{% endblock %}
+{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block contenidoIzq %}
+{% endblock %}
+{% block contenidoDer %}
+	<div class=" crearObj" id="crearObj">Crear Objeto</div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if errores %}
+                <h4>Hay un errror con el formulario</h4>
+        {% endif%}
+        {% if l_errores %}
+            {% for err in l_errores %}
+                <h4><strong>{{err}}</strong></h4>
+            {% endfor %}
+        {% endif%}
+	<form id="editObj" method="post" enctype="multipart/form-data" action="">{% csrf_token %}	
+		{{ formEsp.as_p }}
+        {{ formObj.as_p }}
+        <ul id="autores">
+            {% for a in autores %}
+                <script>
+                    var autores_arr=[];
+                    var a = '{{a.nombres}} {{a.apellidos}} {{a.rol}}';
+                    autores_arr.push(a);
+                    $("#autores").append('<li id="autors{{a.nombres}}_{{a.apellidos}}_{{a.rol}}">{{a.nombres}} {{a.apellidos}} - {{a.rol}}</li>');
+                    $("#autors{{a.nombres}}_{{a.apellidos}}_{{a.rol}}").append(function() {
+                        return $('<span class="autori" id="{{a.nombres}}_{{a.apellidos}}_{{a.rol}}"> (-) </span>').click(function() {
+                            var e=$(this).context.id;
+                            s=e.replace(/_/g,' ');
+                            autores_arr.splice(jQuery.inArray(s,autores_arr),1);
+                            $("#autors"+e).remove();
+                        });
+                    });
+                </script>
+            {% endfor %}
+        </ul>
+        <span id="error"></span>
+        <p>
+            <label for="au_name">Nombre Autor:</label><input id="au_name" type="text"/>
+            <label for="au_last">Apellidos Autor:</label><input id="au_last" type="text"/>
+            <label for="au_rol">Rol Autor:</label><input id="au_rol" value="Autor" type="text"/>
+            <div class="btn_peq" id="btn_agr">+</div>
+        </p>
+        <input id="autores1" name="autores1" type="hidden"/>
+		<p><input id="crearObj" type="submit" value="Guardar Cambios"/></p>
+	</form>
+	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>
+{% endblock %}

@@ -1,7 +1,7 @@
 $(document).on("ready", arranque);
 
 function arranque(name) {
-    var autores=[]
+    var autores_arr=[];
     $( "#id_lc2_fecha" ).datepicker({ dateFormat: "yy/mm/dd" });
     $('#busca').click(function(e) {
         e.preventDefault();
@@ -58,19 +58,21 @@ function arranque(name) {
                 $("#error").html("Autor ya existe");
                 $("#error").fadeIn();
             }else{
-                $("#autores").append('<li id="autors'+naut+aaut+raut+'">'+ naut+' '+aaut+' - '+raut+'</li>');
-                $("#autors"+naut+aaut+raut).append(function() {
-                    return $('<span class="autori" id="'+naut+aaut+raut+'"> (-) </span>').click(function() {
+                var a = naut+" "+aaut+" "+raut;
+                autores_arr.push(a);
+                $("#autores").append('<li id="autors'+naut+'_'+aaut+'_'+raut+'">'+naut+' '+aaut+' - '+raut+'</li>');
+                $("#autors"+naut+'_'+aaut+'_'+raut).append(function() {
+                    return $('<span class="autori" id="'+naut+'_'+aaut+'_'+raut+'"> (-) </span>').click(function() {
                         var e=$(this).context.id;
+                        s=e.replace(/_/g,' ');
+                        autores_arr.splice(jQuery.inArray(s,autores_arr),1);
                         $("#autors"+e).remove();
                     });
                 });
-                var a = naut+" "+aaut+" "+raut;
-                autores.push(a);
                 $('#au_name').val("");
                 $('#au_last').val("");
-                $('#au_rol').val("");
-                $('#autores1').val(autores);
+                $('#au_rol').val("Autor");
+                $('#autores1').val(autores_arr);
             }
         }else{
             $("#error").html("Debes digitar todos los campos del Autor");
@@ -125,3 +127,39 @@ function getCookie(name) {
 }
 var csrftoken = getCookie('csrftoken');
 //console.log(csrftoken)
+
+/*Código que se debe activar en caso de que la eliminación de objetos de un array no sea compatible, es decir en navegadores IE <=8
+  En la creación o modificación de objetos, especificamente en la adición/eliminación de autores es donde esta característica se utiliza.
+
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (searchElement ) {
+        "use strict";
+        if (this == null) {
+            throw new TypeError();
+        }
+        var t = Object(this);
+        var len = t.length >>> 0;
+        if (len === 0) {
+            return -1;
+        }
+        var n = 0;
+        if (arguments.length > 1) {
+            n = Number(arguments[1]);
+            if (n != n) { // shortcut for verifying if it's NaN
+                n = 0;
+            } else if (n != 0 && n != Infinity && n != -Infinity) {
+                n = (n > 0 || -1) * Math.floor(Math.abs(n));
+            }
+        }
+        if (n >= len) {
+            return -1;
+        }
+        var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
+        for (; k < len; k++) {
+            if (k in t && t[k] === searchElement) {
+                return k;
+            }
+        }
+        return -1;
+    }
+}*/

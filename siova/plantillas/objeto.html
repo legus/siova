@@ -3,6 +3,12 @@
 {% block encabezado %}
 	Objeto: {{objeto|capfirst}}
 {% endblock %}
+{% block itemMenu %}
+{% if usuario.profile.rol = 'rdoc' %}
+	<li><a id="editarObj" href="/editObjeto/{{objeto.pk}}">Editar Objeto</a></li>
+	<li><a id="borrarObj" href="/elimObjeto/{{objeto.pk}}">Borrar Objeto</a></li>
+{% endif %}
+{% endblock %}
 {% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
 {% block contenidoIzq %}
 	<dl>

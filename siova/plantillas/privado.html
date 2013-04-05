@@ -9,6 +9,13 @@
 	{% endif %}
 {% endblock %}
 {% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% block contenidoIzq %}
 	<div class="submenu" id="submenu1">Repositorios</div>
 	<ul>
@@ -30,27 +37,27 @@
 		{% for cn1 in catn1 %}
 			<li><a href="/categoria/{{cn1.id}}">
 				{{cn1.nombre_ruta}}
-				{% if cn1.objeto_set.count != 0 %}
+				<!--{% if cn1.objeto_set.count != 0 %}
 					({{cn1.objeto_set.count}})
-				{% endif %}
+				{% endif %}-->
 			</a></li>
 			<ul>
 				{% for cn2 in catn2 %}
 					{% if cn2.cat_padre == cn1 %}
 						<li><a href="/categoria/{{cn2.id}}">
 							{{cn2.nombre_ruta}}
-							{% if cn2.objeto_set.count != 0 %}
+							<!--{% if cn2.objeto_set.count != 0 %}
 								({{cn2.objeto_set.count}})
-							{% endif %}
+							{% endif %}-->
 						</a></li>
 						<ul>
 							{% for cn3 in catn3 %}
 								{% if cn3.cat_padre == cn2 %}
 									<li><a href="/categoria/{{cn3.id}}">
 										{{cn3.nombre_ruta}}
-										{% if cn3.objeto_set.count != 0 %}
+										<!--{% if cn3.objeto_set.count != 0 %}
 											({{cn3.objeto_set.count}})
-										{% endif %}
+										{% endif %}-->
 									</a></li>
 								{% endif %}
 							{% endfor %}
