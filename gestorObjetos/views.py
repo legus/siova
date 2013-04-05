@@ -45,6 +45,49 @@ def ingresar(request):
 		formulario = AuthenticationForm()
 	return render_to_response('ingresar.html', {'formulario':formulario}, context_instance = RequestContext(request))
 
+def principal(request):
+	"""
+		Vista que muestra al usuario visitante la página inicial del sistema
+	"""
+	if request.user:
+		return HttpResponseRedirect('/privado')
+	else:
+		repositorios = []
+		if len(repositorios) == 0:
+			repositorios = list(Repositorio.objects.filter(publico=True))
+		else:
+			repositorios.extend(list(Repositorio.objects.filter(publico=True)))
+		repositorios = list(set(repositorios)) #quitar duplicados en la lista
+		objetos = []
+		for r in repositorios:
+			if len(objetos) == 0:
+				objetos = list(Objeto.objects.filter(repositorio=r).filter(publicado=True))
+			else:
+				objetos.extend(list(Objeto.objects.filter(repositorio=r).filter(publicado=True)))
+
+		catn1 = RutaCategoria.objects.filter(cat_padre=None)
+		catnTemp = list(RutaCategoria.objects.all().exclude(cat_padre=None))
+		catn2=[]
+		catn3=[]
+		temp=0
+		for c in catn1:
+			for c1 in catnTemp:
+				if c1.cat_padre == c:
+					if c1 in catn2:
+						temp=1 #variable temporal sin relevancia en la lógica
+					else:
+						catn2.append(c1)
+		for d in catn2:
+			for d1 in catnTemp:
+				if d1.cat_padre == d:
+					if d1 in catn3:
+						temp=2 #variable temporal sin relevancia en la lógica
+					else:
+						catn3.append(d1)
+		formulario=EspecificacionForm
+		return render_to_response('index.html',{'form':formulario, 'repos':repositorios, 'objetos':objetos, 'catn1':catn1, 'catn2':catn2, 'catn3':catn3},context_instance=RequestContext(request))
+
+
 @login_required(login_url='/ingresar')
 def privado(request):
 	"""
@@ -60,9 +103,9 @@ def privado(request):
 	objetos = []
 	for r in repositorios:
 		if len(objetos) == 0:
-			objetos = list(Objeto.objects.filter(repositorio=r))
+			objetos = list(Objeto.objects.filter(repositorio=r).filter(publicado=True))
 		else:
-			objetos.extend(list(Objeto.objects.filter(repositorio=r)))
+			objetos.extend(list(Objeto.objects.filter(repositorio=r).filter(publicado=True)))
 
 	catn1 = RutaCategoria.objects.filter(cat_padre=None)
 	catnTemp = list(RutaCategoria.objects.all().exclude(cat_padre=None))
@@ -93,18 +136,25 @@ def categoria(request, id_categoria):
 	"""
 	categoria = RutaCategoria.objects.get(pk=id_categoria)
 	catn1 = list(RutaCategoria.objects.filter(cat_padre=categoria))
-	#objetos = categoria.objeto_set.filter()
-	objetos = Objeto.objects.filter(repositorio__grupos=request.user.groups.all())
-	return render_to_response('categoria.html',{'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1},context_instance=RequestContext(request))
+	if request.user:
+		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(repositorio__grupos=request.user.groups.all()).filter(publicado=True)
+		data={'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1}
+	else:
+		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(publicado=True)
+		data={'categoria':categoria, 'objetos':objetos, 'catn1':catn1}
+	return render_to_response('categoria.html',data,context_instance=RequestContext(request))
 
-
-@login_required(login_url='/ingresar')
+#@login_required(login_url='/ingresar')
 def objeto(request, id_objeto):
 	"""
 	En esta vista se desplegarán la información del Objeto seleccionado
 	"""
 	obj=Objeto.objects.get(pk=id_objeto)
-	return render_to_response('objeto.html',{'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()},context_instance=RequestContext(request))
+	if request.user:
+		data={'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()}
+	else:
+		data={'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()}
+	return render_to_response('objeto.html',data,context_instance=RequestContext(request))
 
 def buscar(request):
 	if 'q' in request.GET and request.GET['q']:
