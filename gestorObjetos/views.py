@@ -274,13 +274,6 @@ def editObjeto(request,id_objeto):
 
 
 @login_required(login_url='/ingresar')
-def editObjeto(request,id_objeto):
-	"""
-	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá eliminar objetos
-	"""
-	
-
-@login_required(login_url='/ingresar')
 def crearAutor(request):
 	"""
 	Vista de acceso al usuario con rol de Docente, que le permite crear autores para los objetos.
