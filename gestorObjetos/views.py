@@ -1,4 +1,5 @@
 #encoding:utf-8
+import os
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -15,6 +16,8 @@ from django.contrib import messages
 from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM, PalabraClave
 from gestorObjetos.forms import EspecificacionForm, cEspecificacionForm, ObjetosForm, cObjetosForm
 import datetime
+import siova.lib.Opciones as opc
+import siova.lib.Archivos as mod_archivo
 
 def ingresar(request):
 	"""
@@ -156,10 +159,22 @@ def objeto(request, id_objeto):
 	En esta vista se desplegarán la información del Objeto seleccionado
 	"""
 	obj=Objeto.objects.get(pk=id_objeto)
+	idiom={}
+	nivel_a={}
+	format={}
+	tipo_i={}
+	nivel_i={}
+	contex={}
+	[idiom.update({k:v}) for k,v in opc.get_idiomas()]
+	[nivel_a.update({k:v}) for k,v in opc.get_nivel_agregacion()]
+	[format.update({k:v}) for k,v in opc.get_tipo_recurso()]
+	[tipo_i.update({k:v}) for k,v in opc.get_tipo_interactividad()]
+	[nivel_i.update({k:v}) for k,v in opc.get_nivel_interactividad()]
+	[contex.update({k:v}) for k,v in opc.get_contexto()]
 	if request.user.is_authenticated():
-		data={'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()}
+		data={'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.al(), 'keywords':obj.palabras_claves.all(),'idioma':idiom[obj.espec_lom.lc1_idioma],'niv_agr':nivel_a[obj.espec_lom.lc1_nivel_agregacion],'formato':format[obj.espec_lom.lc4_tipo_rec],'tipo_i':tipo_i[obj.espec_lom.lc4_tipo_inter],'nivel_i':nivel_i[obj.espec_lom.lc4_nivel_inter],'context':contex[obj.espec_lom.lc4_contexto]}
 	else:
-		data={'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()}
+		data={'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all(),'idioma':idiom[obj.espec_lom.lc1_idioma],'niv_agr':nivel_a[obj.espec_lom.lc1_nivel_agregacion],'formato':format[obj.espec_lom.lc4_tipo_rec],'tipo_i':tipo_i[obj.espec_lom.lc4_tipo_inter],'nivel_i':nivel_i[obj.espec_lom.lc4_nivel_inter],'context':contex[obj.espec_lom.lc4_contexto]}
 	return render_to_response('objeto.html',data,context_instance=RequestContext(request))
 
 def buscar(request):
@@ -367,6 +382,13 @@ def crearAutor(request):
 	data = json_serializer.serialize(laut, ensure_ascii=False)
 	return HttpResponse(data, mimetype='application/json')
 
+def download(request,id):
+	f = Objeto.objects.get(pk=id)
+	myfile = open(os.path.join(f.archivo.path)).read()
+	response = HttpResponse(myfile, mimetype='application/force-download')
+	response['Content-Disposition'] = 'attachment; filename=%s' % f.archivo.name
+	#response['X-Sendfile'] = os.stat("/objetos/"+ file_name)
+	return response
 
 @login_required(login_url='/ingresar')
 def cerrar(request):

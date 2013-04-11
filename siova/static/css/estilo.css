@@ -11,6 +11,28 @@ body
 	text-align: center;
 }
 
+dd
+{
+	background: white;
+	width: 66%;
+}
+
+dt
+{
+	font-weight: bold;
+	width: 26%;
+}
+
+dd, dt
+{
+	/*border: 1px solid #000;*/
+	color: #055a9b;
+	display: inline-block;
+	margin: 0.3em 0;
+	padding: 0.4em 0.3em;
+	vertical-align: top;
+}
+
 footer
 {
 	background:#eaeaea;
@@ -190,4 +212,26 @@ ul
 .submenu, .busq
 {
 	margin-bottom: 1em;
+}
+
+.resultados
+{
+	background: #7ac2f9;
+	border-radius: 0.3em;
+	margin: 0.3em 0;
+	padding: 0.3em;
+	text-align: left;
+}
+
+.titulo_item p
+{
+	background: white;
+	border-radius: 0.3em;
+	box-shadow: #7ac2f9 0px 0px 7px;
+	color: #055a9b;
+	font-weight: bold;
+	font-size: 1.5em;
+	margin: 0.5em 0;
+	padding: 0.5em;
+	text-align: center;
 }

@@ -18,6 +18,7 @@
 {% block contenidoIzq %}
 	<div class="titulo_item" id="tit_obj">
 		<p>{{objeto|capfirst}}</p>
+		<div><a href="/descarga/{{objeto.pk}}">Descargar</a></div>
 	</div>
 {% endblock %}
 {% block contenidoDer %}
@@ -25,52 +26,50 @@
 		<dt>Título</dt>
 		<dd>{{espec.lc1_titulo}}</dd>
 		<dt>Idioma</dt>
-		<dd>{{espec.lc1_idioma}}</dd>
+		<dd>{{ idioma }}
+		</dd>
 		<dt>Descripción</dt>
 		<dd>{{espec.lc1_descripcion}}</dd>
-		<ul>Palabras Claves
+		<dt>Palabras Claves</dt>
+			<dd>
 			{% for k in keywords %}
-				<li>{{k.palabra_clave}}</li>
+				{{k.palabra_clave}} 
 			{% empty %}
-			<li>Vacío</li>
+			Vacío
 			{% endfor %}
-		</ul>
+			</dd>
 		<dt>cobertura</dt>
 		<dd>{{espec.lc1_cobertura}}</dd>
 		<dt>Nivel de Agregación</dt>
-		<dd>{{espec.lc1_nivel_agregacion}}</dd>
+		<dd>{{ niv_agr }}</dd>
 		<dt>Versión</dt>
 		<dd>{{espec.lc2_version}}</dd>
-		<dl>Autores
+		<dt>Autores</dt>
+			<dd>
 			{% for a in autores %}
-				<dt>{{a.nombres}} - {{a.apellidos}}</dt>
-				<dd>{{a.rol}}</dd>
+				{{a.nombres|capfirst}} {{a.apellidos|capfirst}} - {{a.rol|capfirst}} <br>
 			{% empty %}
-			<dt>Vacío</dt><dd>Vacío</dd>
+			Vacío
 			{% endfor %}
-		</dl>
+			</dd>
 		<dt>Fecha</dt>
 		<dd>{{espec.lc2_fecha}}</dd>
 		<dt>Formato</dt>
-		<dd>{{espec.lc4_tipo_rec}}</dd>
+		<dd>{{formato}}</dd>
 		<dt>Tamaño</dt>
-		<dd>tamaño</dd>
-		<dt>Ubicación</dt>
-		<dd>ubicación</dd>
+		<dd>{{objeto.archivo.size|filesizeformat}}</dd>
 		<dt>Requerimientos</dt>
 		<dd>{{espec.lc3_requerimientos}}</dd>
 		<dt>Instrucciones</dt>
 		<dd>{{espec.lc3_instrucciones}}</dd>
 		<dt>Tipo de interactividad</dt>
-		<dd>{{espec.lc4_tipo_inter}}</dd>
-		<dt>Tipo de Recurso</dt>
-		<dd>{{espec.lc4_tipo_rec}}</dd>
+		<dd>{{tipo_i}}</dd>
 		<dt>Nivel de Interactividad</dt>
-		<dd>{{espec.lc4_nivel_inter}}</dd>
+		<dd>{{nivel_i}}</dd>
 		<dt>Población</dt>
 		<dd>{{espec.lc4_poblacion}}</dd>
 		<dt>Contexto</dt>
-		<dd>{{espec.lc4_contexto}}</dd>
+		<dd>{{context}}</dd>
 		<dt>Derechos de Autor</dt>
 		<dd>{{espec.lc5_derechos}}</dd>
 		<dt>Uso Educativo</dt>
