@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
-{% block titulo %} Bienvenido, {{usuario.username|capfirst}} {% endblock %}
-{% block encabezado %}
-	Bienvenido, {{usuario.first_name|capfirst}}
-{% endblock %}
+{% block titulo %} Siova: Docente {% endblock %}
 {% block itemMenu %}
 	{% if usuario.profile.rol = 'rdoc' %}
-		<li><a href="/{{usuario.profile.rol}}">Objetos</a></li>
+		<li><a href="/docente">Objetos</a></li>
 	{% endif %}
 {% endblock %}
-{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block itemMenuUs %}
+    <li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
+    <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
-        <ul>
+        <ul id="ocontenidos">
         {% for obj in objetos%}
                 <li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
         {% endfor %}

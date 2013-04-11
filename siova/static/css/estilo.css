@@ -1,26 +1,193 @@
+a
+{
+	color: #034a80;
+	text-decoration: none;
+}
+
 body
 {
-	background: #eee;
+	background:#055a9b;
 	font-size: 16px;
 	text-align: center;
 }
 
 footer
 {
+	background:#eaeaea;
+	color:#222;
 	font-size: 0.8em;
+	padding: 0.5em;
 }
 
-h1
+footer p
 {
-	border: 1px dashed #fff;
+	margin: 0.2em;
 }
 
 header
 {
-	border: 1px solid #ff0;
+	background:#055a9b;
+	display: inline-block;
+	height: 80px;
+	margin: 0 0 0.1em 0;
+	padding: 0.5em 0;
+	width: 100%;
+}
+
+header h1
+{
+	color:#eaeaea;
+	font-size: 1.7em;	
+	margin: 0.8em 0 0 0;
+	text-shadow:#2d2d2d 2px 2px 5px;
+}
+
+ul
+{
+	list-style: none;
+	margin: 0.1em;
+	padding: 0.1em;
 }
 
 #cargando
 {
 	display:none;
+}
+
+#contenedor
+{
+	/*border: 1px solid #000;*/
+	display: inline-block;
+	margin: 1em 0;
+	width: 100%;
+}
+
+#contenidoIzq
+{
+	/*border: 1px solid #f00;*/
+	background: #eaeaea;
+	border-radius: 0.5em;
+	box-shadow: #2d2d2d -2px 2px 5px;
+	display: inline-block;
+	margin-left: 0.3em;
+	vertical-align: top;
+	width:46%;
+}
+
+#contenidoDer
+{
+	/*border: 1px solid #f00;*/
+	background: #eaeaea;
+	border-radius: 0.5em;
+	box-shadow: #2d2d2d -2px 2px 5px;
+	display: inline-block;
+	margin-left: 0.3em;
+	vertical-align: top;
+	width:46%;
+}
+
+#contenidosm2, #contenidosm4
+{
+	display: none;
+}
+
+#contenidosm3
+{
+	text-align: center;
+}
+
+#formulario label
+{
+	display: inline-block;
+	width: 160px;
+}
+
+#formulario input
+{
+	display: inline-block;
+}
+
+#menu
+{
+	background: #eaeaea;
+	height: 30px;
+	padding-top: 8px;
+}
+
+#menuPrincipal
+{
+	/*border: 1px solid #000;*/
+	display: inline-block;
+	text-align: left;
+	width: 49%;
+}
+
+#menuUsuario
+{
+	/*border: 1px solid #000;*/
+	display: inline-block;
+	text-align: right;
+	vertical-align: top;
+	width: 48%;
+}
+
+#navegacion
+{
+	color: #eaeaea;
+	text-align: left;
+}
+
+#navegacion li a
+{
+	color: #eaeaea;
+	font-weight: bold;
+}
+
+#rcontenidos li
+{
+	color: #034a80;
+	font-weight: bold;
+	padding: 0.1em 0.3em;
+	margin: 0px;
+}
+
+#ocontenidos li
+{
+	font-weight: normal;
+}
+
+#submenu1, #submenu2, #busq1, #busq2
+{
+	background:#034a80;
+	border-radius: 0.2em;
+	color: white;
+	cursor:pointer;
+	display: inline-block;
+	padding: 0.3em 0;
+	text-align: center;
+	width: 40%;
+}
+
+#submenu2, #busq2
+{
+	background:#155688;
+}
+
+.contenido
+{
+	margin-bottom: 1em;
+	padding: 0.8em;
+	text-align: left;
+}
+
+.menus li
+{
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+}
+
+.submenu, .busq
+{
+	margin-bottom: 1em;
 }

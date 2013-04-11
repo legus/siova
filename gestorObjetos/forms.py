@@ -3,18 +3,22 @@ from django.forms import ModelForm
 from django import forms
 import datetime
 from gestorObjetos.models import EspecificacionLOM, Objeto, Repositorio, PalabraClave
-from django.forms.extras.widgets import SelectDateWidget
+import siova.lib.Opciones as opc
 
 class EspecificacionForm(ModelForm):
 	class Meta:
 		model=EspecificacionLOM
-	fecha = forms.DateField(initial=datetime.date.today,widget=SelectDateWidget())
-	derechos = forms.CharField()
-
-class cEspecificacionForm(ModelForm):
-	class Meta:
-		model=EspecificacionLOM
 	lc2_fecha = forms.DateField(initial=datetime.date.today)
+
+class cEspecificacionForm(forms.Form):
+	c_titulo = forms.CharField(max_length=200)
+	c_tipo_obj = forms.CharField(max_length=3,widget=forms.Select(choices=opc.get_tipo_obj()))
+	c_idioma = forms.CharField(max_length=2,widget=forms.Select(choices=opc.get_idiomas()))
+	c_nivel_agregacion = forms.CharField(max_length=2,widget=forms.Select(choices=opc.get_nivel_agregacion()))
+	c_fecha = forms.DateField(initial=datetime.date.today)
+	c_tipo_inter = forms.CharField(max_length=3,widget=forms.Select(choices=opc.get_tipo_interactividad()))
+	c_tipo_rec = forms.CharField(max_length=50,widget=forms.Select(choices=opc.get_tipo_recurso()))
+	c_nivel_inter = forms.CharField(max_length=3,widget=forms.Select(choices=opc.get_nivel_interactividad()))
 
 class ObjetosForm(ModelForm):
 	def __init__(self,gruposu,*args,**kwargs):

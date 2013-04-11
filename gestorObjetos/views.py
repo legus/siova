@@ -14,6 +14,7 @@ import operator
 from django.contrib import messages
 from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM, PalabraClave
 from gestorObjetos.forms import EspecificacionForm, cEspecificacionForm, ObjetosForm, cObjetosForm
+import datetime
 
 def ingresar(request):
 	"""
@@ -49,7 +50,7 @@ def principal(request):
 	"""
 		Vista que muestra al usuario visitante la página inicial del sistema
 	"""
-	if request.user:
+	if request.user.is_authenticated():
 		return HttpResponseRedirect('/privado')
 	else:
 		repositorios = []
@@ -84,7 +85,7 @@ def principal(request):
 						temp=2 #variable temporal sin relevancia en la lógica
 					else:
 						catn3.append(d1)
-		formulario=EspecificacionForm
+		formulario=cEspecificacionForm
 		return render_to_response('index.html',{'form':formulario, 'repos':repositorios, 'objetos':objetos, 'catn1':catn1, 'catn2':catn2, 'catn3':catn3},context_instance=RequestContext(request))
 
 
@@ -126,22 +127,27 @@ def privado(request):
 					temp=2 #variable temporal sin relevancia en la lógica
 				else:
 					catn3.append(d1)
-	formulario=EspecificacionForm
+	formulario=cEspecificacionForm
 	return render_to_response('privado.html',{'usuario':request.user, 'form':formulario, 'repos':repositorios, 'objetos':objetos, 'catn1':catn1, 'catn2':catn2, 'catn3':catn3},context_instance=RequestContext(request))
 
-@login_required(login_url='/ingresar')
+#@login_required(login_url='/ingresar')
 def categoria(request, id_categoria):
 	"""
 	Vista que despliega las sub categorías y objetos pretenecientes a dicha catagoría.
 	"""
+	padre=None
+	abuelo=None
 	categoria = RutaCategoria.objects.get(pk=id_categoria)
 	catn1 = list(RutaCategoria.objects.filter(cat_padre=categoria))
-	if request.user:
+	padre = categoria.cat_padre
+	if padre:
+		abuelo = padre.cat_padre
+	if request.user.is_authenticated():
 		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(repositorio__grupos=request.user.groups.all()).filter(publicado=True)
-		data={'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1}
+		data={'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1, 'padre':padre, 'abuelo':abuelo}
 	else:
-		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(publicado=True)
-		data={'categoria':categoria, 'objetos':objetos, 'catn1':catn1}
+		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(publicado=True).filter(repositorio__publico=True)
+		data={'usuario':False,'categoria':categoria, 'objetos':objetos, 'catn1':catn1, 'padre':padre, 'abuelo':abuelo}
 	return render_to_response('categoria.html',data,context_instance=RequestContext(request))
 
 #@login_required(login_url='/ingresar')
@@ -150,7 +156,7 @@ def objeto(request, id_objeto):
 	En esta vista se desplegarán la información del Objeto seleccionado
 	"""
 	obj=Objeto.objects.get(pk=id_objeto)
-	if request.user:
+	if request.user.is_authenticated():
 		data={'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()}
 	else:
 		data={'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all()}
@@ -160,10 +166,13 @@ def buscar(request):
 	if 'q' in request.GET and request.GET['q']:
 		q = request.GET['q']
 		spec=[]
-		r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by( 'espec_lom'))
+		if request.user.is_authenticated():
+			r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by('espec_lom').filter(publicado=True).filter(repositorio__grupos=request.user.groups.all()))
+		else:
+			r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by('espec_lom').filter(publicado=True).filter(repositorio__publico=True))
 		rob=list(set(r_obj))
 		for r in rob:
-			spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
+			spec.extend([r.espec_lom])
 		d=rob+spec
 		json_serializer = serializers.get_serializer("json")()
 		data = json_serializer.serialize(d, ensure_ascii=False)
@@ -173,33 +182,40 @@ def buscar(request):
 
 def busqueda(request):
 	qlist = []
-	if 'tit' in request.GET and request.GET['tit']:
+	if 'tit' in request.GET and request.GET['tit'] and request.GET['v_tit']=="True":
 		titulo = request.GET['tit']
-		qlist.append(('espec_lom__lc1_titulo__iexact',titulo))
-	if 'idi' in request.GET and request.GET['idi']:
+		qlist.append(('espec_lom__lc1_titulo__icontains',titulo))
+	if 'tob' in request.GET and request.GET['tob'] and request.GET['v_tob']=="True":
+		tipo = request.GET['tob']
+		qlist.append(('tipo_obj__iexact',tipo))
+	if 'idi' in request.GET and request.GET['idi'] and request.GET['v_idi']=="True":
 		idioma = request.GET['idi']	
 		qlist.append(('espec_lom__lc1_idioma__iexact',idioma))
-	if 'nag' in request.GET and request.GET['nag']:
+	if 'nag' in request.GET and request.GET['nag'] and request.GET['v_nag']=="True":
 		nivel_agregacion = request.GET['nag']	
 		qlist.append(('espec_lom__lc1_nivel_agregacion__exact',nivel_agregacion))
-	if 'fec' in request.GET and request.GET['fec']:
-		fecha = request.GET['fec']	
-		qlist.append(('espec_lom__lc2_fecha__exact',fecha))
-	if 'tin' in request.GET and request.GET['tin']:
+	if 'fec' in request.GET and request.GET['fec'] and request.GET['v_fec']=="True":
+		fech = request.GET['fec']
+		fecha = datetime.datetime.strptime(fech,"%d/%m/%Y").strftime("%Y-%m-%d") 
+		qlist.append(('espec_lom__lc2_fecha__lte',fecha))
+	if 'tin' in request.GET and request.GET['tin'] and request.GET['v_tin']=="True":
 		tipo_interactividad = request.GET['tin']	
 		qlist.append(('espec_lom__lc4_tipo_inter__exact',tipo_interactividad))
-	if 'tre' in request.GET and request.GET['tre']:
-		tipo_recurso = request.GET['tre']	
+	if 'tre' in request.GET and request.GET['tre'] and request.GET['v_tre']=="True":
+		tipo_recurso = request.GET['tre']
 		qlist.append(('espec_lom__lc4_tipo_rec__exact',tipo_recurso))
-	if 'nin' in request.GET and request.GET['nin']:
+	if 'nin' in request.GET and request.GET['nin'] and request.GET['v_nin']=="True":
 		nivel_interactividad = request.GET['nin']
 		qlist.append(('espec_lom__lc4_nivel_inter__exact',nivel_interactividad))
 	spec=[]
 	q=[Q(x) for x in qlist]
-	r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)))
+	if request.user.is_authenticated():
+		r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)).filter(publicado=True).filter(repositorio__grupos=request.user.groups.all()))
+	else:
+		r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)).filter(publicado=True).filter(repositorio__publico=True))
 	rob=list(set(r_obj))#Eliminar duplicados de la lista
 	for r in rob:
-		spec.extend(list(EspecificacionLOM.objects.filter(pk=r.id)))
+		spec.extend([r.espec_lom])
 	d=rob+spec
 	json_serializer = serializers.get_serializer("json")()
 	data = json_serializer.serialize(d, ensure_ascii=False)
@@ -208,41 +224,100 @@ def busqueda(request):
 @login_required(login_url='/ingresar')
 def docObjeto(request):
 	"""
-	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá crear/modificar/eliminar objetos
+	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá crearobjetos
 	"""
-	objetos = Objeto.objects.filter(creador=request.user.id)
-	gruposu = request.user.groups.all()
-	errores = False
-	error1 = False
-	l_errores=[]
-	if request.method == 'POST':
-		if not request.POST.get('autores1'):
-			l_errores.append('No incluyó autores al objeto.')
-			error1=True
-		if not request.POST.get('palabras_claves'):
-			l_errores.append('No incluyó palabras claves al objeto.')
-			error1=True
-		if not request.POST.get('repositorio'):
-			l_errores.append('No seleccionó repositorio.. si no hay repositorios asociados, consulte a un administrador del sistema para agregar alguno.')
-			error1=True
+	if request.user.profile.rol == 'rdoc':
+		objetos = Objeto.objects.filter(creador=request.user.id)
+		gruposu = request.user.groups.all()
+		errores = False
+		error1 = False
+		l_errores=[]
+		if request.method == 'POST':
+			if not request.POST.get('autores1'):
+				l_errores.append('No incluyó autores al objeto.')
+				error1=True
+			if not request.POST.get('palabras_claves'):
+				l_errores.append('No incluyó palabras claves al objeto.')
+				error1=True
+			if not request.POST.get('repositorio'):
+				l_errores.append('No seleccionó repositorio.. si no hay repositorios asociados, consulte a un administrador del sistema para agregar alguno.')
+				error1=True
+			l_autores = request.POST.getlist('autores1')
+			formularioEsp = EspecificacionForm(request.POST)
+			formularioObj = ObjetosForm(gruposu, request.POST, request.FILES)
+			if not error1:
+				if formularioEsp.is_valid():#si es válido el formularo de especificaciónLOM
+					if formularioObj.is_valid():#si el válido el objeto
+						esp=formularioEsp.save()#se guarda la especificaciónLOM primero
+						pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
+						re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
+						f=formularioObj.save(commit=False)#se guarda un instancia temporañ
+						f.espec_lom = esp # se asocia el objeto con su especificaciónLOM
+						f.creador=request.user # Se asocia el objeto con el usuario que lo crea
+						f.repositorio=re
+						f.save() # se guarda el objeto en la base de datos.
+						if ',' in pc: #si hay comas en las palabras claves
+							lpc=[x.strip() for x in pc.split(',')] # se utilizan las palabras claves como una lista de palabras separadas sin comas ni espacios
+						else:
+							lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
+						for l in lpc:
+							p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
+							if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
+								p.save() #se guarda la palabra clave en la bd
+							f.palabras_claves.add(p) # se añade cada palabra clave al objeto
+						for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
+							stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
+							for st in stri: # se recorre cada autor
+								s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
+								aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
+								if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
+									aut.save() #se guarda el autor en la bd
+								f.autores.add(aut) # se añade al campo manytomany con Autores.
+						messages.add_message(request, messages.SUCCESS, 'Objeto Agregado Exitosamente')
+						formularioObj=ObjetosForm(gruposu)
+						formularioEsp=EspecificacionForm()
+					else:
+						errores=True
+				else:
+					errores = True
+		else:
+			formularioObj=ObjetosForm(gruposu)
+			formularioEsp=EspecificacionForm()
+
+		return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
+	else:
+		return HttpResponseRedirect('/')
+
+@login_required(login_url='/ingresar')
+def editObjeto(request,id_objeto):
+	"""
+	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá modificar objetos
+	"""
+	if request.user.profile.rol == 'rdoc':
+		error1 = False
+		errores = False
+		l_errores=[]
+		gruposu = request.user.groups.all()
+		obj=Objeto.objects.get(pk=id_objeto)
+		esp=obj.espec_lom
 		l_autores = request.POST.getlist('autores1')
-		formularioEsp = cEspecificacionForm(request.POST)
-		formularioObj = ObjetosForm(gruposu, request.POST, request.FILES)
-		if not error1:
-			if formularioEsp.is_valid():#si es válido el formularo de especificaciónLOM
-				if formularioObj.is_valid():#si el válido el objeto
-					esp=formularioEsp.save()#se guarda la especificaciónLOM primero
+		autores = obj.autores.all()
+		if request.method == 'POST':
+			if not request.POST.get('autores1'):
+				l_errores.append('No incluyó autores al objeto.')
+				error1=True
+			if not request.POST.get('palabras_claves'):
+				l_errores.append('No incluyó palabras claves al objeto.')
+				error1=True
+			formularioEsp = EspecificacionForm(request.POST, instance=esp)
+			formularioObj = cObjetosForm(request.user, obj, request.POST, request.FILES, instance=obj)
+			if not error1:
+				if formularioEsp.is_valid() & formularioObj.is_valid():
+					formularioEsp.save()
 					pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
 					re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
-					f=formularioObj.save(commit=False)#se guarda un instancia temporañ
-					f.espec_lom = esp # se asocia el objeto con su especificaciónLOM
-					f.creador=request.user # Se asocia el objeto con el usuario que lo crea
-					f.repositorio=re
-					f.save() # se guarda el objeto en la base de datos.
-					if ',' in pc: #si hay comas en las palabras claves
-						lpc=[x.strip() for x in pc.split(',')] # se utilizan las palabras claves como una lista de palabras separadas sin comas ni espacios
-					else:
-						lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
+					f=formularioObj.save(commit=False)#se guarda un instancia temporal
+					lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
 					for l in lpc:
 						p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
 						if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
@@ -256,71 +331,18 @@ def docObjeto(request):
 							if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
 								aut.save() #se guarda el autor en la bd
 							f.autores.add(aut) # se añade al campo manytomany con Autores.
-					messages.add_message(request, messages.SUCCESS, 'Objeto Agregado Exitosamente')
-					formularioObj=ObjetosForm(gruposu)
-					formularioEsp=cEspecificacionForm()
+					f.repositorio=re
+					f.save()
+					messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
+					return HttpResponseRedirect('/privado')
 				else:
 					errores=True
-			else:
-				errores = True
+		else:
+			formularioEsp = EspecificacionForm(instance=esp)
+			formularioObj = cObjetosForm(request.user, obj, instance=obj)
+		return render_to_response('editObjeto.html',{'objeto':obj,'usuario':request.user,'formObj':formularioObj,'formEsp':formularioEsp,'autores':autores,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
 	else:
-		formularioObj=ObjetosForm(gruposu)
-		formularioEsp=cEspecificacionForm()
-
-	return render_to_response('docente.html',{'usuario':request.user,'objetos':objetos,'formObj':formularioObj,'formEsp':formularioEsp,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
-
-@login_required(login_url='/ingresar')
-def editObjeto(request,id_objeto):
-	"""
-	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá modificar objetos
-	"""
-	error1 = False
-	errores = False
-	l_errores=[]
-	gruposu = request.user.groups.all()
-	obj=Objeto.objects.get(pk=id_objeto)
-	esp=obj.espec_lom
-	l_autores = request.POST.getlist('autores1')
-	autores = obj.autores.all()
-	if request.method == 'POST':
-		if not request.POST.get('autores1'):
-			l_errores.append('No incluyó autores al objeto.')
-			error1=True
-		if not request.POST.get('palabras_claves'):
-			l_errores.append('No incluyó palabras claves al objeto.')
-			error1=True
-		formularioEsp = cEspecificacionForm(request.POST, instance=esp)
-		formularioObj = cObjetosForm(request.user, obj, request.POST, request.FILES, instance=obj)
-		if not error1:
-			if formularioEsp.is_valid() & formularioObj.is_valid():
-				formularioEsp.save()
-				pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
-				re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
-				f=formularioObj.save(commit=False)#se guarda un instancia temporal
-				lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
-				for l in lpc:
-					p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
-					if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
-						p.save() #se guarda la palabra clave en la bd
-					f.palabras_claves.add(p) # se añade cada palabra clave al objeto
-				for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
-					stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
-					for st in stri: # se recorre cada autor
-						s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
-						aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
-						if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
-							aut.save() #se guarda el autor en la bd
-						f.autores.add(aut) # se añade al campo manytomany con Autores.
-				f.repositorio=re
-				f.save()
-				messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
-				return HttpResponseRedirect('/privado')
-			else:
-				errores=True
-	else:
-		formularioEsp = cEspecificacionForm(instance=esp)
-		formularioObj = cObjetosForm(request.user, obj, instance=obj)
-	return render_to_response('editObjeto.html',{'objeto':obj,'usuario':request.user,'formObj':formularioObj,'formEsp':formularioEsp,'autores':autores,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
+		return HttpResponseRedirect('/')
 
 
 @login_required(login_url='/ingresar')

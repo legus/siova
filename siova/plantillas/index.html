@@ -1,105 +1,124 @@
 {% extends 'base.html' %}
-{% block titulo %} Sistema de Información Objetos de Aprendizaje {% endblock %}
-{% block encabezado %}
-	Sistema de Información Objetos de Aprendizaje
-{% endblock %}
-{% block itemMenuUs %} <li><a href="/ingresar">Ingresar</a></li> {% endblock %}
+{% block titulo %} siova: Sistema de Información Objetos de Aprendizaje {% endblock %}
+{% block itemMenuUs %}<li><a href="/ingresar">Ingresar</a></li>{% endblock %}
+{% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
 	<div class="submenu" id="submenu1">Repositorios</div>
-	<ul>
-		{% for rep in repos %}
-			<li>{{rep.nombre|title}}</li>
-		<ul>
-			{% for obj in objetos %}
-				{% if obj.repositorio == rep %}
-					<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
-				{% endif %}
-			{% endfor %}
-		</ul>
-		{% empty %}
-			<li>No hay repositorios registrados aún.</li>
-		{% endfor %}
-	</ul>
 	<div class="submenu" id="submenu2">Categorias</div>
-	<ul>
-		{% for cn1 in catn1 %}
-			<li><a href="/categoria/{{cn1.id}}">
-				{{cn1.nombre_ruta}}
-				<!--{% if cn1.objeto_set.count != 0 %}
-					({{cn1.objeto_set.count}})
-				{% endif %}-->
-			</a></li>
-			<ul>
-				{% for cn2 in catn2 %}
-					{% if cn2.cat_padre == cn1 %}
-						<li><a href="/categoria/{{cn2.id}}">
-							{{cn2.nombre_ruta}}
-							<!--{% if cn2.objeto_set.count != 0 %}
-								({{cn2.objeto_set.count}})
-							{% endif %}-->
-						</a></li>
-						<ul>
-							{% for cn3 in catn3 %}
-								{% if cn3.cat_padre == cn2 %}
-									<li><a href="/categoria/{{cn3.id}}">
-										{{cn3.nombre_ruta}}
-										<!--{% if cn3.objeto_set.count != 0 %}
-											({{cn3.objeto_set.count}})
-										{% endif %}-->
-									</a></li>
-								{% endif %}
-							{% endfor %}
-						</ul>
+	<div id="contenidosm1">
+		<ul id="rcontenidos">
+			{% for rep in repos %}
+				<li>{{rep.nombre|title}}</li>
+			<ul id="ocontenidos">
+				{% for obj in objetos %}
+					{% if obj.repositorio == rep %}
+						<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
 					{% endif %}
 				{% endfor %}
 			</ul>
-		{% endfor %}
-	</ul>
+			{% empty %}
+				<li>No hay repositorios registrados aún.</li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div id="contenidosm2">
+		<ul id="rcontenidos">
+			{% for cn1 in catn1 %}
+				<li><a href="/categoria/{{cn1.id}}">
+					{{cn1.nombre_ruta}}
+					<!--{% if cn1.objeto_set.count != 0 %}
+						({{cn1.objeto_set.count}})
+					{% endif %}-->
+				</a></li>
+				<ul id="ocontenidos">
+					{% for cn2 in catn2 %}
+						{% if cn2.cat_padre == cn1 %}
+							<li><a href="/categoria/{{cn2.id}}">
+								{{cn2.nombre_ruta}}
+								<!--{% if cn2.objeto_set.count != 0 %}
+									({{cn2.objeto_set.count}})
+								{% endif %}-->
+							</a></li>
+							<ul id="ocontenidos">
+								{% for cn3 in catn3 %}
+									{% if cn3.cat_padre == cn2 %}
+										<li><a href="/categoria/{{cn3.id}}">
+											{{cn3.nombre_ruta}}
+											<!--{% if cn3.objeto_set.count != 0 %}
+												({{cn3.objeto_set.count}})
+											{% endif %}-->
+										</a></li>
+									{% endif %}
+								{% endfor %}
+							</ul>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			{% endfor %}
+		</ul>
+	</div>
 {% endblock %}
 {% block contenidoDer %}
 	<div class="busq" id="busq1">Búsqueda Rápida</div>
-	<!--<form action="/buscar" method="get">-->
+	<div class="busq" id="busq2">Búsqueda Avanzada</div>
+	<div id = "contenidosm3">
         <input id="q" type="text" name="q">
         <input id="busca" type="submit" value="Buscar">
-    <!--</form>-->
-    <div id="results">
-    	<ol id="results1">
-    	</ol>
-	</div>
-	<div class="busq" id="busq2">Búsqueda Avanzada</div>
-	<form id="formulario" method="get">
-		
-		{{ form.non_field_errors }}
-
-		{{ form.lc1_titulo.errors }}
-		<label for="id_lc1_titulo">Buscar por título:</label>
-        {{ form.lc1_titulo }}
-        <span>(Y)</span>
-        {{ form.lc1_idioma.errors }}
-		<label for="id_lc1_idioma">Buscar por idioma:</label>
-        {{ form.lc1_idioma }}
-        <span>(Y)</span>
-        {{ form.lc1_nivel_agregacion.errors }}
-		<label for="id_lc1_nivel_agregacion">Buscar por nivel de agregación:</label>
-        {{ form.lc1_nivel_agregacion }}
-        <span>(Y)</span>
-        <label for="id_fecha">Buscar por fecha de publicación:</label>
-        {{ form.fecha }}
-        <span>(Y)</span>
-        <label for="id_lc4_tipo_inter">Buscar por Tipo de Interactividad:</label>
-        {{ form.lc4_tipo_inter }}
-        <span>(Y)</span>
-        <label for="id_lc4_tipo_rec">Buscar por Tipo de Recurso:</label>
-        {{ form.lc4_tipo_rec }}
-        <span>(Y)</span>
-        <label for="id_lc4_nivel_inter">Buscar por Nivel de Interactividad:</label>
-        {{ form.lc4_nivel_inter }}
-
-		<p><input id="busqueda" type="submit" value="Busqueda"/></p>
-	    <div id="resultado">
-	    	<ol id="results2">
+	    <div id="results">
+	    	<ol id="results1">
 	    	</ol>
 		</div>
-	</form>
+	</div>
+	<div id = "contenidosm4">
+		<form id="formulario" method="get">
+			Buscar por
+			<p>
+				<input type="checkbox" id="v_tit" name="v_tit" value="True">
+				<label for="id_c_titulo">Título:</label>
+		        {{ form.c_titulo }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_tob" name="v_tob" value="True">
+				<label for="id_c_tipo_obj">Tipo de Objeto:</label>
+		        {{ form.c_tipo_obj }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_idi" name="v_idi" value="True">
+				<label for="id_c_idioma">Idioma:</label>
+		        {{ form.c_idioma }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_nag" name="v_nag" value="True">
+				<label for="id_c_nivel_agregacion">Nivel de agregación:</label>
+		        {{ form.c_nivel_agregacion }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_fec" name="v_fec" value="True">
+		        <label for="id_c_fecha">Fecha de publicación:</label>
+		        {{ form.c_fecha }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_tin" name="v_tin" value="True">
+		        <label for="id_c_tipo_inter">Tipo de Interactividad:</label>
+		        {{ form.c_tipo_inter }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_tre" name="v_tre" value="True">
+		        <label for="id_c_tipo_rec">Tipo de Recurso:</label>
+		        {{ form.c_tipo_rec }}
+		    </p>
+		    <p>
+		    	<input type="checkbox" id="v_nin" name="v_nin" value="True">
+		        <label for="id_c_nivel_inter">Nivel de Interactividad:</label>
+		        {{ form.c_nivel_inter }}
+			</p>
+
+			<p><input id="busqueda" type="submit" value="Busqueda"/></p>
+		    <div id="resultado">
+		    	<ol id="results2">
+		    	</ol>
+			</div>
+		</form>
+	</div>
 	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>
 {% endblock %}

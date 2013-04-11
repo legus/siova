@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block titulo %} Ingresar {% endblock %}
-{% block encabezado %} Ingresa {% endblock %}
+{% block titulo %} siova: Ingresar {% endblock %}
+{% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
 	<form id='formulario' method='post' action=''>{% csrf_token %}
 		<table>{{formulario}}</table>

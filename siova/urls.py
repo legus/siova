@@ -25,5 +25,5 @@ urlpatterns = patterns('',
     url(r'^busqueda/$','gestorObjetos.views.busqueda', name='busqueda'),
     url(r'^crearAutor/$','gestorObjetos.views.crearAutor', name='crearAutor'),
     url(r'^categoria/(?P<id_categoria>\d+)$','gestorObjetos.views.categoria'),
-    url(r'^rdoc/$','gestorObjetos.views.docObjeto'),
+    url(r'^docente/$','gestorObjetos.views.docObjeto'),
 )

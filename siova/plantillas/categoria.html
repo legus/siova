@@ -1,21 +1,40 @@
 {% extends 'base.html' %}
-{% block titulo %} {{categoria.nombre_ruta|capfirst}} {% endblock %}
-{% block encabezado %}
-	Categoria: {{categoria.nombre_ruta|capfirst}}
+{% block titulo %} siova: {{categoria.nombre_ruta|capfirst}} {% endblock %}
+{% block itemMenu %}
+{% if usuario.profile.rol = 'rdoc' %}
+	<li><a href="/docente">Objetos</a></li>
+{% endif %}
 {% endblock %}
-{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block itemMenuUs %}
+	<li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
+	{% if usuario %}
+		<li><a href="/cerrar">Salir</a></li>
+	{% else %}
+		<li><a href="/ingresar">Ingresar</a></li>
+	{% endif %}
+{% endblock %}
+{% block itemNav %}
+	<li><a href="/">Inicio</a></li>
+	{% if abuelo %}
+		> <li><a href="/categoria/{{abuelo.id}}">{{abuelo.nombre_ruta|title}}</a></li>
+	{% endif %}
+	{% if padre %}
+		> <li><a href="/categoria/{{padre.id}}">{{padre.nombre_ruta|title}}</a></li>
+	{% endif %}
+{% endblock %}
 {% block contenidoIzq %}
+	<div class="titulo_item" id="tit_obj">
+		<p>{{categoria.nombre_ruta|capfirst}}</p>
+	</div>
+{% endblock %}
+{% block contenidoDer %}
 	<ul>
 		{% for c1 in catn1 %}
 			<li><a href="/categoria/{{c1.id}}">
 				{{c1.nombre_ruta|title}}
-				{% if c1.objeto_set.count != 0 %}
-					({{c1.objeto_set.count}})
-				{% endif %}
 			</a></li>
 		{% endfor %}
 	</ul>
-	<hr>
 	<ul>
 		{% for obj in objetos %}
 			<li><a href="/objeto/{{obj.id}}">{{obj|title}}</a></li>

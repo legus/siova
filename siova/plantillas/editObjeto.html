@@ -1,10 +1,22 @@
 {% extends 'base.html' %}
-{% block titulo %} Objeto: {{objeto|capfirst}} {% endblock %}
-{% block encabezado %}
-    Objeto: {{objeto|capfirst}}
+{% block titulo %} siova: edit-{{objeto|capfirst}} {% endblock %}
+{% block itemMenu %}
+    {% if usuario.profile.rol = 'rdoc' %}
+        <li><a href="/docente">Objetos</a></li>
+    {% endif %}
 {% endblock %}
-{% block itemMenuUs %} <li><a href="/cerrar">Salir</a></li> {% endblock %}
+{% block itemMenuUs %}
+    <li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
+    <li><a href="/cerrar">Salir</a></li>
+{% endblock %}
+{% block itemNav %}
+    <li><a href="/">Inicio</a></li>
+    > <li><a href="/docente">Objetos</a></li>
+{% endblock %}
 {% block contenidoIzq %}
+    <div class="titulo_item" id="tit_obj">
+        <p>{{objeto|capfirst}}</p>
+    </div>
 {% endblock %}
 {% block contenidoDer %}
 	<div class=" crearObj" id="crearObj">Crear Objeto</div>

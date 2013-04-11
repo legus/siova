@@ -3,6 +3,7 @@
 	<head>
 		<meta charset='utf-8'>
 		<title>SIOVA - {% block titulo %}{% endblock %}</title>
+		<link rel="stylesheet" href='{{STATIC_URL}}css/normalize.css'>
 		<link rel="stylesheet" href='{{STATIC_URL}}css/estilo.css'>
 		<link rel="stylesheet" href='{{STATIC_URL}}css/sunny/jquery-ui-1.10.2.custom.min.css'>
 		<link rel="shortcut icon" href='{{STATIC_URL}}img/icono.png'>
@@ -13,18 +14,25 @@
 	</head>
 	<body>
 		<header>
-			<h1>{% block encabezado %}{% endblock %}</h1>
-			<nav class="menu" id="menuPrincipal">
+			<h1>Sistema de Información Objetos de Aprendizaje</h1>
+		</header>
+		<section id="menu">
+			<nav class="menus" id="menuPrincipal">
 				<ul>
 					{% block itemMenu %}{% endblock %}
 				</ul>
 			</nav>
-			<nav class="menu" id="menuUsuario">
+			<nav class="menus" id="menuUsuario">
 				<ul>
 					{% block itemMenuUs %}{% endblock %}
 				</ul>
 			</nav>
-		</header>
+		</section>
+		<nav class="menus" id="navegacion">
+			<ul>
+				{% block itemNav %}{% endblock %}
+			</ul>
+		</nav>
 		<section id="contenedor">
 			<section class="contenido" id="contenidoIzq">
 				{% block contenidoIzq %}{% endblock %}
@@ -34,7 +42,6 @@
 			</section>
 		</section>
 		<footer>
-			<hr>
 			<p>Sistema de Información para la gestión de Objetos de Aprendizaje, utilizando LOM como esquema de metadatos</p>
 			<p id="autores">Integrantes: Leidy Johanna Reyes Ruiz - Gustavo Adolfo Gómez Gómez</p>
 			<p>Unisangil &copy</p>
