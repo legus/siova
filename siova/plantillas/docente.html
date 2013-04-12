@@ -2,22 +2,23 @@
 {% block titulo %} Siova: Docente {% endblock %}
 {% block itemMenu %}
 	{% if usuario.profile.rol = 'rdoc' %}
-		<li><a href="/docente">Objetos</a></li>
+		<li><a class="menusbtn" href="/docente">Objetos</a></li>
 	{% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-    <li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
-    <li><a href="/cerrar">Salir</a></li> {% endblock %}
+    <li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+    <li><a class="menusubtn" href="/cerrar">Salir</a></li> {% endblock %}
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
-        <ul id="ocontenidos">
-        {% for obj in objetos%}
-                <li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
-        {% endfor %}
-        </ul>
+    <div class="titulos" id="titulo">Objetos</div>
+    <ul id="rcontenidos">
+    {% for obj in objetos%}
+            <li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
+    {% endfor %}
+    </ul>
 {% endblock %}
 {% block contenidoDer %}
-	<div class=" crearObj" id="crearObj">Crear Objeto</div>
+	<div class="titulos" id="titulo">Crear Objeto</div>
         {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -36,72 +37,113 @@
 	<form id="formulario" method="post" enctype="multipart/form-data" action="">{% csrf_token %}	
 
 		{{ formEsp.non_field_errors }}
-        {{ formEsp.lc1_titulo.errors }}
-        <label for="id_lc1_titulo">Título:</label>
-        {{ formEsp.lc1_titulo }}
-        {{ formEsp.lc1_descripcion.errors }}
-        <label for="id_lc1_descripcion">Descripción:</label>
-        {{ formEsp.lc1_descripcion }}
-        {{ formEsp.lc1_idioma.errors }}
-        <label for="id_lc1_idioma">Idioma:</label>
-        {{ formEsp.lc1_idioma }}
-        {{ formEsp.lc1_cobertura.errors }}
-        <label for="id_lc1_cobertura">Cobertura:</label>
-        {{ formEsp.lc1_cobertura }}
-        {{ formEsp.lc1_nivel_agregacion.errors }}
-        <label for="id_lc1_nivel_agregacion">Nivel de Agregación:</label>
-        {{ formEsp.lc1_nivel_agregacion }}
-        {{ formEsp.lc2_version.errors }}
-        <label for="id_lc2_version">Versión:</label>
-        {{ formEsp.lc2_version }}
-        {{ formEsp.lc2_fecha.errors }}
-        <label for="id_lc2_fecha">Fecha de publicación:</label>
-        {{ formEsp.lc2_fecha }}
-        {{ formEsp.lc3_requerimientos.errors }}
-        <label for="id_lc3_requerimientos">Requerimientos:</label>
-        {{ formEsp.lc3_requerimientos }}
-        {{ formEsp.lc3_instrucciones.errors }}
-        <label for="id_lc3_instrucciones">Instrucciones:</label>
-        {{ formEsp.lc3_instrucciones }}
-        {{ formEsp.lc4_tipo_inter.errors }}
-        <label for="id_lc4_tipo_inter">Tipo de Interactividad:</label>
-        {{ formEsp.lc4_tipo_inter }}
-        {{ formEsp.lc4_tipo_rec.errors }}
-        <label for="id_lc4_tipo_rec">Tipo de Recurso:</label>
-        {{ formEsp.lc4_tipo_rec }}
-        {{ formEsp.lc4_nivel_inter.errors }}
-        <label for="id_lc4_nivel_inter">Nivel de Interactividad:</label>
-        {{ formEsp.lc4_nivel_inter }}
-        {{ formEsp.lc4_poblacion.errors }}
-        <label for="id_lc4_poblacion">Población:</label>
-        {{ formEsp.lc4_poblacion }}
-        {{ formEsp.lc4_contexto.errors }}
-        <label for="id_lc4_contexto">Contexto:</label>
-        {{ formEsp.lc4_contexto }}
-        {{ formEsp.lc5_derechos.errors }}
-        <label for="id_lc5_derechos">Derechos de Uso:</label>
-        {{ formEsp.lc5_derechos }}
-        {{ formEsp.lc6_uso_educativo.errors }}
-        <label for="id_lc6_uso_educativo">Uso Educativo:</label>
-        {{ formEsp.lc6_uso_educativo }}
-
+        <p>
+            {{ formEsp.lc1_titulo.errors }}
+            <label for="id_lc1_titulo">Título:</label>
+            {{ formEsp.lc1_titulo }}
+        </p>
+        <p>
+            {{ formEsp.lc1_descripcion.errors }}
+            <label for="id_lc1_descripcion">Descripción:</label>
+            {{ formEsp.lc1_descripcion }}
+        </p>
+        <p>
+            {{ formEsp.lc1_idioma.errors }}
+            <label for="id_lc1_idioma">Idioma:</label>
+            {{ formEsp.lc1_idioma }}
+        </p>
+        <p>
+            {{ formEsp.lc1_cobertura.errors }}
+            <label for="id_lc1_cobertura">Cobertura:</label>
+            {{ formEsp.lc1_cobertura }}
+        </p>
+        <p>
+            {{ formEsp.lc1_nivel_agregacion.errors }}
+            <label for="id_lc1_nivel_agregacion">Nivel de Agregación:</label>
+            {{ formEsp.lc1_nivel_agregacion }}
+        </p>
+        <p>
+            {{ formEsp.lc2_version.errors }}
+            <label for="id_lc2_version">Versión:</label>
+            {{ formEsp.lc2_version }}
+        </p>
+        <p>
+            {{ formEsp.lc2_fecha.errors }}
+            <label for="id_lc2_fecha">Fecha de publicación:</label>
+            {{ formEsp.lc2_fecha }}
+        </p>
+        <p>
+            {{ formEsp.lc3_requerimientos.errors }}
+            <label for="id_lc3_requerimientos">Requerimientos:</label>
+            {{ formEsp.lc3_requerimientos }}
+        </p>
+        <p>
+            {{ formEsp.lc3_instrucciones.errors }}
+            <label for="id_lc3_instrucciones">Instrucciones:</label>
+            {{ formEsp.lc3_instrucciones }}
+        </p>
+        <p>
+            {{ formEsp.lc4_tipo_inter.errors }}
+            <label for="id_lc4_tipo_inter">Tipo de Interactividad:</label>
+            {{ formEsp.lc4_tipo_inter }}
+        </p>
+        <p>
+            {{ formEsp.lc4_tipo_rec.errors }}
+            <label for="id_lc4_tipo_rec">Tipo de Recurso:</label>
+            {{ formEsp.lc4_tipo_rec }}
+        </p>
+        <p>
+            {{ formEsp.lc4_nivel_inter.errors }}
+            <label for="id_lc4_nivel_inter">Nivel de Interactividad:</label>
+            {{ formEsp.lc4_nivel_inter }}
+        </p>
+        <p>
+            {{ formEsp.lc4_poblacion.errors }}
+            <label for="id_lc4_poblacion">Población:</label>
+            {{ formEsp.lc4_poblacion }}
+        </p>
+        <p>
+            {{ formEsp.lc4_contexto.errors }}
+            <label for="id_lc4_contexto">Contexto:</label>
+            {{ formEsp.lc4_contexto }}
+        </p>
+        <p>
+            {{ formEsp.lc5_derechos.errors }}
+            <label for="id_lc5_derechos">Derechos de Uso:</label>
+            {{ formEsp.lc5_derechos }}
+        </p>
+        <p>
+            {{ formEsp.lc6_uso_educativo.errors }}
+            <label for="id_lc6_uso_educativo">Uso Educativo:</label>
+            {{ formEsp.lc6_uso_educativo }}
+        </p>
         {{ formObj.non_field_errors }}
-
-		{{ formObj.publicado.errors }}
-		<label for="id_publicado">Es Público?:</label>
-        {{ formObj.publicado }}
-        {{ formObj.tipo_obj.errors }}
-        <label for="id_tipo_obj">Tipo de Objeto:</label>
-        {{ formObj.tipo_obj }}
-        {{ formObj.archivo.errors }}
-        <label for="id_archivo">Archivo:</label>
-        {{ formObj.archivo }}
-        {{ formObj.repositorio.errors }}
-        <label for="id_repositorio">Repositorio:</label>
-        {{ formObj.repositorio }}
-        {{ formObj.ruta_categoria.errors }}
-        <label for="id_ruta_categoria">Categoria:</label>
-        {{ formObj.ruta_categoria }}
+        <p>
+		  {{ formObj.publicado.errors }}
+		  <label for="id_publicado">Es Público?:</label>
+            {{ formObj.publicado }}
+        </p>
+        <p>
+            {{ formObj.tipo_obj.errors }}
+            <label for="id_tipo_obj">Tipo de Objeto:</label>
+            {{ formObj.tipo_obj }}
+        </p>
+        <p>
+            {{ formObj.archivo.errors }}
+            <label for="id_archivo">Archivo:</label>
+            {{ formObj.archivo }}
+        </p>
+        <p>
+            {{ formObj.repositorio.errors }}
+            <label for="id_repositorio">Repositorio:</label>
+            {{ formObj.repositorio }}
+        </p>
+        <p>
+            {{ formObj.ruta_categoria.errors }}
+            <label for="id_ruta_categoria">Categoria:</label>
+            {{ formObj.ruta_categoria }}
+        </p>
+        <p>
             <ul id="autores"></ul>
             <span id="error"></span>
             <p>
@@ -110,11 +152,13 @@
                 <label for="au_rol">Rol Autor:</label><input id="au_rol" value="Autor" type="text"/>
                 <div class="btn_peq" id="btn_agr">+</div>
             </p>
-        {{ formObj.palabras_claves.errors }}
-        <input id="autores1" name="autores1" type="hidden"/>
-        <label for="id_palabras_claves">Palabras Claves:</label>
-        {{ formObj.palabras_claves }}
-                
+        </p>
+            <input id="autores1" name="autores1" type="hidden"/>
+        <p>
+            {{ formObj.palabras_claves.errors }}
+            <label for="id_palabras_claves">Palabras Claves:</label>
+            {{ formObj.palabras_claves }}
+        </p>
 		<p><input id="crearObj" type="submit" value="Crear Objeto"/></p>
 	</form>
 	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>

@@ -2,12 +2,12 @@
 {% block titulo %} siova: Sistema de Información Objetos de Aprendizaje {% endblock %}
 {% block itemMenu %}
 	{% if usuario.profile.rol = 'rdoc' %}
-		<li><a href="/docente">Objetos</a></li>
+		<li><a class="menusbtn" href="/docente">Objetos</a></li>
 	{% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-	<li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
-	<li><a href="/cerrar">Salir</a></li>
+	<li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+	<li><a class="menusubtn" href="/cerrar">Salir</a></li>
 {% endblock %}
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% if messages %}
@@ -130,8 +130,8 @@
 
 			<p><input id="busqueda" type="submit" value="Busqueda"/></p>
 		    <div id="resultado">
-		    	<ol id="results2">
-		    	</ol>
+		    	<ul id="results2">
+		    	</ul>
 			</div>
 		</form>
 	</div>

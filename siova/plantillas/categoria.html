@@ -2,15 +2,15 @@
 {% block titulo %} siova: {{categoria.nombre_ruta|capfirst}} {% endblock %}
 {% block itemMenu %}
 {% if usuario.profile.rol = 'rdoc' %}
-	<li><a href="/docente">Objetos</a></li>
+	<li><a class="menusbtn" href="/docente">Objetos</a></li>
 {% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-	<li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
+	<li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
 	{% if usuario %}
-		<li><a href="/cerrar">Salir</a></li>
+		<li><a class="menusubtn" href="/cerrar">Salir</a></li>
 	{% else %}
-		<li><a href="/ingresar">Ingresar</a></li>
+		<li><a class="menusubtn" href="/ingresar">Ingresar</a></li>
 	{% endif %}
 {% endblock %}
 {% block itemNav %}
@@ -28,14 +28,15 @@
 	</div>
 {% endblock %}
 {% block contenidoDer %}
-	<ul>
+	<ul id="rcontenidos">
 		{% for c1 in catn1 %}
 			<li><a href="/categoria/{{c1.id}}">
 				{{c1.nombre_ruta|title}}
 			</a></li>
 		{% endfor %}
 	</ul>
-	<ul>
+	<hr>
+	<ul id="ocontenidos">
 		{% for obj in objetos %}
 			<li><a href="/objeto/{{obj.id}}">{{obj|title}}</a></li>
 		{% empty %}

@@ -2,23 +2,23 @@
 {% block titulo %} siova: {{objeto|capfirst}} {% endblock %}
 {% block itemMenu %}
 {% if usuario.profile.rol = 'rdoc' %}
-	<li><a href="/docente">Objetos</a></li>
-	<li><a id="editarObj" href="/editObjeto/{{objeto.pk}}">Editar Objeto</a></li>
+	<li><a class="menusbtn" href="/docente">Objetos</a></li>
+	<li><a class="menusbtn" id="editarObj" href="/editObjeto/{{objeto.pk}}">Editar Objeto</a></li>
 {% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-	<li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
+	<li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
 	{% if usuario %}
-		<li><a href="/cerrar">Salir</a></li>
+		<li><a class="menusubtn" href="/cerrar">Salir</a></li>
 	{% else %}
-		<li><a href="/ingresar">Ingresar</a></li>
+		<li><a class="menusubtn" href="/ingresar">Ingresar</a></li>
 	{% endif %}
 {% endblock %}
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
 	<div class="titulo_item" id="tit_obj">
 		<p>{{objeto|capfirst}}</p>
-		<div><a href="/descarga/{{objeto.pk}}">Descargar</a></div>
+		<div id="descargar"><a class="descarga" href="/descarga/{{objeto.pk}}" target="_blank">Descargar</a></div>
 	</div>
 {% endblock %}
 {% block contenidoDer %}

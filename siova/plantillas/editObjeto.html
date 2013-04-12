@@ -2,12 +2,12 @@
 {% block titulo %} siova: edit-{{objeto|capfirst}} {% endblock %}
 {% block itemMenu %}
     {% if usuario.profile.rol = 'rdoc' %}
-        <li><a href="/docente">Objetos</a></li>
+        <li><a class="menusbtn" href="/docente">Objetos</a></li>
     {% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-    <li><a href="/usuario">{{usuario.username|capfirst}}</a></li>
-    <li><a href="/cerrar">Salir</a></li>
+    <li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+    <li><a class="menusubtn" href="/cerrar">Salir</a></li>
 {% endblock %}
 {% block itemNav %}
     <li><a href="/">Inicio</a></li>

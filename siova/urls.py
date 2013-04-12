@@ -27,4 +27,5 @@ urlpatterns = patterns('',
     url(r'^categoria/(?P<id_categoria>\d+)$','gestorObjetos.views.categoria'),
     url(r'^docente/$','gestorObjetos.views.docObjeto'),
     url(r'^descarga/(?P<id>.+)$', 'gestorObjetos.views.download'),
+    url(r'^admin/gestorObjetos/objeto/(?P<id>.+)/objetos/.+$', 'gestorObjetos.views.download'),
 )
