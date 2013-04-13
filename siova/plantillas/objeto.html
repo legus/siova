@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block titulo %} siova: {{objeto|capfirst}} {% endblock %}
 {% block itemMenu %}
-{% if usuario.profile.rol = 'rdoc' %}
+{% if usuario.profile.rol == 'rdoc' %}
 	<li><a class="menusbtn" href="/docente">Objetos</a></li>
-	<li><a class="menusbtn" id="editarObj" href="/editObjeto/{{objeto.pk}}">Editar Objeto</a></li>
+	{% if objeto.creador.pk == usuario.pk %}
+		<li><a class="menusbtn" id="editarObj" href="/editObjeto/{{objeto.pk}}">Editar Objeto</a></li>
+	{% endif %}
 {% endif %}
 {% endblock %}
 {% block itemMenuUs %}

@@ -4,7 +4,7 @@
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
 	<div class="submenu" id="submenu1">Repositorios</div>
-	<div class="submenu" id="submenu2">Categorias</div>
+	<div class="submenu_" id="submenu2">Categorias</div>
 	<div id="contenidosm1">
 		<ul id="rcontenidos">
 			{% for rep in repos %}
@@ -59,11 +59,11 @@
 	</div>
 {% endblock %}
 {% block contenidoDer %}
-	<div class="busq" id="busq1">Búsqueda Rápida</div>
-	<div class="busq" id="busq2">Búsqueda Avanzada</div>
+	<div class="submenu" id="busq1">Búsqueda Rápida</div>
+	<div class="submenu_" id="busq2">Búsqueda Avanzada</div>
 	<div id = "contenidosm3">
         <input id="q" type="text" name="q">
-        <input id="busca" type="submit" value="Buscar">
+        <input class="menusbtn" id="busca" type="submit" value="Buscar">
 	    <div id="results">
 	    	<ul id="results1">
 	    	</ul>
@@ -113,7 +113,7 @@
 		        {{ form.c_nivel_inter }}
 			</p>
 
-			<p><input id="busqueda" type="submit" value="Busqueda"/></p>
+			<p><input class="menusbtn" id="busqueda" type="submit" value="Busqueda"/></p>
 		    <div id="resultado">
 		    	<ul id="results2">
 		    	</ul>

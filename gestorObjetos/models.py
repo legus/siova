@@ -90,18 +90,18 @@ class EspecificacionLOM(models.Model):
 
     """Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado."""
     lc1_cobertura=models.TextField(help_text='Lugar, tiempo, cultura, geografía o región en la cual el objeto es aplicado',
-                                    verbose_name="Cobertura", null=True)
+                                    verbose_name="Cobertura", null=True, blank=True)
     """
     Granularidad Funcional del objeto. N1: recursos digitales, N2:colección de recursos. ejp: lección,
     N3: Colección de lecciones. ejp: cursos, N4: ejp:conjunto de cursos.
     """
-    lc1_nivel_agregacion=models.CharField(help_text='Granularidad Funcional del objeto. N1: recurso digital, N2:colección de recursos. ejp: lección, N3: Colección de lecciones. ejp: cursos, N4: ejp:conjunto de cursos',
+    lc1_nivel_agregacion=models.CharField(help_text='Granularidad Funcional del objeto.',
                                             verbose_name='Nivel de Agregación', max_length=2,choices=opc.get_nivel_agregacion(),default=opc.get_nivel_agregacion()[0][0])
     """La edición del objeto."""
     lc2_version=models.CharField(help_text='La edición del objeto', verbose_name="Versión", max_length=50, default="1.0")
 
     """Fecha en que el objeto es creado."""
-    lc2_fecha=models.DateTimeField(help_text='Fecha en que el objeto es creado', verbose_name="Fecha de Creación", auto_now_add=True)
+    lc2_fecha=models.DateTimeField(help_text='Fecha en que el objeto es publicado', verbose_name="Fecha de Publicación", auto_now_add=True)
     
     """Tipo de Datos técnico, tipo MIME Types. http://www.iana.org/assignments/media-types/index.html.
     lc3_formato=models.CharField(help_text='Tipo de datos. Ejp: video/mpeg, text/html, image/jpg', verbose_name="Formato",
@@ -117,16 +117,16 @@ class EspecificacionLOM(models.Model):
     lc3_requerimientos=models.TextField(help_text='Capacidades técnicas requeridas para usar este objeto',
                                     verbose_name="Requerimientos", null=True, blank=True)
     """Descripción de cómo instalar este objeto."""
-    lc3_instrucciones=models.TextField(help_text='Descripción de cómo instalar este objeto.', verbose_name="Instrucciones", null=True, blank=True)
+    lc3_instrucciones=models.TextField(help_text='Descripción de cómo usar este objeto.', verbose_name="Instrucciones", null=True, blank=True)
     
     """Modo predominante del aprendizaje que aplica este objeto."""
-    lc4_tipo_inter=models.CharField(help_text="Modo predominante del aprendizaje que aplica este objeto: Activo(Aprender Haciendo, induce al estudiante a tomar acción), Expositivo(Aprendizaje Pasivo, el trabajo del aprendiz consiste en aboserber información).",
+    lc4_tipo_inter=models.CharField(help_text="Modo predominante del aprendizaje que aplica este objeto",
                                     verbose_name="Tipo de Interactividad", max_length=3,choices=opc.get_tipo_interactividad(),default=opc.get_tipo_interactividad()[1][0])
     """Tipo de recurso de aprendizaje."""
     lc4_tipo_rec=models.CharField(help_text="Tipo de recurso de aprendizaje.",
                                     verbose_name="Tipo de Recurso de Aprendizaje", max_length=50, null=True,choices=opc.get_tipo_recurso(),default=opc.get_tipo_recurso()[0][0])
     """Grado de interactividad que predomina en el objeto."""
-    lc4_nivel_inter=models.CharField(help_text="Grado de interactividad que predomina en el objeto.(Muy Bajo, Bajo, Medio, Alto y Muy Alto)",
+    lc4_nivel_inter=models.CharField(help_text="Grado de interactividad que predomina en el objeto.",
                                     verbose_name="Nivel de Interactividad", max_length=3,choices=opc.get_nivel_interactividad(),default=opc.get_nivel_interactividad()[0][0])
     """Descripción de los Usarios para los cuales este objeto fue diseñado."""
     lc4_poblacion=models.TextField(help_text='Descripción de los Usarios para los cuales este objeto fue diseñado.',
@@ -135,7 +135,7 @@ class EspecificacionLOM(models.Model):
     lc4_contexto=models.CharField(help_text="Principal ambiente en el cual este objeto es utilizado.",
                                     verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0], null=True, blank=True)
     """Comentarios sobre las condiciones de uso de este objeto."""
-    lc5_derechos=models.TextField(help_text='condiciones de uso de este objeto. Ejp: CreativeCommons',
+    lc5_derechos=models.TextField(help_text='condiciones de uso de este objeto. Ejp: copyright',
                                     verbose_name="Derechos de Uso", null=False)
     """Se proveen comentarios sobre el uso educativo del objeto."""
     lc6_uso_educativo=models.TextField(help_text='Anotación sobre el uso educativo del objeto',

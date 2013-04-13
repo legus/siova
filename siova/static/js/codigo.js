@@ -146,19 +146,24 @@ function arranque(name) {
         raut = $('#au_rol').val();
         if(naut.length>0 & aaut.length>0 & raut.length>0){
             var flag = false;
-            $( "li" ).each(function( index ) {
+            var flag2 = false;
+            $( "#autores li #sp1" ).each(function( index ) {
                 var t = $(this).text().split(" ");
                 flag=validar(t,naut,aaut,raut);
+                if(flag==true){
+                    flag2=true;
+                }
             });
-            if(flag){
+            if(flag2){
                 $("#error").html("Autor ya existe");
                 $("#error").fadeIn();
             }else{
                 var a = naut+" "+aaut+" "+raut;
                 autores_arr.push(a);
-                $("#autores").append('<li id="autors'+naut+'_'+aaut+'_'+raut+'">'+naut+' '+aaut+' - '+raut+'</li>');
-                $("#autors"+naut+'_'+aaut+'_'+raut).append(function() {
-                    return $('<span class="autori" id="'+naut+'_'+aaut+'_'+raut+'"> (-) </span>').click(function() {
+                $("#autores").fadeIn();
+                $("#autores").append('<li id="autors'+naut+'_'+aaut+'_'+raut+'"><span id="sp1">'+naut+' '+aaut+' - '+raut+'</span></li>');
+                $("#autores li").last().append(function() {
+                    return $('<span class="btn_peq" id="'+naut+'_'+aaut+'_'+raut+'">&nbsp-&nbsp</span>').click(function() {
                         var e=$(this).context.id;
                         s=e.replace(/_/g,' ');
                         autores_arr.splice(jQuery.inArray(s,autores_arr),1);
@@ -180,32 +185,40 @@ function arranque(name) {
         $("#contenidosm2").fadeOut(function(e){
             $("#contenidosm1").fadeIn();
         });
-        $("#submenu1").css('background','#034a80');
-        $("#submenu2").css('background','#155688');
+        $("#submenu1").removeClass('submenu_');
+        $("#submenu1").addClass('submenu');
+        $("#submenu2").removeClass('submenu');
+        $("#submenu2").addClass('submenu_');
     });
 
     $("#submenu2").click(function(e){
         $("#contenidosm1").fadeOut(function(e){
             $("#contenidosm2").fadeIn();
         });
-        $("#submenu1").css('background','#155688'); 
-        $("#submenu2").css('background','#034a80');
+        $("#submenu1").removeClass('submenu');
+        $("#submenu1").addClass('submenu_');
+        $("#submenu2").removeClass('submenu_');
+        $("#submenu2").addClass('submenu');
     });
 
     $("#busq1").click(function(e){
         $("#contenidosm4").fadeOut(function(e){
             $("#contenidosm3").fadeIn();
         });
-        $("#busq1").css('background','#034a80');
-        $("#busq2").css('background','#155688');
+        $("#busq1").removeClass('submenu_');
+        $("#busq1").addClass('submenu');
+        $("#busq2").removeClass('submenu');
+        $("#busq2").addClass('submenu_');
     });
 
     $("#busq2").click(function(e){
         $("#contenidosm3").fadeOut(function(e){
             $("#contenidosm4").fadeIn();
         });
-        $("#busq1").css('background','#155688'); 
-        $("#busq2").css('background','#034a80');
+        $("#busq1").removeClass('submenu');
+        $("#busq1").addClass('submenu_');
+        $("#busq2").removeClass('submenu_');
+        $("#busq2").addClass('submenu');
     });
 }
 

@@ -12,6 +12,7 @@ class UserProfileAdmin(UserAdmin):
 	inlines = [UserProfileInline]
  
 class ObjetoAdmin(admin.ModelAdmin):
+    exclude = ('creador',)
     list_display = ('espec_lom', 'tipo_obj', 'publicado')
     search_fields = ('espec_lom__lc1_titulo', 'palabras_claves__palabra_clave', 'espec_lom__lc1_descripcion', 'autores__nombres', 'autores__apellidos', 'autores__rol')
     list_filter = ('repositorio','creador','espec_lom__lc1_idioma','espec_lom__lc4_contexto','espec_lom__lc4_tipo_rec','ruta_categoria')

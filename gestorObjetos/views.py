@@ -100,10 +100,7 @@ def privado(request):
 	"""
 	repositorios = []
 	for g in request.user.groups.all():
-		if len(repositorios) == 0:
-			repositorios = list(Repositorio.objects.filter(grupos=g))
-		else:
-			repositorios.extend(list(Repositorio.objects.filter(grupos=g)))
+		repositorios.extend(list(Repositorio.objects.filter(grupos=g) | Repositorio.objects.filter(publico=True)))
 	repositorios = list(set(repositorios)) #quitar duplicados en la lista
 	objetos = []
 	for r in repositorios:
@@ -147,7 +144,8 @@ def categoria(request, id_categoria):
 	if padre:
 		abuelo = padre.cat_padre
 	if request.user.is_authenticated():
-		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(repositorio__grupos=request.user.groups.all()).filter(publicado=True)
+		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(repositorio__grupos=request.user.groups.all()).filter(publicado=True) | Objeto.objects.filter(ruta_categoria=categoria).filter(repositorio__publico=True).filter(publicado=True)
+		objetos = list(set(objetos)) #quitar duplicados en la lista
 		data={'usuario':request.user, 'categoria':categoria, 'objetos':objetos, 'catn1':catn1, 'padre':padre, 'abuelo':abuelo}
 	else:
 		objetos = Objeto.objects.filter(ruta_categoria=categoria).filter(publicado=True).filter(repositorio__publico=True)
@@ -160,23 +158,33 @@ def objeto(request, id_objeto):
 	En esta vista se desplegarán la información del Objeto seleccionado
 	"""
 	obj=Objeto.objects.get(pk=id_objeto)
-	idiom={}
-	nivel_a={}
-	format={}
-	tipo_i={}
-	nivel_i={}
-	contex={}
-	[idiom.update({k:v}) for k,v in opc.get_idiomas()]
-	[nivel_a.update({k:v}) for k,v in opc.get_nivel_agregacion()]
-	[format.update({k:v}) for k,v in opc.get_tipo_recurso()]
-	[tipo_i.update({k:v}) for k,v in opc.get_tipo_interactividad()]
-	[nivel_i.update({k:v}) for k,v in opc.get_nivel_interactividad()]
-	[contex.update({k:v}) for k,v in opc.get_contexto()]
-	if request.user.is_authenticated():
-		data={'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all(),'idioma':idiom[obj.espec_lom.lc1_idioma],'niv_agr':nivel_a[obj.espec_lom.lc1_nivel_agregacion],'formato':format[obj.espec_lom.lc4_tipo_rec],'tipo_i':tipo_i[obj.espec_lom.lc4_tipo_inter],'nivel_i':nivel_i[obj.espec_lom.lc4_nivel_inter],'context':contex[obj.espec_lom.lc4_contexto]}
+	gruposobj = obj.repositorio.grupos.all()
+	gruposu = request.user.groups.all()
+	puedever=False
+	for go in gruposobj:
+		for gu in gruposu:
+			if go == gu:
+				puedever=True
+	if puedever | obj.repositorio.publico:
+		idiom={}
+		nivel_a={}
+		format={}
+		tipo_i={}
+		nivel_i={}
+		contex={}
+		[idiom.update({k:v}) for k,v in opc.get_idiomas()]
+		[nivel_a.update({k:v}) for k,v in opc.get_nivel_agregacion()]
+		[format.update({k:v}) for k,v in opc.get_tipo_recurso()]
+		[tipo_i.update({k:v}) for k,v in opc.get_tipo_interactividad()]
+		[nivel_i.update({k:v}) for k,v in opc.get_nivel_interactividad()]
+		[contex.update({k:v}) for k,v in opc.get_contexto()]
+		if request.user.is_authenticated():
+			data={'usuario':request.user, 'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all(),'idioma':idiom[obj.espec_lom.lc1_idioma],'niv_agr':nivel_a[obj.espec_lom.lc1_nivel_agregacion],'formato':format[obj.espec_lom.lc4_tipo_rec],'tipo_i':tipo_i[obj.espec_lom.lc4_tipo_inter],'nivel_i':nivel_i[obj.espec_lom.lc4_nivel_inter],'context':contex[obj.espec_lom.lc4_contexto]}
+		else:
+			data={'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all(),'idioma':idiom[obj.espec_lom.lc1_idioma],'niv_agr':nivel_a[obj.espec_lom.lc1_nivel_agregacion],'formato':format[obj.espec_lom.lc4_tipo_rec],'tipo_i':tipo_i[obj.espec_lom.lc4_tipo_inter],'nivel_i':nivel_i[obj.espec_lom.lc4_nivel_inter],'context':contex[obj.espec_lom.lc4_contexto]}
+		return render_to_response('objeto.html',data,context_instance=RequestContext(request))
 	else:
-		data={'objeto':obj, 'espec':obj.espec_lom, 'autores':obj.autores.all(), 'keywords':obj.palabras_claves.all(),'idioma':idiom[obj.espec_lom.lc1_idioma],'niv_agr':nivel_a[obj.espec_lom.lc1_nivel_agregacion],'formato':format[obj.espec_lom.lc4_tipo_rec],'tipo_i':tipo_i[obj.espec_lom.lc4_tipo_inter],'nivel_i':nivel_i[obj.espec_lom.lc4_nivel_inter],'context':contex[obj.espec_lom.lc4_contexto]}
-	return render_to_response('objeto.html',data,context_instance=RequestContext(request))
+		return HttpResponseRedirect('/')
 
 def buscar(request):
 	if 'q' in request.GET and request.GET['q']:
@@ -256,7 +264,7 @@ def docObjeto(request):
 				l_errores.append('No incluyó palabras claves al objeto.')
 				error1=True
 			if not request.POST.get('repositorio'):
-				l_errores.append('No seleccionó repositorio.. si no hay repositorios asociados, consulte a un administrador del sistema para agregar alguno.')
+				l_errores.append('No seleccionó repositorio. Si no hay repositorios asociados, consulte a un administrador del sistema para agregar alguno.')
 				error1=True
 			l_autores = request.POST.getlist('autores1')
 			formularioEsp = EspecificacionForm(request.POST)
@@ -309,54 +317,57 @@ def editObjeto(request,id_objeto):
 	"""
 	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá modificar objetos
 	"""
+	obj=Objeto.objects.get(pk=id_objeto)
 	if request.user.profile.rol == 'rdoc':
-		error1 = False
-		errores = False
-		l_errores=[]
-		gruposu = request.user.groups.all()
-		obj=Objeto.objects.get(pk=id_objeto)
-		esp=obj.espec_lom
-		l_autores = request.POST.getlist('autores1')
-		autores = obj.autores.all()
-		if request.method == 'POST':
-			if not request.POST.get('autores1'):
-				l_errores.append('No incluyó autores al objeto.')
-				error1=True
-			if not request.POST.get('palabras_claves'):
-				l_errores.append('No incluyó palabras claves al objeto.')
-				error1=True
-			formularioEsp = EspecificacionForm(request.POST, instance=esp)
-			formularioObj = cObjetosForm(request.user, obj, request.POST, request.FILES, instance=obj)
-			if not error1:
-				if formularioEsp.is_valid() & formularioObj.is_valid():
-					formularioEsp.save()
-					pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
-					re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
-					f=formularioObj.save(commit=False)#se guarda un instancia temporal
-					lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
-					for l in lpc:
-						p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
-						if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
-							p.save() #se guarda la palabra clave en la bd
-						f.palabras_claves.add(p) # se añade cada palabra clave al objeto
-					for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
-						stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
-						for st in stri: # se recorre cada autor
-							s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
-							aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
-							if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
-								aut.save() #se guarda el autor en la bd
-							f.autores.add(aut) # se añade al campo manytomany con Autores.
-					f.repositorio=re
-					f.save()
-					messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
-					return HttpResponseRedirect('/privado')
-				else:
-					errores=True
+		if obj.creador == request.user:
+			error1 = False
+			errores = False
+			l_errores=[]
+			gruposu = request.user.groups.all()
+			esp=obj.espec_lom
+			l_autores = request.POST.getlist('autores1')
+			autores = obj.autores.all()
+			if request.method == 'POST':
+				if not request.POST.get('autores1'):
+					l_errores.append('No incluyó autores al objeto.')
+					error1=True
+				if not request.POST.get('palabras_claves'):
+					l_errores.append('No incluyó palabras claves al objeto.')
+					error1=True
+				formularioEsp = EspecificacionForm(request.POST, instance=esp)
+				formularioObj = cObjetosForm(request.user, obj, request.POST, request.FILES, instance=obj)
+				if not error1:
+					if formularioEsp.is_valid() & formularioObj.is_valid():
+						formularioEsp.save()
+						pc = formularioObj.cleaned_data['palabras_claves']#se toman las palabras claves digitadas
+						re = formularioObj.cleaned_data['repositorio']#se toma el repositorio
+						f=formularioObj.save(commit=False)#se guarda un instancia temporal
+						lpc=[x.strip() for x in pc.split(' ')] # se utilizan las palabras claves como una lista de palabras separadas sin espacios
+						for l in lpc:
+							p,b=PalabraClave.objects.get_or_create(palabra_clave=l) # Se crea una palabra clave por cada palabra en la lista
+							if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
+								p.save() #se guarda la palabra clave en la bd
+							f.palabras_claves.add(p) # se añade cada palabra clave al objeto
+						for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
+							stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
+							for st in stri: # se recorre cada autor
+								s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
+								aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
+								if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
+									aut.save() #se guarda el autor en la bd
+								f.autores.add(aut) # se añade al campo manytomany con Autores.
+						f.repositorio=re
+						f.save()
+						messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
+						return HttpResponseRedirect('/privado')
+					else:
+						errores=True
+			else:
+				formularioEsp = EspecificacionForm(instance=esp)
+				formularioObj = cObjetosForm(request.user, obj, instance=obj)
+			return render_to_response('editObjeto.html',{'objeto':obj,'usuario':request.user,'formObj':formularioObj,'formEsp':formularioEsp,'autores':autores,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
 		else:
-			formularioEsp = EspecificacionForm(instance=esp)
-			formularioObj = cObjetosForm(request.user, obj, instance=obj)
-		return render_to_response('editObjeto.html',{'objeto':obj,'usuario':request.user,'formObj':formularioObj,'formEsp':formularioEsp,'autores':autores,'errores':errores,'l_errores':l_errores},context_instance=RequestContext(request))
+			return HttpResponseRedirect('/')	
 	else:
 		return HttpResponseRedirect('/')
 
@@ -385,8 +396,18 @@ def crearAutor(request):
 
 def download(request,id):
 	f= get_object_or_404(Objeto, pk=id)
+	gruposobj = f.repositorio.grupos.all()
+	gruposu = request.user.groups.all()
+	puededescargar=False
+	for go in gruposobj:
+		for gu in gruposu:
+			if go == gu:
+				puededescargar=True
 	if request.user.is_authenticated():
-		return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		if puededescargar:
+			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		else:
+			return HttpResponseRedirect('/')
 	elif f.repositorio.publico & f.publicado:
 		return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
 	else:
