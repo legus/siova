@@ -317,6 +317,27 @@ ul
 	width: 100%;
 }
 
+.lista_objetos_no_publicos
+{
+	background: #ccc;
+	border-radius: 0.3em;
+	display: block;
+	margin: 0.5em 0;
+	padding: 0.3em;
+	text-align: left;
+}
+
+.lista_objetos_publicos
+{
+	background: #7ac2f9;
+	border-radius: 0.3em;
+	display: block;
+	margin: 0.5em 0;
+	padding: 0.3em;
+	text-align: left;
+}
+
+
 .menusbtn {
 	-moz-box-shadow:inset 0px 1px 0px 0px #97c4fe;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #97c4fe;

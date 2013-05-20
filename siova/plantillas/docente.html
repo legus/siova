@@ -11,9 +11,17 @@
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
     <div class="titulos" id="titulo">Mis Objetos</div>
-    <ul id="rcontenidos">
-    {% for obj in objetos%}
-            <li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
+    <ul id="lista">
+    {% for obj in objetos %}
+            <li>
+                {% if obj.publicado %}
+                    <a class="lista_objetos_publicos" href="/objeto/{{obj.id}}">
+                {% else %}
+                    <a class="lista_objetos_no_publicos" href="/objeto/{{obj.id}}">
+                {% endif %}
+                    {{obj}}
+                </a>
+            </li>
     {% endfor %}
     </ul>
 {% endblock %}

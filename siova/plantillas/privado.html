@@ -25,15 +25,17 @@
 	<div class="submenu_" id="submenu2">Categorias</div>
 	<div id="contenidosm1">
 		<ul id="rcontenidos">
+			<br>
 			{% for rep in repos %}
 				<li>{{rep.nombre|title}}</li>
-			<ul id="ocontenidos">
-				{% for obj in objetos %}
-					{% if obj.repositorio == rep %}
-						<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
-					{% endif %}
-				{% endfor %}
-			</ul>
+				<ul id="ocontenidos">
+					{% for obj in objetos %}
+						{% if obj.repositorio == rep %}
+							<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+				<hr><br>
 			{% empty %}
 				<li>No hay repositorios registrados aún.</li>
 			{% endfor %}
