@@ -6,7 +6,7 @@
     {% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-    <li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+   <li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
     <li><a class="menusubtn" href="/cerrar">Salir</a></li>
 {% endblock %}
 {% block itemNav %}
@@ -51,28 +51,40 @@
             <p>
                 <div class="btn_peq" id="btn_agr">+</div>
             </p>
+            <input id="autores1" name="autores1" type="hidden"/>
             <ul id="autores">
+                <script>
+                    var autores_arr=[];
+                </script>
                 {% for a in autores %}
                     <script>
-                        var autores_arr=[];
                         var a = '{{a.nombres}} {{a.apellidos}} {{a.rol}}';
                         autores_arr.push(a);
                         $("#autores").append('<li id="autors{{a.nombres}}_{{a.apellidos}}_{{a.rol}}"><span id="sp1">{{a.nombres}} {{a.apellidos}} - {{a.rol}}</span></li>');
-                        $("#autores li").last().append(function() {
+                        $("#autores li").last().append(function(){
                             return $('<span class="btn_peq" id="{{a.nombres}}_{{a.apellidos}}_{{a.rol}}">&nbsp-&nbsp</span>').click(function() {
                                 var e=$(this).context.id;
                                 s=e.replace(/_/g,' ');
+                                var string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
+                                autores_arr=string_autores.split(",");//como no hay comunicación con el array autores de la plantilla entonces se crea aquí el array con los autores del objeto actual.
                                 autores_arr.splice(jQuery.inArray(s,autores_arr),1);
+                                $('#autores1').val(autores_arr);
+                                console.log("Incrustado_autores previos: (al eliminar)  "+$('#autores1').val());
+                                console.log("Incrustado_autores previos: (al eliminar)  "+autores_arr.length);
                                 $("#autors"+e).remove();
                             });
                         });
                     </script>
                 {% endfor %}
+                <script>
+                    $('#autores1').val(autores_arr);
+                    console.log("Incrustado_autores previos:   "+$('#autores1').val());
+                </script>
             </ul>
             <p id="error"></p>
-            <input id="autores1" name="autores1" type="hidden"/>
         </div>
+        <span class="helptext">Personas autoras del objeto</span>
+        
 		<p class="btnInferior"><input class="descarga" id="crearObj" type="submit" value="Guardar Cambios"/></p>
 	</form>
-	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>
 {% endblock %}

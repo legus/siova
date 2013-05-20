@@ -9,7 +9,7 @@
 {% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-	<li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+	<li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
 	{% if usuario %}
 		<li><a class="menusubtn" href="/cerrar">Salir</a></li>
 	{% else %}

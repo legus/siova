@@ -3,7 +3,7 @@
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
 	<form id='formulario' method='post' action=''>{% csrf_token %}
-		<table>{{formulario}}</table>
-		<p><input type='submit' value='Ingresar' /></p>
+		{{formulario.as_p}}
+		<p class="btnInferior"><input class="descarga" type='submit' value='Ingresar' /></p>
 	</form>
 {% endblock %}

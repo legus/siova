@@ -2,8 +2,12 @@
 #encoding:utf-8
 
 # la ruta del proyecto
+#from django.contrib.auth.models import User
+#User.Meta.verbose_name = "Usuario"
 import os
 RUTA_PROYECTO = os.path.dirname(os.path.realpath(__file__))
+
+
 
 
 DEBUG = True
@@ -136,6 +140,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'gestorObjetos',
     'filetransfers',
+
 )
 
 # A sample logging configuration. The only tangible logging

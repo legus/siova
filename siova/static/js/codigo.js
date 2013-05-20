@@ -1,7 +1,12 @@
 $(document).on("ready", arranque);
 
 function arranque(name) {
-    var autores_arr=[];
+    if($("#autores1").val()){
+        var string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
+        var autores_arr=string_autores.split(",");//como no hay comunicación con el array autores de la plantilla entonces se crea aquí el array con los autores del objeto.
+    }else{
+        var autores_arr=[];//si no hay nada en el campo es porque Ó no está en la página de modificación Ó porque no hay autores en el objeto a modificar
+    }
     /*
         Deshabilitar / habilitar campos de texto para las busquedas avanzadas
     */
@@ -80,8 +85,12 @@ function arranque(name) {
 
     // termina
 
+    /* Interacciones con JQueryUI*/
+    //$("#rcontenidos").accordion({ active: 2 });
     $("#id_c_fecha" ).datepicker({dateFormat:'dd/mm/yy'});
     $("#id_lc2_fecha" ).datepicker({dateFormat:'dd/mm/yy'});
+
+
     $('#busca').click(function(e) {
         e.preventDefault();
         qu = $('#q').val();
@@ -140,6 +149,12 @@ function arranque(name) {
     });
 
     $('#btn_agr').click(function(e) {
+        if($("#autores1").val()){
+            string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
+            autores_arr=string_autores.split(",");//como no hay comunicación con el array autores de la plantilla entonces se crea aquí el array con los autores del objeto.
+        }else{
+            autores_arr=[];
+        }
         $("#error").css('display','none');
         naut = $('#au_name').val();
         aaut = $('#au_last').val();
@@ -164,16 +179,23 @@ function arranque(name) {
                 $("#autores").append('<li id="autors'+naut+'_'+aaut+'_'+raut+'"><span id="sp1">'+naut+' '+aaut+' - '+raut+'</span></li>');
                 $("#autores li").last().append(function() {
                     return $('<span class="btn_peq" id="'+naut+'_'+aaut+'_'+raut+'">&nbsp-&nbsp</span>').click(function() {
+                       if($("#autores1").val()){
+                            string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
+                            autores_arr=string_autores.split(",");//como no hay comunicación con el array autores de la plantilla entonces se crea aquí el array con los autores del objeto.
+                        }
                         var e=$(this).context.id;
                         s=e.replace(/_/g,' ');
                         autores_arr.splice(jQuery.inArray(s,autores_arr),1);
+                        $('#autores1').val(autores_arr);
                         $("#autors"+e).remove();
+                        console.log("Archivo_autores:  (al eliminar) "+$('#autores1').val());
                     });
                 });
                 $('#au_name').val("");
                 $('#au_last').val("");
                 $('#au_rol').val("Autor");
                 $('#autores1').val(autores_arr);
+                console.log("Archivo_autores previos:  (al agregar) "+$('#autores1').val());
             }
         }else{
             $("#error").html("Debes digitar todos los campos del Autor");

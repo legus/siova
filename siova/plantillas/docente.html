@@ -6,7 +6,7 @@
 	{% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-    <li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+    <li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
     <li><a class="menusubtn" href="/cerrar">Salir</a></li> {% endblock %}
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
 {% block contenidoIzq %}
@@ -37,7 +37,7 @@
 	<form id="formulario" method="post" enctype="multipart/form-data" action="">{% csrf_token %}	
 		{{ formEsp.as_p }}
         {{ formObj.as_p }}
-        Autores
+        Autores:
         <div id = "camposAutores">
             <p>
                 Nombres<br><input id="au_name" type="text" size="10"/>
@@ -55,7 +55,7 @@
             <p id="error"></p>
             <input id="autores1" name="autores1" type="hidden"/>
         </div>
+        <span class="helptext">Personas autoras del objeto</span>
 		<p class="btnInferior"><input class="descarga" id="crearObj" type="submit" value="Crear Objeto"/></p>
 	</form>
-	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>
 {% endblock %}

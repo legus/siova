@@ -14,7 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-
     url(r'^$','gestorObjetos.views.principal'),
     url(r'^ingresar/$','gestorObjetos.views.ingresar'),
     url(r'^cerrar/$', 'gestorObjetos.views.cerrar'),
@@ -27,5 +26,7 @@ urlpatterns = patterns('',
     url(r'^categoria/(?P<id_categoria>\d+)$','gestorObjetos.views.categoria'),
     url(r'^docente/$','gestorObjetos.views.docObjeto'),
     url(r'^descarga/(?P<id>.+)$', 'gestorObjetos.views.download'),
+    url(r'^editObjeto/objetos/(?P<id>.+)$', 'gestorObjetos.views.downloadEdit'),
     url(r'^admin/gestorObjetos/objeto/(?P<id>.+)/objetos/.+$', 'gestorObjetos.views.download'),
+    url(r'^admin/logout/$', 'gestorObjetos.views.redirige'),
 )

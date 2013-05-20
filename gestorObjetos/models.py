@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.contrib import admin
 import siova.lib.Archivos as mod_archivo
 import siova.lib.Opciones as opc
+
 class PalabraClave(models.Model):
     """
     Modelo que representa las palabras claves que se pueden asocia a cada :model:'gestorObjetos.EspecificacionLOM'
@@ -42,7 +43,7 @@ class Autor (models.Model):
     """Nombres del Autor del Objeto."""
     nombres = models.CharField(help_text="Nombres del Autor del Objeto.", verbose_name='Nombres', max_length=100, null=False)
     """Apellidos del Autor del Objeto."""
-    apellidos = models.CharField(help_text="apellidos del Autor del Objeto.", verbose_name='Apellidos', max_length=100, null=False)
+    apellidos = models.CharField(help_text="Apellidos del Autor del Objeto.", verbose_name='Apellidos', max_length=100, null=False)
     """Campo para el rol que representa el usuario en el objeto."""
     rol = models.CharField(help_text="Papel que juega en la creación del Objeto", verbose_name='Rol', max_length=100, default="Autor")
     class Meta:
@@ -66,7 +67,7 @@ class RutaCategoria(models.Model):
     """Nombre para la ruta de Categoría"""
     nombre_ruta=models.CharField(help_text="Nombre de la Categoría.", verbose_name='Categoría', max_length=150, null=False)
     """Relación a la :model:'gestorObjetos.RutaCategoria' para determinar si tiene una categoría padre"""
-    cat_padre=models.ForeignKey('self', null=True, blank=True, related_name='+')
+    cat_padre=models.ForeignKey('self', null=True, blank=True, related_name='+',verbose_name='Categoría Padre', help_text="Categoría que la contiene")
     class Meta:
         verbose_name = "Categoría"
         verbose_name_plural = "Categorías"
@@ -129,17 +130,20 @@ class EspecificacionLOM(models.Model):
     lc4_nivel_inter=models.CharField(help_text="Grado de interactividad que predomina en el objeto.",
                                     verbose_name="Nivel de Interactividad", max_length=3,choices=opc.get_nivel_interactividad(),default=opc.get_nivel_interactividad()[0][0])
     """Descripción de los Usarios para los cuales este objeto fue diseñado."""
-    lc4_poblacion=models.TextField(help_text='Descripción de los Usarios para los cuales este objeto fue diseñado.',
+    lc4_poblacion=models.TextField(help_text='Descripción de los Usuarios para los cuales este objeto fue diseñado.',
                                     verbose_name="Población", null=True, blank=True)
     """Principal ambiente en el cual este objeto es utilizado."""
     lc4_contexto=models.CharField(help_text="Principal ambiente en el cual este objeto es utilizado.",
                                     verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0], null=True, blank=True)
     """Comentarios sobre las condiciones de uso de este objeto."""
-    lc5_derechos=models.TextField(help_text='condiciones de uso de este objeto. Ejp: copyright',
+    lc5_derechos=models.TextField(help_text='Condiciones de uso de este objeto. Ejp: copyright, Creative Commons',
                                     verbose_name="Derechos de Uso", null=False)
     """Se proveen comentarios sobre el uso educativo del objeto."""
     lc6_uso_educativo=models.TextField(help_text='Anotación sobre el uso educativo del objeto',
                                     verbose_name="Uso Educativo", null=True, blank=True)
+    class Meta:
+        verbose_name = "Metadato"
+        verbose_name_plural = "Metadatos"
 
     def __unicode__(self):
         return self.lc1_titulo
@@ -159,19 +163,19 @@ class Objeto(models.Model):
     archivo = models.FileField(help_text='Archivo a Subir', verbose_name='Archivo', upload_to=mod_archivo.get_file_path, storage=mod_archivo.get_file_storage())
 
     """Atributo que relaciona uno a uno el objeto con su respectiva especificación LOM"""
-    espec_lom = models.OneToOneField(EspecificacionLOM)
+    espec_lom = models.OneToOneField(EspecificacionLOM, help_text='Metadatos para el objeto', verbose_name='Metadato')
 
     """Atributo que relaciona al objeto con un :model:'gestorObjetos.Repositorio'."""
-    repositorio = models.ForeignKey(Repositorio)
+    repositorio = models.ForeignKey(Repositorio,help_text='Repositorio donde se aloja el objeto')
 
     """Campo que representa la :model:'gestorObjetos.Categoria' o Ruta Taxonómica del :model:'gestorObjetos.Objeto'"""
-    ruta_categoria=models.ForeignKey(RutaCategoria)
+    ruta_categoria=models.ForeignKey(RutaCategoria,help_text='Categoría o área de conocimiento')
 
     """Relación a los :model:'gestorObjetos.Autor' para definir los autores asociados al objeto"""
-    autores=models.ManyToManyField(Autor)
+    autores=models.ManyToManyField(Autor,help_text='Personas autoras del objeto')
 
     """Relación a las :model:'gestorObjetos.PalabraClave' para definir etiquetas asociadas al objeto"""
-    palabras_claves=models.ManyToManyField(PalabraClave)
+    palabras_claves=models.ManyToManyField(PalabraClave,help_text='Palabras asociadas al objeto.')
 
     """Relación al :model:'User' para determinar el creador del objeto"""
     creador = models.ForeignKey(User, blank=True, null=True, default=1)
@@ -188,10 +192,17 @@ class UserProfile(models.Model):
     """Adición de método para la relación del Usuario con un Rol que lo identifica en el sistema"""
     rol = models.CharField(help_text='Rol que identifica la participación del :model:"User" en el sistema',
                             verbose_name='Rol de Usuario', max_length=4, choices=opc.get_roles(), default=opc.get_roles()[0][0])
-    """Adición de método para la relación con la :model:'gestorObjetos.RutaCategoria"""
-    ruta_categoria = models.ForeignKey(RutaCategoria, null=True, blank=True)
+    """Adición de método para la relación con la :model:'gestorObjetos.RutaCategoria
+    ruta_categoria = models.ForeignKey(RutaCategoria, null=True, blank=True)"""
     """relación directa al usuario"""
     user = models.ForeignKey(User, unique=True)
+
+    class Meta:
+        verbose_name = "Perfil de Usuario"
+        verbose_name_plural = "Perfiles de Usuario"
+
+    def __unicode__(self):
+        return self.user.first_name
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
         

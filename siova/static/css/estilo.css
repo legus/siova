@@ -48,7 +48,7 @@ footer p
 
 header
 {
-	background:#055a9b;
+	background:#055a9b, url("piece.png") no-repeat 98% center;
 	display: inline-block;
 	height: 80px;
 	margin: 0 0 0.1em 0;
@@ -92,7 +92,7 @@ ul
 #camposAutores
 {
 	display: inline-block;
-	margin-left:115px;
+	margin-left:23%;
 	text-align: center;
 	vertical-align: top;
 }
@@ -137,7 +137,7 @@ ul
 	display: inline-block;
 	margin-left: 0.3em;
 	vertical-align: top;
-	width:50%;
+	width:49%;
 }
 
 #contenidosm2, #contenidosm4
@@ -176,20 +176,26 @@ ul
 #formulario label
 {
 	display: inline-block;
-	width: 33%;
+	margin-bottom: 5px;
+	vertical-align: top;
+	width: 30%;
 }
 
-#formulario input
+#formulario input, #formulario textarea, #formulario select
 {
 	display: inline-block;
+	margin-bottom: 5px;
+	vertical-align: top;
 }
 
 #formulario .helptext
 {
+	/*border: 1px solid #000;*/
 	color: #055a9b;
-	display: inline-block;
+	display: block;
 	font-size: 0.8em;
-	margin-left: 170px;
+	margin-bottom: 25px;
+	margin-left: 31%;
 }
 
 #menu
@@ -208,8 +214,8 @@ ul
 
 #menuUsuario
 {
-	/*border: 1px solid #000;*/
 	display: inline-block;
+	margin-top: 0.4em;
 	text-align: right;
 	vertical-align: top;
 	width: 48%;
@@ -244,7 +250,7 @@ ul
 {
 	cursor:pointer;
 	display: inline-block;
-	width: 40%;
+	width: 46%;
 }
 
 .contenido
@@ -339,11 +345,6 @@ ul
 	top:1px;
 }
 
-.menusubtn
-{
-	margin-top:0.4em;
-}
-
 .menus li
 {
 	display: inline-block;
@@ -384,7 +385,7 @@ ul
 	display:inline-block;
 	color:#333333;
 	font-family:arial;
-	font-size:16px;
+	font-size:1em;
 	font-weight:bold;
 	margin-bottom: 1em;
 	padding:8px 4px;
@@ -414,7 +415,7 @@ ul
 	display:inline-block;
 	color:#ffffff;
 	font-family:arial;
-	font-size:16px;
+	font-size:1em;
 	font-weight:bold;
 	padding:8px 4px;
 	text-decoration:none;

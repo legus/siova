@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
+from django.core.files import File
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -24,13 +25,18 @@ def ingresar(request):
 	"""
 		Vista que permite realizar el respectivo inicio de sesión para los Usuarios del sistema
 	"""
+	#Validación del usuario activo que ingresa a la página
 	if not request.user.is_anonymous():
+		#si es administrador se redirigirá a la interfaz de administración de lo contrario a la vista privado
 		if request.user.profile.rol == "radm":
 			return HttpResponseRedirect('/admin')
 		else:
 			return HttpResponseRedirect('/privado')
+	#Si la petición a la vista ya contiene un objeto formulario diligenciado
 	if request.method == 'POST':
+		#Se instancia el formulario de autenticación por defecto de Django
 		formulario = AuthenticationForm(request.POST)
+		#Se valida el formualario en sus campos.
 		if formulario.is_valid:
 			usuario = request.POST['username']
 			clave = request.POST['password']
@@ -190,10 +196,12 @@ def buscar(request):
 	if 'q' in request.GET and request.GET['q']:
 		q = request.GET['q']
 		spec=[]
+		r_obj=[]
 		if request.user.is_authenticated():
-			r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by('espec_lom').filter(publicado=True).filter(repositorio__grupos=request.user.groups.all()))
-		else:
-			r_obj = list(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by('espec_lom').filter(publicado=True).filter(repositorio__publico=True))
+			grupos = request.user.groups.all()
+			for g in grupos:
+				r_obj.extend(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by('espec_lom').filter(publicado=True).filter(repositorio__grupos=g))
+		r_obj.extend(Objeto.objects.filter( Q( palabras_claves__palabra_clave__icontains = q ) | Q( espec_lom__lc1_titulo__icontains = q ) | Q( espec_lom__lc1_descripcion__icontains = q ) | Q( espec_lom__lc4_poblacion__icontains = q ) | Q( espec_lom__lc4_contexto__icontains = q ) | Q( espec_lom__lc6_uso_educativo__icontains = q )).order_by('espec_lom').filter(publicado=True).filter(repositorio__publico=True))
 		rob=list(set(r_obj))
 		for r in rob:
 			spec.extend([r.espec_lom])
@@ -233,10 +241,12 @@ def busqueda(request):
 		qlist.append(('espec_lom__lc4_nivel_inter__exact',nivel_interactividad))
 	spec=[]
 	q=[Q(x) for x in qlist]
+	r_obj=[]
 	if request.user.is_authenticated():
-		r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)).filter(publicado=True).filter(repositorio__grupos=request.user.groups.all()))
-	else:
-		r_obj = list(Objeto.objects.filter(reduce(operator.and_, q)).filter(publicado=True).filter(repositorio__publico=True))
+		grupos = request.user.groups.all()
+		for g in grupos:
+			r_obj.extend(Objeto.objects.filter(reduce(operator.and_, q)).filter(publicado=True).filter(repositorio__grupos=g))
+	r_obj.extend(Objeto.objects.filter(reduce(operator.and_, q)).filter(publicado=True).filter(repositorio__publico=True))
 	rob=list(set(r_obj))#Eliminar duplicados de la lista
 	for r in rob:
 		spec.extend([r.espec_lom])
@@ -317,7 +327,8 @@ def editObjeto(request,id_objeto):
 	"""
 	Vista de acceso al usuario con rol de Docente, de esta manera se le permitirá modificar objetos
 	"""
-	obj=Objeto.objects.get(pk=id_objeto)
+	obj=Objeto.objects.get(pk=id_objeto)#objeto que se está modificando
+	kws=obj.palabras_claves.all()#palabras claves del objeto
 	if request.user.profile.rol == 'rdoc':
 		if obj.creador == request.user:
 			error1 = False
@@ -327,8 +338,12 @@ def editObjeto(request,id_objeto):
 			esp=obj.espec_lom
 			l_autores = request.POST.getlist('autores1')
 			autores = obj.autores.all()
+			lista_autores=[]#lista para guardar los autores incluidos en el formulario, ya sea para añadir o eliminar.
 			if request.method == 'POST':
-				if not request.POST.get('autores1'):
+				if not request.POST.getlist('autores1'):
+					l_errores.append('No incluyó autores al objeto.')
+					error1=True
+				if len(l_autores[0])==0:
 					l_errores.append('No incluyó autores al objeto.')
 					error1=True
 				if not request.POST.get('palabras_claves'):
@@ -348,18 +363,25 @@ def editObjeto(request,id_objeto):
 							if not b: #Si ya existe la palabra entonces se obvia el proceso de crearla
 								p.save() #se guarda la palabra clave en la bd
 							f.palabras_claves.add(p) # se añade cada palabra clave al objeto
+						for kw in kws: #Se recorre todo el conjunto de palabras claves del objeto
+							if kw.palabra_clave not in lpc: #se valida si cada palabra clave todavía se mantiene en lo que el usuario digitó
+								f.palabras_claves.remove(kw) #de no encontrarse la palabra clave debe desasociarse aunque no eliminarse.
 						for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
-							stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
-							for st in stri: # se recorre cada autor
+							lista_autores=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
+							for st in lista_autores: # se recorre cada autor
 								s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
 								aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
 								if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
 									aut.save() #se guarda el autor en la bd
 								f.autores.add(aut) # se añade al campo manytomany con Autores.
+						for autor in autores: #Se recorre todo el conjunto de autores del objeto
+							cadena_temporal=autor.nombres+' '+autor.apellidos+' '+autor.rol #cadena que concatena los datos del autor para compararlos con la lista que el usuario digita
+							if cadena_temporal not in lista_autores: #se valida si cada autor todavía se mantiene en lo que el usuario digitó
+								f.autores.remove(autor) #de no encontrarse el autor, debe desasociarse aunque no eliminarse.
 						f.repositorio=re
 						f.save()
-						messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
-						return HttpResponseRedirect('/privado')
+						#messages.add_message(request, messages.SUCCESS, 'Cambios Actualizados Exitosamente')# no funciona al redireccionar
+						return HttpResponseRedirect('/objeto/'+str(obj.pk))
 					else:
 						errores=True
 			else:
@@ -394,6 +416,9 @@ def crearAutor(request):
 	data = json_serializer.serialize(laut, ensure_ascii=False)
 	return HttpResponse(data, mimetype='application/json')
 
+"""
+Vista que permite gestionar la descarga del objeto dependiendo de los permisos que tenga
+"""
 def download(request,id):
 	f= get_object_or_404(Objeto, pk=id)
 	gruposobj = f.repositorio.grupos.all()
@@ -405,6 +430,34 @@ def download(request,id):
 				puededescargar=True
 	if request.user.is_authenticated():
 		if puededescargar:
+			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		elif f.repositorio.publico & f.publicado:
+			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		else:
+			return HttpResponseRedirect('/')
+	elif f.repositorio.publico & f.publicado:
+		return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+	else:
+		return HttpResponseRedirect('/')
+
+"""
+Vista para la gestión de la descargar del objeto desde la interfaz de edición del mismo
+"""
+def downloadEdit(request, id):
+	codigo_espec_archivo=int(id.split('.')[0].split('_')[1])#toma el id (nombre del archivo) y toma la parte que corresponde al pk del espec del archivo
+	#f=Objeto.objects.get(archivo=miarchivo.file)
+	f= get_object_or_404(Objeto, espec_lom=codigo_espec_archivo)
+	gruposobj = f.repositorio.grupos.all()
+	gruposu = request.user.groups.all()
+	puededescargar=False
+	for go in gruposobj:
+		for gu in gruposu:
+			if go == gu:
+				puededescargar=True
+	if request.user.is_authenticated():
+		if puededescargar:
+			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		elif f.repositorio.publico & f.publicado:
 			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
 		else:
 			return HttpResponseRedirect('/')
@@ -419,4 +472,10 @@ def cerrar(request):
 	Vista que permite cerrar sesión de manera segura en el sistema.
 	"""
 	logout(request)
+	return HttpResponseRedirect('/')
+
+def redirige(request):
+	"""
+	Vista que permite redirigir hacia la página principal.
+	"""
 	return HttpResponseRedirect('/')

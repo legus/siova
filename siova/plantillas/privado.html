@@ -4,9 +4,12 @@
 	{% if usuario.profile.rol = 'rdoc' %}
 		<li><a class="menusbtn" href="/docente">Objetos</a></li>
 	{% endif %}
+	{% if usuario.profile.rol = 'radm' %}
+		<li><a class="menusbtn" href="/admin">Administrador</a></li>
+	{% endif %}
 {% endblock %}
 {% block itemMenuUs %}
-	<li><a class="menusubtn" href="/usuario">{{usuario.username|capfirst}}</a></li>
+	<li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
 	<li><a class="menusubtn" href="/cerrar">Salir</a></li>
 {% endblock %}
 {% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
@@ -135,5 +138,5 @@
 			</div>
 		</form>
 	</div>
-	<span id="cargando"><img src="{{STATIC_URL}}img/temp.png"/></span>
+	<span id="cargando"><img src="{{STATIC_URL}}img/loading.gif"/></span>
 {% endblock %}
