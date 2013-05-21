@@ -303,7 +303,7 @@ def docObjeto(request):
 							stri=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
 							for st in stri: # se recorre cada autor
 								s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
-								aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
+								aut,cr=Autor.objects.get_or_create(nombres=s[0].replace('-',' '), apellidos=s[1].replace('-',' '), rol=s[2].replace('-',' '))
 								if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
 									aut.save() #se guarda el autor en la bd
 								f.autores.add(aut) # se añade al campo manytomany con Autores.
@@ -339,6 +339,7 @@ def editObjeto(request,id_objeto):
 			l_autores = request.POST.getlist('autores1')
 			autores = obj.autores.all()
 			lista_autores=[]#lista para guardar los autores incluidos en el formulario, ya sea para añadir o eliminar.
+			lista_temporal=[]#lista temporal con los datos de los autores sin el caracter - para guardar los autores incluidos en el formulario, ya sea para añadir o eliminar.
 			if request.method == 'POST':
 				if not request.POST.getlist('autores1'):
 					l_errores.append('No incluyó autores al objeto.')
@@ -369,14 +370,15 @@ def editObjeto(request,id_objeto):
 						for l in l_autores: #como el objeto llega como una lista... se debe recorrer per en realidad siempre tiene un solo objeto
 							lista_autores=l.split(',') #se divide la lista por comas que representa cada string de campos del autor
 							for st in lista_autores: # se recorre cada autor
+								lista_temporal.append(st.replace('-',' '))
 								s=st.split(' ') # se divide los campos nombres, apellidos y rol en una lista
-								aut,cr=Autor.objects.get_or_create(nombres=s[0], apellidos=s[1], rol=s[2])
+								aut,cr=Autor.objects.get_or_create(nombres=s[0].replace('-',' '), apellidos=s[1].replace('-',' '), rol=s[2].replace('-',' '))
 								if not cr: #Si ya existe el autor entonces se obvia el proceso de crearlo
 									aut.save() #se guarda el autor en la bd
 								f.autores.add(aut) # se añade al campo manytomany con Autores.
 						for autor in autores: #Se recorre todo el conjunto de autores del objeto
 							cadena_temporal=autor.nombres+' '+autor.apellidos+' '+autor.rol #cadena que concatena los datos del autor para compararlos con la lista que el usuario digita
-							if cadena_temporal not in lista_autores: #se valida si cada autor todavía se mantiene en lo que el usuario digitó
+							if cadena_temporal not in lista_temporal: #se valida si cada autor todavía se mantiene en lo que el usuario digitó
 								f.autores.remove(autor) #de no encontrarse el autor, debe desasociarse aunque no eliminarse.
 						f.repositorio=re
 						f.save()

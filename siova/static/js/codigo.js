@@ -173,12 +173,18 @@ function arranque(name) {
                 $("#error").html("Autor ya existe");
                 $("#error").fadeIn();
             }else{
-                var a = naut+" "+aaut+" "+raut;
+                _naut=naut.replace(/ /g,'-');
+                _aaut=aaut.replace(/ /g,'-');
+                _raut=raut.replace(/ /g,'-');
+                _naut=_naut.replace(/\./g,'');
+                _aaut=_aaut.replace(/\./g,'');
+                _raut=_raut.replace(/\./g,'');
+                var a = _naut+" "+_aaut+" "+_raut;
                 autores_arr.push(a);
                 $("#autores").fadeIn();
-                $("#autores").append('<li id="autors'+naut+'_'+aaut+'_'+raut+'"><span id="sp1">'+naut+' '+aaut+' - '+raut+'</span></li>');
+                $("#autores").append('<li id="autors'+_naut+'_'+_aaut+'_'+_raut+'"><span id="sp1">'+naut+' '+aaut+' - '+raut+'</span></li>');
                 $("#autores li").last().append(function() {
-                    return $('<span class="btn_peq" id="'+naut+'_'+aaut+'_'+raut+'">&nbsp-&nbsp</span>').click(function() {
+                    return $('<span class="btn_peq" id="'+_naut+'_'+_aaut+'_'+_raut+'">&nbsp-&nbsp</span>').click(function() {
                        if($("#autores1").val()){
                             string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
                             autores_arr=string_autores.split(",");//como no hay comunicación con el array autores de la plantilla entonces se crea aquí el array con los autores del objeto.

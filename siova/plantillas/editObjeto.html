@@ -58,11 +58,18 @@
                 </script>
                 {% for a in autores %}
                     <script>
-                        var a = '{{a.nombres}} {{a.apellidos}} {{a.rol}}';
+                        //var a = '{{a.nombres}} {{a.apellidos}} {{a.rol}}';
+                        var _naut='{{a.nombres}}'.replace(/ /g,'-');
+                        var _aaut='{{a.apellidos}}'.replace(/ /g,'-');
+                        var _raut='{{a.rol}}'.replace(/ /g,'-');
+                        _naut=_naut.replace(/\./g,'');
+                        _aaut=_aaut.replace(/\./g,'');
+                        _raut=_raut.replace(/\./g,'');
+                        var a = _naut+" "+_aaut+" "+_raut;
                         autores_arr.push(a);
-                        $("#autores").append('<li id="autors{{a.nombres}}_{{a.apellidos}}_{{a.rol}}"><span id="sp1">{{a.nombres}} {{a.apellidos}} - {{a.rol}}</span></li>');
+                        $("#autores").append('<li id="autors'+_naut+'_'+_aaut+'_'+_raut+'"><span id="sp1">{{a.nombres}} {{a.apellidos}} - {{a.rol}}</span></li>');
                         $("#autores li").last().append(function(){
-                            return $('<span class="btn_peq" id="{{a.nombres}}_{{a.apellidos}}_{{a.rol}}">&nbsp-&nbsp</span>').click(function() {
+                            return $('<span class="btn_peq" id="'+_naut+'_'+_aaut+'_'+_raut+'">&nbsp-&nbsp</span>').click(function() {
                                 var e=$(this).context.id;
                                 s=e.replace(/_/g,' ');
                                 var string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
@@ -70,7 +77,7 @@
                                 autores_arr.splice(jQuery.inArray(s,autores_arr),1);
                                 $('#autores1').val(autores_arr);
                                 console.log("Incrustado_autores previos: (al eliminar)  "+$('#autores1').val());
-                                console.log("Incrustado_autores previos: (al eliminar)  "+autores_arr.length);
+                                console.log(e);
                                 $("#autors"+e).remove();
                             });
                         });
