@@ -30,7 +30,7 @@ class Repositorio(models.Model):
     """campo que permite determinar si el repositorio es visible para todos los usuarios o solo para aquellos autorizados"""
     publico = models.BooleanField(help_text='Marca para habilitar el repositorio al público', verbose_name='Público', default=True)
     """Relación hacia el :model:'Group' que puede observar los objetos"""
-    grupos = models.ManyToManyField(Group)
+    grupos = models.ManyToManyField(Group,null=True,blank=True)
 
     def __unicode__(self):
         return self.nombre
