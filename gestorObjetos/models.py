@@ -72,10 +72,11 @@ class RutaCategoria(models.Model):
         verbose_name = "Categoría"
         verbose_name_plural = "Categorías"
     def __unicode__(self):
-        if self.cat_padre:
-            return ' | '.join([self.cat_padre.nombre_ruta,  self.nombre_ruta, ])
-        else:
-            return self.nombre_ruta
+        return self.nombre_ruta
+        #if self.cat_padre:
+            #return ' | '.join([self.cat_padre.nombre_ruta,  self.nombre_ruta, ])
+        #else:
+            #return self.nombre_ruta
         
 class EspecificacionLOM(models.Model):
     """
