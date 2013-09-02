@@ -8,6 +8,9 @@ from django.contrib.auth.models import Group
 from django.contrib import admin
 import siova.lib.Archivos as mod_archivo
 import siova.lib.Opciones as opc
+# Receive the pre_delete signal and delete the file associated with the model instance.
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
 class PalabraClave(models.Model):
     """
@@ -126,7 +129,7 @@ class EspecificacionLOM(models.Model):
                                     verbose_name="Tipo de Interactividad", max_length=3,choices=opc.get_tipo_interactividad(),default=opc.get_tipo_interactividad()[1][0])
     """Tipo de recurso de aprendizaje."""
     lc4_tipo_rec=models.CharField(help_text="Tipo de recurso de aprendizaje.",
-                                    verbose_name="Tipo de Recurso de Aprendizaje", max_length=50, null=True,choices=opc.get_tipo_recurso(),default=opc.get_tipo_recurso()[0][0])
+                                    verbose_name="Tipo de Recurso de Aprendizaje", max_length=50,choices=opc.get_tipo_recurso(),default=opc.get_tipo_recurso()[0][0])
     """Grado de interactividad que predomina en el objeto."""
     lc4_nivel_inter=models.CharField(help_text="Grado de interactividad que predomina en el objeto.",
                                     verbose_name="Nivel de Interactividad", max_length=3,choices=opc.get_nivel_interactividad(),default=opc.get_nivel_interactividad()[0][0])
@@ -135,7 +138,7 @@ class EspecificacionLOM(models.Model):
                                     verbose_name="Población", null=True, blank=True)
     """Principal ambiente en el cual este objeto es utilizado."""
     lc4_contexto=models.CharField(help_text="Principal ambiente en el cual este objeto es utilizado.",
-                                    verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0], null=True, blank=True)
+                                    verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0])
     """Comentarios sobre las condiciones de uso de este objeto."""
     lc5_derechos=models.TextField(help_text='Condiciones de uso de este objeto. Ejp: copyright, Creative Commons',
                                     verbose_name="Derechos de Uso", null=False)
@@ -183,6 +186,13 @@ class Objeto(models.Model):
 
     def __unicode__(self):
         return self.espec_lom.lc1_titulo
+"""
+Función que utiliza una señal de django para antes de borrar un objeto, también se elimine del sistema de ficheros el archivo almacenado
+"""
+@receiver(pre_delete, sender=Objeto)
+def objeto_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    instance.archivo.delete(False)
 
 
 class UserProfile(models.Model):
