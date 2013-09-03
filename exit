@@ -1,0 +1,55 @@
+[33mcommit 8e6a5ecfc7559c65eee69dcef6561b43bc587050[m
+Author: legus <adolfo_8704@yahoo.es>
+Date:   Mon Sep 2 11:25:17 2013 -0500
+
+    Permite borrar fichero del sistema de almacenamiento
+
+[1mdiff --git a/gestorObjetos/models.py b/gestorObjetos/models.py[m
+[1mindex 8e801a1..78cfab5 100644[m
+[1m--- a/gestorObjetos/models.py[m
+[1m+++ b/gestorObjetos/models.py[m
+[36m@@ -8,6 +8,9 @@[m [mfrom django.contrib.auth.models import Group[m
+ from django.contrib import admin[m
+ import siova.lib.Archivos as mod_archivo[m
+ import siova.lib.Opciones as opc[m
+[32m+[m[32m# Receive the pre_delete signal and delete the file associated with the model instance.[m[41m[m
+[32m+[m[32mfrom django.db.models.signals import pre_delete[m[41m[m
+[32m+[m[32mfrom django.dispatch.dispatcher import receiver[m[41m[m
+ [m
+ class PalabraClave(models.Model):[m
+     """[m
+[36m@@ -126,7 +129,7 @@[m [mclass EspecificacionLOM(models.Model):[m
+                                     verbose_name="Tipo de Interactividad", max_length=3,choices=opc.get_tipo_interactividad(),default=opc.get_tipo_interactividad()[1][0])[m
+     """Tipo de recurso de aprendizaje."""[m
+     lc4_tipo_rec=models.CharField(help_text="Tipo de recurso de aprendizaje.",[m
+[31m-                                    verbose_name="Tipo de Recurso de Aprendizaje", max_length=50, null=True,choices=opc.get_tipo_recurso(),default=opc.get_tipo_recurso()[0][0])[m
+[32m+[m[32m                                    verbose_name="Tipo de Recurso de Aprendizaje", max_length=50,choices=opc.get_tipo_recurso(),default=opc.get_tipo_recurso()[0][0])[m[41m[m
+     """Grado de interactividad que predomina en el objeto."""[m
+     lc4_nivel_inter=models.CharField(help_text="Grado de interactividad que predomina en el objeto.",[m
+                                     verbose_name="Nivel de Interactividad", max_length=3,choices=opc.get_nivel_interactividad(),default=opc.get_nivel_interactividad()[0][0])[m
+[36m@@ -135,7 +138,7 @@[m [mclass EspecificacionLOM(models.Model):[m
+                                     verbose_name="Población", null=True, blank=True)[m
+     """Principal ambiente en el cual este objeto es utilizado."""[m
+     lc4_contexto=models.CharField(help_text="Principal ambiente en el cual este objeto es utilizado.",[m
+[31m-                                    verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0], null=True, blank=True)[m
+[32m+[m[32m                                    verbose_name="Contexto", max_length=4,choices=opc.get_contexto(),default=opc.get_contexto()[0][0])[m[41m[m
+     """Comentarios sobre las condiciones de uso de este objeto."""[m
+     lc5_derechos=models.TextField(help_text='Condiciones de uso de este objeto. Ejp: copyright, Creative Commons',[m
+                                     verbose_name="Derechos de Uso", null=False)[m
+[36m@@ -183,6 +186,13 @@[m [mclass Objeto(models.Model):[m
+ [m
+     def __unicode__(self):[m
+         return self.espec_lom.lc1_titulo[m
+[32m+[m[32m"""[m[41m[m
+[32m+[m[32mFunción que utiliza una señal de django para antes de borrar un objeto, también se elimine del sistema de ficheros el archivo almacenado[m[41m[m
+[32m+[m[32m"""[m[41m[m
+[32m+[m[32m@receiver(pre_delete, sender=Objeto)[m[41m[m
+[32m+[m[32mdef objeto_delete(sender, instance, **kwargs):[m[41m[m
+[32m+[m[32m    # Pass false so FileField doesn't save the model.[m[41m[m
+[32m+[m[32m    instance.archivo.delete(False)[m[41m[m
+ [m
+ [m
+ class UserProfile(models.Model):[m
+[1mdiff --git a/gestorObjetos/models.pyc b/gestorObjetos/models.pyc[m
+[1mindex 9584d24..1d693f6 100644[m
+Binary files a/gestorObjetos/models.pyc and b/gestorObjetos/models.pyc differ

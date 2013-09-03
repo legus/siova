@@ -9,7 +9,7 @@ from django.contrib import admin
 import siova.lib.Archivos as mod_archivo
 import siova.lib.Opciones as opc
 # Receive the pre_delete signal and delete the file associated with the model instance.
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_delete
 from django.dispatch.dispatcher import receiver
 
 class PalabraClave(models.Model):
@@ -191,8 +191,17 @@ Función que utiliza una señal de django para antes de borrar un objeto, tambi�
 """
 @receiver(pre_delete, sender=Objeto)
 def objeto_delete(sender, instance, **kwargs):
-    # Pass false so FileField doesn't save the model.
+    """Al pasar el parámetro False, se evita que django guarde el modelo antes de eliminar"""
     instance.archivo.delete(False)
+
+"""
+Función que utiliza una señal de django para después de borrar un objeto, también se elimine la EspecificacionLOM asociada con la relación OneToOneField
+"""
+@receiver(post_delete, sender=Objeto)
+def post_delete_objeto(sender, instance, *args, **kwargs):
+    """Eliminar la instancia de metadato creada ya que quedaría huérfana. Sin embargo se debe preguntar si existe primero"""
+    if instance.espec_lom:
+        instance.espec_lom.delete()
 
 
 class UserProfile(models.Model):
