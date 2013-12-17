@@ -4,6 +4,7 @@ import uuid
 from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
+from gestorProyectos.models import Proyecto
 from django.contrib.auth.models import Group
 from django.contrib import admin
 import siova.lib.Archivos as mod_archivo
@@ -184,6 +185,8 @@ class Objeto(models.Model):
     """Relación al :model:'User' para determinar el creador del objeto"""
     creador = models.ForeignKey(User, blank=True, null=True, default=1)
 
+    proyecto = models.OneToOneField(Proyecto, help_text='proyecto tomado como objeto.', blank=True, null=True)
+    
     def __unicode__(self):
         return self.espec_lom.lc1_titulo
 """

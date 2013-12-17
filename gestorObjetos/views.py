@@ -16,6 +16,8 @@ import operator
 from django.contrib import messages
 from gestorObjetos.models import Repositorio, Objeto, Autor, RutaCategoria, EspecificacionLOM, PalabraClave
 from gestorObjetos.forms import EspecificacionForm, cEspecificacionForm, ObjetosForm, cObjetosForm
+from gestorProyectos.models import Proyecto
+from gestorProyectos.forms import Proyecto
 import datetime
 from filetransfers.api import serve_file
 import siova.lib.Opciones as opc
@@ -239,6 +241,25 @@ def busqueda(request):
 	if 'nin' in request.GET and request.GET['nin'] and request.GET['v_nin']=="True":
 		nivel_interactividad = request.GET['nin']
 		qlist.append(('espec_lom__lc4_nivel_inter__exact',nivel_interactividad))
+	"""proyectos """
+	if 'pfas' in request.GET and request.GET['pfas'] and request.GET['v_pfas']=="True":
+		proyecto_fase = request.GET['pfas']
+		qlist.append(('proyecto__fase',proyecto_fase))
+	if 'ppro' in request.GET and request.GET['ppro'] and request.GET['v_ppro']=="True":
+		proyecto_programa = request.GET['ppro']
+		qlist.append(('proyecto__programa',proyecto_programa))
+	if 'pcal' in request.GET and request.GET['pcal'] and request.GET['v_pcal']=="True":
+		proyecto_calif = request.GET['pcal']
+		qlist.append(('proyecto__calificacion',proyecto_calif))
+	if 'pfec' in request.GET and request.GET['pfec'] and request.GET['v_pfec']=="True":
+		proyecto_fecha = request.GET['pfec']
+		proyecto_fecha1 = datetime.datetime.strptime(proyecto_fecha,"%d/%m/%Y").strftime("%Y-%m-%d")
+		qlist.append(('proyecto__fecha__lte',proyecto_fecha1))
+	if 'pgra' in request.GET and request.GET['pgra'] and request.GET['v_pgra']=="True":
+		proyecto_grado = request.GET['pgra']
+		qlist.append(('proyecto__indicadores__grados',proyecto_grado))
+		#l_grados=proyecto_grados.split(',')
+		#for pg in l_grados:
 	spec=[]
 	q=[Q(x) for x in qlist]
 	r_obj=[]

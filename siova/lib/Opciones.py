@@ -1,4 +1,5 @@
 #encoding:utf-8
+from decimal import Decimal
 """
 Funciones para el manejo de las opciones
 """
@@ -122,9 +123,125 @@ def get_roles():
 	REST = 'rest'
 	RDOC = 'rdoc'
 	RADM = 'radm'
+	RCAT = 'rcat'
+	RREV = 'rrev'
 	ROLE_CHOICES = (
 		(REST, 'Estudiante'),
 		(RDOC, 'Docente'),
 		(RADM, 'Administrador'),
+		(RCAT, 'Catalogador'),
+		(RREV, 'Revisor'),
 	)
 	return ROLE_CHOICES
+
+def get_modalidades():
+	MPRE = 'mpr'
+	MSEM = 'mse'
+	MDIS = 'mdi'
+	MVIR = 'mvi'
+	MODALIDADES_CHOICES = (
+		(MPRE, 'Presencial'),
+		(MSEM, 'Semi presencial'),
+		(MDIS, 'A Distancia'),
+		(MVIR, 'Virtual'),
+	)
+	return MODALIDADES_CHOICES
+
+def get_sedes():
+	SSAN = 'ssa'
+	SCHI = 'sch'
+	SYOP = 'syo'
+	SSER = 'sse'
+	SEDES_CHOICES = (
+		(SSAN, 'San Gil'),
+		(SCHI, 'Chiquinquirá'),
+		(SYOP, 'Yopal'),
+		(SSER, 'Seres'),
+	)
+	return SEDES_CHOICES
+
+def get_grado():
+	GPRI = 'gpr'
+	GSEG = 'gse'
+	GTER = 'gte'
+	GCUA = 'gcu'
+	GQUI = 'gqu'
+	GRADOS_CHOICES = (
+		(GPRI, 'Primero'),
+		(GSEG, 'Segundo'),
+		(GTER, 'Tercero'),
+		(GCUA, 'Cuarto'),
+		(GQUI, 'Quinto'),
+	)
+	return GRADOS_CHOICES
+
+def get_fase():
+	F1 = 'f1'
+	F2 = 'f2'
+	F3 = 'f3'
+	FASES_CHOICES = (
+		(F1, 'Fase 1'),
+		(F2, 'Fase 2'),
+		(F3, 'Fase 3'),
+	)
+	return FASES_CHOICES
+
+def get_tipo_p():
+	ACONT = 'acon'
+	AENF = 'aenf'
+	AEVA = 'aeva'
+	AINT = 'aint'
+	APOS = 'apos'
+	TIPO_P_CHOICES = (
+		(ACONT, 'Contenido en Relación con los estándares'),
+		(AENF, 'Enfoque Cognitivo'),
+		(AEVA, 'Evaluación'),
+		(AINT, 'Intercomunicación Estudiante-Material'),
+		(APOS, 'Posibilidades metodológicas'),
+	)
+	return TIPO_P_CHOICES
+
+def get_valoracion():
+	VNUL = '0.0'
+	VTOT = '10.0'
+	VMED = '7.0'
+	VESC = '5.0'
+	VNOC = '2.5'
+	VALORACION_CHOICES = (
+		(VNUL, 'Sin Calificar'),
+		(VTOT, 'Totalmente'),
+		(VMED, 'Medianamente'),
+		(VESC, 'Escasamente'),
+		(VNOC, 'No Cumple'),
+	)
+	return VALORACION_CHOICES
+
+def get_valoracion_decimal():
+	VNUL = Decimal('0.0')
+	VTOT = Decimal('10.0')
+	VMED = Decimal('7.0')
+	VESC = Decimal('5.0')
+	VNOC = Decimal('2.5')
+	VALORACION_CHOICES = (
+		(VNUL, 'Sin Calificar'),
+		(VTOT, 'Totalmente'),
+		(VMED, 'Medianamente'),
+		(VESC, 'Escasamente'),
+		(VNOC, 'No Cumple'),
+	)
+	return VALORACION_CHOICES
+
+def get_calif():
+	NUL = 's'
+	APR = 'a'
+	REP = 'r'
+	CALIFICACION_CHOICES = (
+		(NUL, 'Sin calificar'),
+		(APR, 'Clasificado'),
+		(REP, 'No Clasificado'),
+	)
+	return CALIFICACION_CHOICES
+
+def get_umbral_calificacion():
+	UMBRAL=Decimal('7.0')
+	return UMBRAL
