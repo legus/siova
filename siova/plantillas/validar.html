@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block titulo %} siova: {{proyecto|capfirst}} {% endblock %}
+{% block itemMenu %}
+{% if usuario.profile.rol == 'rrev' %}
+	<li><a class="menusbtn" href="/revisor">Proyectos</a></li>
+{% endif %}
+{% endblock %}
+{% block itemMenuUs %}
+	<li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
+	{% if usuario %}
+		<li><a class="menusubtn" href="/cerrar">Salir</a></li>
+	{% else %}
+		<li><a class="menusubtn" href="/ingresar">Ingresar</a></li>
+	{% endif %}
+{% endblock %}
+{% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
+{% block contenidoIzq %}
+	<div class="titulo_item" id="tit_obj">
+		<p>{{objeto|capfirst}}</p>
+		<div id="descargar"><a class="descarga" href="/descarga/{{objeto.pk}}" target="_blank">Descargar</a></div>
+	</div>
+	<div class="seccion">
+		<div class="seccion_btn" id="sec1_btn">Proyecto</div>
+		<div class="sec_desplegar" id="sec1">
+			<dl>
+				<dt>Categoría</dt>
+				<dd>{{objeto.ruta_categoria}}</dd>
+				<dt>Programa académico</dt>
+				<dd>{{proyecto.programa}}</dd>
+				<dt>Fecha</dt>
+				<dd>{{proyecto.fecha|date:"SHORT_DATE_FORMAT"}}</dd>
+				<dt>Fase</dt>
+                <dd>{{proyecto.fase|cut:"f"}}</dd>
+				<dt>Nota</dt>
+				<dd class="{{proyecto.calificacion}}probado">{% widthratio proyecto.nota 1 10 %}%</dd>
+				<dt>Calificación</dt>
+				<dd class="{{proyecto.calificacion}}probado">{{proyecto.get_calificacion_display}}</dd>
+			</dl>
+		</div>
+	</div>
+	<div class="seccion">
+		<div class="seccion_btn" id="sec2_btn">Metadatos</div>
+		<div class="sec_desplegar" id="sec2">
+			<dl>
+				<dt>Título</dt>
+				<dd>{{espec.lc1_titulo}}</dd>
+				<dt>Idioma</dt>
+				<dd>{{ espec.get_lc1_idioma_display }}
+				</dd>
+				<dt>Descripción</dt>
+				<dd>{{espec.lc1_descripcion}}</dd>
+				<dt>Palabras Claves</dt>
+					<dd>
+					{% for k in keywords %}
+						{{k.palabra_clave}} 
+					{% empty %}
+					Vacío
+					{% endfor %}
+					</dd>
+				<dt>cobertura</dt>
+				<dd>{{espec.lc1_cobertura}}</dd>
+				<dt>Nivel de Agregación</dt>
+				<dd>{{ espec.get_lc1_nivel_agregacion_display }}</dd>
+				<dt>Versión</dt>
+				<dd>{{espec.lc2_version}}</dd>
+				<dt>Autores</dt>
+					<dd>
+					{% for a in autores %}
+						{{a.nombres|capfirst}} {{a.apellidos|capfirst}} - {{a.rol|capfirst}} <br>
+					{% empty %}
+					Vacío
+					{% endfor %}
+					</dd>
+				<dt>Fecha</dt>
+				<dd>{{espec.lc2_fecha}}</dd>
+				<dt>Formato</dt>
+				<dd>{{espec.get_lc4_tipo_rec_display}}</dd>
+				<dt>Tamaño</dt>
+				<dd>{{objeto.archivo.size|filesizeformat}}</dd>
+				<dt>Requerimientos</dt>
+				<dd>{{espec.lc3_requerimientos}}</dd>
+				<dt>Instrucciones</dt>
+				<dd>{{espec.lc3_instrucciones}}</dd>
+				<dt>Tipo de interactividad</dt>
+				<dd>{{espec.get_lc4_tipo_inter_display}}</dd>
+				<dt>Nivel de Interactividad</dt>
+				<dd>{{espec.get_lc4_nivel_inter_display}}</dd>
+				<dt>Población</dt>
+				<dd>{{espec.lc4_poblacion}}</dd>
+				<dt>Contexto</dt>
+				<dd>{{espec.get_lc4_contexto_display}}</dd>
+				<dt>Derechos de Autor</dt>
+				<dd>{{espec.lc5_derechos}}</dd>
+				<dt>Uso Educativo</dt>
+				<dd>{{espec.lc6_uso_educativo}}</dd>
+			</dl>
+		</div>
+	</div>
+	<div class="seccion">
+		<div class="seccion_btn" id="sec3_btn">Estándares de Competencia</div>
+		<div class="sec_desplegar" id="sec3">
+			<ul>
+			{% if indicadores %}
+		        {% for ind in indicadores %}
+		        	{% ifchanged ind.factor %}<p id="c_fac{{ind.pk}}" class="factores">{{ind.factor}}</p>{% endifchanged %}
+		        	{% if ind.enunciado %}
+		        		{% ifchanged ind.enunciado %}<p id="c_enu{{ind.pk}}" class="enunciados">{{ind.enunciado|truncatechars:70}}</p>{% endifchanged %}
+		        	{% endif %}
+		            <li data-full_="{{ind}}" data-grados_="{{ind.grados.all|cut:','}}" class="indicadores">{{ind|truncatechars:80}}</li>
+		        {% endfor %}
+		    {% endif%}
+		    </ul>
+		    <br>
+		    <p class="operaciones">Operaciones Mentales</p>
+		    <ul>
+		    	{% for op in operaciones %}
+		            <li data-descr="{{op}}" class="operaciones_items">{{op}}</li>
+		        {% endfor %}
+		    </ul>
+		</div>
+	</div>
+{% endblock %}
+{% block contenidoDer %}
+	<div class="titulo_item" id="tit_validar">
+		<p>Validar Proyecto</p>
+	</div>
+	<br>
+	{% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if errores %}
+	    <script type="text/javascript">
+	    	errores_s="{{errores}}";
+	    </script>
+    	<p class="errores">hay {{errores|length}} error(es) con el formulario</p>
+    {% else %}
+    	<script type="text/javascript">
+	    	errores_s="";
+	    </script>
+    {% endif%}
+	<form id="validar" method="post" action="">{% csrf_token %}	
+		{{ formValidar.management_form }}
+	    <div id="validaciones">
+			{% for form in formValidar %}
+				{% for p in parametros %}
+					{% if forloop.counter0 == forloop.parentloop.counter0%}
+						{% for key,value in tipos.items %}
+							{%if key == p.tipo %}
+								<p class="tipos_parametros" id='{{key}}{{ forloop.parentloop.counter0 }}'>Asociados a {{ value }}</p>
+							{% endif %}
+						{% endfor %}
+						<div class="sec_formV_par"  data-descripcion="{{p.descripcion}}" id="sec_formV_par{{forloop.counter}}">{{p.nombre}} ({% widthratio p.ponderacion 1 100 %}%)</div>
+					{% endif %}
+				{% endfor %}
+				<div class="sec_formV" id="sec_formV_{{forloop.counter}}">{{ form.as_p }}</div>
+			{% endfor %}
+	    </div>
+	    {% comment %}
+	    	{% for form in formValidar %}
+	    		{% for key,value in tipos.items %}
+					{% if forloop.counter0 == forloop.parentloop.counter0 %}
+						<h3>Asociados a {{ value }}</h3><br>
+					{% endif %}
+				{% endfor %}
+		    	{% for ps in parametros %}
+		    		{% for p in ps %}
+		    			{% if p%}
+		    				{{forloop.counter}} - {{p}} ({% widthratio p.ponderacion 1 100 %}%)
+		    			{% endif %}
+		    		{% endfor %}
+		    	{% endfor %}
+		    	{{ form.as_p }}
+		    {% endfor %}
+	    	{% for form in formValidar %}
+
+				{% regroup parametros by get_tipo_display as parametros_list %}
+				{% for tipo in parametros_list %}
+					<h3>Asociados a {{ tipo.grouper }}</h3><br>
+					{% for pl in tipo.list %}
+						{{forloop.counter}} - {{pl}} ({% widthratio pl.ponderacion 1 100 %}%)
+					{% endfor %}
+				{% endfor %}
+				{{ form.as_p }}
+			{% endfor %}
+	    {% endcomment %}
+	    <p class="btnInferior">
+	    	<input class="descarga" id="validar" type="submit" value="Calificar"/></p>
+	</form>
+{% endblock %}

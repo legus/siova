@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block titulo %} Siova: Revisor {% endblock %}
+{% block itemMenu %}
+	{% if usuario.profile.rol = 'rrev' %}
+		<li><a class="menusbtn" href="/revisor">Proyectos</a></li>
+	{% endif %}
+{% endblock %}
+{% block itemMenuUs %}
+    <li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
+    <li><a class="menusubtn" href="/cerrar">Salir</a></li> {% endblock %}
+{% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
+{% block contenidoIzq %}
+    <div class="titulo_item" id="tit_obj"><p>Proyectos</p></div>
+    <div>
+        <ul>
+            {% regroup proyectos by get_calificacion_display as get_calificacion_display_list %}
+            {% for get_calificacion_display in get_calificacion_display_list %}
+                {% if get_calificacion_display.grouper = 'Sin calificar' %}
+                    <p class="calificaciones" id="sprobado_lista" data-conteo="({{get_calificacion_display.list|length}})">{{get_calificacion_display.grouper}}</lis>
+                    <div class="listaP" id="sprobado_listaP">
+                {% elif get_calificacion_display.grouper = 'Clasificado' %}
+                    <p class="calificaciones" id="aprobado_lista" data-conteo="({{get_calificacion_display.list|length}})">{{get_calificacion_display.grouper}}</p>
+                    <div class="listaP" id="aprobado_listaP">
+                {% else %}
+                    <p class="calificaciones" id="rprobado_lista" data-conteo="({{get_calificacion_display.list|length}})">{{get_calificacion_display.grouper}}</p>
+                    <div class="listaP" id="rprobado_listaP">
+                {% endif %}
+                    {% for item in get_calificacion_display.list %}
+                        <li class="proyectos_lista" id="p_{{item.pk}}">{{item.titulo|title}}</li>
+                    {% empty %}
+                        <li>No hay proyectos registrados aún para validar</li>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            {% comment %}
+            {% for p in proyectos %}
+                <li class="{{p.calificacion}}probado_lista">{{p.titulo|title}}</li>
+            {% empty %}
+                <li>No hay proyectos registrados aún para valixdar</li>
+            {% endfor %}
+            {% endcomment %}
+        </ul>
+    </div>
+{% endblock %}
+{% block contenidoDer %}
+    <div class="titulo_item" id="pro_val"><p>Validar</p></div>
+    <dl id="proyectos">
+
+    </dl>
+    <p class="btnInferior" id="btn_validar">
+        
+    </p>
+{% endblock %}
