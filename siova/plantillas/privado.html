@@ -7,6 +7,12 @@
 	{% if usuario.profile.rol = 'radm' %}
 		<li><a class="menusbtn" href="/admin">Administrador</a></li>
 	{% endif %}
+	{% if usuario.profile.rol = 'rcat' %}
+		<li><a class="menusbtn" href="/proyecto">Proyectos</a></li>
+	{% endif %}
+	{% if usuario.profile.rol = 'rrev' %}
+		<li><a class="menusbtn" href="/revisor">Proyectos</a></li>
+	{% endif %}
 {% endblock %}
 {% block itemMenuUs %}
 	<li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
@@ -31,7 +37,11 @@
 				<ul id="ocontenidos">
 					{% for obj in objetos %}
 						{% if obj.repositorio == rep %}
-							<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
+							{% if obj.proyecto %}
+								<li><a href="/proyecto/{{obj.id}}">{{obj}}</a></li>
+							{% else %}
+								<li><a href="/objeto/{{obj.id}}">{{obj}}</a></li>
+							{% endif %}
 						{% endif %}
 					{% endfor %}
 				</ul>
@@ -132,7 +142,34 @@
 		        <label for="id_c_nivel_inter">Nivel de Interactividad:</label>
 		        {{ form.c_nivel_inter }}
 			</p>
-
+			{% if usuario.profile.rol = 'rcat' or usuario.profile.rol = 'rrev'%}
+				Asociados al proyecto
+				<p>
+			    	<input type="checkbox" id="v_pfas" name="v_pfas" value="True">
+			        <label for="v_pfas">Fase:</label>
+			        {{ form.c_pro_fase }}
+				</p>
+				<p>
+			    	<input type="checkbox" id="v_ppro" name="v_ppro" value="True">
+			        <label for="v_ppro">Programa Académico:</label>
+			        {{ form.c_pro_prog }}
+				</p>
+				<p>
+			    	<input type="checkbox" id="v_pcal" name="v_pcal" value="True">
+			        <label for="v_pcal">Calificación:</label>
+			        {{ form.c_pro_calif }}
+				</p>
+				<p>
+			    	<input type="checkbox" id="v_pfec" name="v_pfec" value="True">
+			        <label for="v_pfec">Fecha Aprobación:</label>
+			        {{ form.c_pro_fecha }}
+				</p>
+				<p>
+			    	<input type="checkbox" id="v_pgra" name="v_pgra" value="True">
+			        <label for="v_pgra">Grado de Escolaridad:</label>
+			        {{ form.c_pro_gra }}
+				</p>
+			{% endif %}
 			<p><input class="menusbtn" id="busqueda" type="submit" value="Busqueda"/></p>
 		    <div id="resultado">
 		    	<ul id="results2">

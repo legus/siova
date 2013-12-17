@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block titulo %} Siova: Catalogador {% endblock %}
+{% block itemMenu %}
+	{% if usuario.profile.rol = 'rcat' %}
+		<li><a class="menusbtn" href="/proyecto">Proyectos</a></li>
+	{% endif %}
+{% endblock %}
+{% block itemMenuUs %}
+    <li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
+    <li><a class="menusubtn" href="/cerrar">Salir</a></li> {% endblock %}
+{% block itemNav %}<li><a href="/">Inicio</a></li>{% endblock %}
+{% block contenidoIzq %}
+    <div class="titulo_item" id="tit_obj"><p>Proyectos</p></div>
+    <ul id="lista">
+    {% for pro in proyecto %}
+            <li>
+                {% if pro.publicado %}
+                    <a class="lista_objetos_publicos" href="/proyecto/{{pro.id}}">
+                {% else %}
+                    <a class="lista_objetos_no_publicos" href="/proyecto/{{pro.id}}">
+                {% endif %}
+                    {{pro}}
+                </a>
+            </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+{% block contenidoDer %}
+	<div class="titulo_item"  id="tit_obj"><p>Crear Nuevo Proyecto</p></div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{{ message }}</li> 
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if errores %}
+                <p class="errores">Hay un error con el formulario</h4>
+        {% endif%}
+        {% if l_errores %}
+            {% for err in l_errores %}
+                <p class="errores">{{err}}</p>
+            {% endfor %}
+        {% endif%}
+	<form id="formulario" method="post" enctype="multipart/form-data" action="">{% csrf_token %}
+        {{ formEsp.as_p }}
+        {{ formObj.as_p }}
+        {{ formPro.as_p }}
+        Autores:
+        <div id = "camposAutores">
+            <p>
+                Nombres<br><input id="au_name" type="text" size="10"/>
+            </p>
+            <p>
+               Apellidos<br><input id="au_last" type="text" size="10"/>
+            </p>
+            <p>
+                Rol *<br><input id="au_rol" value="Autor" type="text" size="8"/>
+            </p>
+            <p>
+                <div class="btn_peq" id="btn_agr">+</div>
+            </p>
+            <ul id="autores"></ul>
+            <p id="error"></p>
+            <input id="autores1" name="autores1" type="hidden"/>
+        </div>
+        <span class="helptext">Personas autoras del proyecto</span>
+		<p class="btnInferior"><input class="descarga" id="crearPro" type="submit" value="Crear Proyecto"/></p>
+	</form>
+{% endblock %}

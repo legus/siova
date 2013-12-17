@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block titulo %} siova: edit-{{proyecto|capfirst}} {% endblock %}
+{% block itemMenu %}
+    {% if usuario.profile.rol = 'rcat' %}
+        <li><a class="menusbtn" href="/proyecto">Proyectos</a></li>
+    {% endif %}
+{% endblock %}
+{% block itemMenuUs %}
+   <li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
+    <li><a class="menusubtn" href="/cerrar">Salir</a></li>
+{% endblock %}
+{% block itemNav %}
+    <li><a href="/">Inicio</a></li>
+    > <li><a href="/proyecto">Proyectos</a></li>
+{% endblock %}
+{% block contenidoIzq %}
+    <div class="titulo_item" id="tit_obj">
+        <p>{{proyecto|capfirst}}</p>
+    </div>
+{% endblock %}
+{% block contenidoDer %}
+	<div class="titulos" id="titulo">Modificar Proyecto</div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if errores %}
+                <p class="errores">Hay un errror con el formulario</p>
+        {% endif%}
+        {% if l_errores %}
+            {% for err in l_errores %}
+                <p class="errores">{{err}}</p>
+            {% endfor %}
+        {% endif%}
+	<form id="formulario" method="post" enctype="multipart/form-data" action="">{% csrf_token %}	
+		{{ formEsp.as_p }}
+        {{ formObj.as_p }}
+        {{ formPro.as_p }}
+        <div id = "camposAutores">
+            <p>
+                Nombres<br><input id="au_name" type="text" size="10"/>
+            </p>
+            <p>
+               Apellidos<br><input id="au_last" type="text" size="10"/>
+            </p>
+            <p>
+                Rol *<br><input id="au_rol" value="Autor" type="text" size="8"/>
+            </p>
+            <p>
+                <div class="btn_peq" id="btn_agr">+</div>
+            </p>
+            <input id="autores1" name="autores1" type="hidden"/>
+            <ul id="autores">
+                <script>
+                    var autores_arr=[];
+                </script>
+                {% for a in autores %}
+                    <script>
+                        //var a = '{{a.nombres}} {{a.apellidos}} {{a.rol}}';
+                        var _naut='{{a.nombres}}'.replace(/ /g,'-');
+                        var _aaut='{{a.apellidos}}'.replace(/ /g,'-');
+                        var _raut='{{a.rol}}'.replace(/ /g,'-');
+                        _naut=_naut.replace(/\./g,'');
+                        _aaut=_aaut.replace(/\./g,'');
+                        _raut=_raut.replace(/\./g,'');
+                        var a = _naut+" "+_aaut+" "+_raut;
+                        autores_arr.push(a);
+                        $("#autores").append('<li id="autors'+_naut+'_'+_aaut+'_'+_raut+'"><span id="sp1">{{a.nombres}} {{a.apellidos}} - {{a.rol}}</span></li>');
+                        $("#autores li").last().append(function(){
+                            return $('<span class="btn_peq" id="'+_naut+'_'+_aaut+'_'+_raut+'">&nbsp-&nbsp</span>').click(function() {
+                                var e=$(this).context.id;
+                                s=e.replace(/_/g,' ');
+                                var string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
+                                autores_arr=string_autores.split(",");//como no hay comunicación con el array autores de la plantilla entonces se crea aquí el array con los autores del objeto actual.
+                                autores_arr.splice(jQuery.inArray(s,autores_arr),1);
+                                $('#autores1').val(autores_arr);
+                                console.log("Incrustado_autores previos: (al eliminar)  "+$('#autores1').val());
+                                console.log(e);
+                                $("#autors"+e).remove();
+                            });
+                        });
+                    </script>
+                {% endfor %}
+                <script>
+                    $('#autores1').val(autores_arr);
+                    console.log("Incrustado_autores previos:   "+$('#autores1').val());
+                </script>
+            </ul>
+            <p id="error"></p>
+        </div>
+        <span class="helptext">Personas autoras del objeto</span>
+        
+		<p class="btnInferior"><input class="descarga" id="crearObj" type="submit" value="Guardar Cambios"/></p>
+	</form>
+{% endblock %}
