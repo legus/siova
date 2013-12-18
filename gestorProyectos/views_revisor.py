@@ -11,9 +11,7 @@ from django.core import serializers
 
 @login_required(login_url='/ingresar')
 def verProyectos(request):
-	proyectos= Proyecto.objects.exclude(fase='f1').order_by('fase')
-	repositorios = []
-	objetos = []
+	proyectos= Proyecto.objects.exclude(fase='f1').order_by('-calificacion')
 	return render_to_response('revisor.html', {'usuario':request.user, 'proyectos':proyectos}, context_instance=RequestContext(request))
 
 def ver_proyecto(request):

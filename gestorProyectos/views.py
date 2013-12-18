@@ -289,7 +289,7 @@ def asociarProyecto(request,id_objeto):
 				return HttpResponseRedirect('/proyecto/'+str(obj.pk))
 		l_oind=pro.indicadores.all()
 		operaciones2=pro.operaciones.all()
-		data={'usuario':request.user,'objeto':obj,'proyecto':pro,'espec':obj.espec_lom,'operaciones':operaciones,'operaciones2':operaciones2,'autores':obj.autores.all(),'keywords':obj.palabras_claves.all(),'l_oind':l_oind,'l_errores':l_errores,'factor':fac,'lenunciado':lenunciado,'lindicadores':lindicadores}
+		data={'usuario':request.user,'error':error,'objeto':obj,'proyecto':pro,'espec':obj.espec_lom,'operaciones':operaciones,'operaciones2':operaciones2,'autores':obj.autores.all(),'keywords':obj.palabras_claves.all(),'l_oind':l_oind,'l_errores':l_errores,'factor':fac,'lenunciado':lenunciado,'lindicadores':lindicadores}
 		return render_to_response('asociarProyecto.html',data,context_instance=RequestContext(request))
 	else:
 		return HttpResponseRedirect('/')

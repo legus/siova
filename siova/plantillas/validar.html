@@ -135,6 +135,7 @@
     {% if errores %}
 	    <script type="text/javascript">
 	    	errores_s="{{errores}}";
+	    	num_parametros={{ parametros|length }}
 	    </script>
     	<p class="errores">hay {{errores|length}} error(es) con el formulario</p>
     {% else %}
@@ -159,35 +160,11 @@
 				<div class="sec_formV" id="sec_formV_{{forloop.counter}}">{{ form.as_p }}</div>
 			{% endfor %}
 	    </div>
-	    {% comment %}
-	    	{% for form in formValidar %}
-	    		{% for key,value in tipos.items %}
-					{% if forloop.counter0 == forloop.parentloop.counter0 %}
-						<h3>Asociados a {{ value }}</h3><br>
-					{% endif %}
-				{% endfor %}
-		    	{% for ps in parametros %}
-		    		{% for p in ps %}
-		    			{% if p%}
-		    				{{forloop.counter}} - {{p}} ({% widthratio p.ponderacion 1 100 %}%)
-		    			{% endif %}
-		    		{% endfor %}
-		    	{% endfor %}
-		    	{{ form.as_p }}
-		    {% endfor %}
-	    	{% for form in formValidar %}
-
-				{% regroup parametros by get_tipo_display as parametros_list %}
-				{% for tipo in parametros_list %}
-					<h3>Asociados a {{ tipo.grouper }}</h3><br>
-					{% for pl in tipo.list %}
-						{{forloop.counter}} - {{pl}} ({% widthratio pl.ponderacion 1 100 %}%)
-					{% endfor %}
-				{% endfor %}
-				{{ form.as_p }}
-			{% endfor %}
-	    {% endcomment %}
 	    <p class="btnInferior">
-	    	<input class="descarga" id="validar" type="submit" value="Calificar"/></p>
+	    	<input class="descarga" id="validar" type="submit" value="Calificar"/>
+	    </p>
 	</form>
+	<script type="text/javascript">
+    	pintarFormularioValidar({{ parametros|length }});
+    </script>
 {% endblock %}

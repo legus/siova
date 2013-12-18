@@ -1,5 +1,6 @@
 $(document).on("ready", arranque);
 var errores_s="";
+var num_parametros=0;
 function arranque(name) {
     if($("#autores1").val()){
         var string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
@@ -422,7 +423,6 @@ function arranque(name) {
 
 
     /***********************Errores para el formulario de validación************/
-    var num_parametros=18;
     if(errores_s.length>0){
         var errores_arr=errores_s.split(",");
         for(var i=0; i<errores_arr.length; i++){
@@ -430,19 +430,24 @@ function arranque(name) {
             num=(Number(cadenafinal)+1);
             $("#sec_formV_par"+num).addClass("sec_formV_par_error");
         }
-        for(var j=0; j<num_parametros; j++){
-            for(var k=0; k<5; k++){
-                if($("#id_form-"+j+"-valoracion_"+k).attr("checked")=="checked"){
-                    calif=$("#id_form-"+j+"-valoracion_"+k).attr("value");
-                    st2=calif.substr(0,calif.length-2);
-                    $("#sec_formV_par"+(j+1)).removeClass('calificacion_10 calificacion_7 calificacion_5 calificacion_2');
-                    $("#sec_formV_par"+(j+1)).addClass('calificacion_'+st2);
-                }
-            }
-        }
+        pintarFormularioValidar(num_parametros);
     }
 
     /***************************************************************/
+}
+
+function pintarFormularioValidar(np){
+    num_parametros=np;
+    for(var j=0; j<num_parametros; j++){
+        for(var k=0; k<5; k++){
+            if($("#id_form-"+j+"-valoracion_"+k).attr("checked")=="checked"){
+                calif=$("#id_form-"+j+"-valoracion_"+k).attr("value");
+                st2=calif.substr(0,calif.length-2);
+                $("#sec_formV_par"+(j+1)).removeClass('calificacion_10 calificacion_7 calificacion_5 calificacion_2');
+                $("#sec_formV_par"+(j+1)).addClass('calificacion_'+st2);
+            }
+        }
+    }
 }
 
 function validar(ar,nam,las,rol) {

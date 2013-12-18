@@ -122,75 +122,75 @@
         {% for err in l_errores%}
             <p class="errores">{{err}}</p>
         {% endfor %}
-        {% if error %}
-            <center><div id="proyecto"><a class="descarga" href="/proyecto/{{objeto.pk}}">Volver</a></div></center>
-        {% endif %}
     {% endif %}
-    <form id="asociar_form" method="post" action="">{% csrf_token %}
-    <ul id="lista_factores">
-        {% for f in factor %}
-            <li><p class="lap_factores">{{f.factor}}</p>
-                <ul class="ie_contenedor">
-                    {% if lenunciado%}
-                        {% for e in lenunciado %}
-                            {% if e.factor == f %}
-                                <li><p class="lap_enunciados">{{e}}</p>
-                                    <ul class="ind_contenedor">
-                                    {% if lindicadores %}  
-                                        {% for ind in lindicadores%}
-                                            {% if ind.enunciado == e%}
-                                                <li data-grados="{{ind.grados.all|cut:','}}" data-full="{{ind}} {{ind.grados.all|cut:','}}" class="lap_indicadores">
-                                                    {% if ind in l_oind %}
-                                                        <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}" checked="True">
-                                                    {% else %}
-                                                        <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}">
-                                                    {% endif %}
-                                                    <label for="ind_{{ind.pk}}">{{ind|truncatechars:70}}</label>
-                                                </li>
-                                            {% endif %}
-                                        {%endfor%}
-                                    {% endif %}
-                                    </ul>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        {% if lindicadores %}
-                            {% for ind in lindicadores%}
-                                {% if ind.factor == f%}
-                                   <li data-grados="{{ind.grados.all|cut:','}}" data-full="{{ind}}" class="lap_indicadores">
-                                        {% if ind in l_oind %}
-                                            <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}" checked="True">
-                                        {% else %}
-                                            <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}">
+    {% if error %}
+        <center><div id="proyecto"><a class="descarga" href="/proyecto/{{objeto.pk}}">Volver</a></div></center>
+    {% else %}
+        <form id="asociar_form" method="post" action="">{% csrf_token %}
+        <ul id="lista_factores">
+            {% for f in factor %}
+                <li><p class="lap_factores">{{f.factor}}</p>
+                    <ul class="ie_contenedor">
+                        {% if lenunciado%}
+                            {% for e in lenunciado %}
+                                {% if e.factor == f %}
+                                    <li><p class="lap_enunciados">{{e}}</p>
+                                        <ul class="ind_contenedor">
+                                        {% if lindicadores %}  
+                                            {% for ind in lindicadores%}
+                                                {% if ind.enunciado == e%}
+                                                    <li data-grados="{{ind.grados.all|cut:','}}" data-full="{{ind}} {{ind.grados.all|cut:','}}" class="lap_indicadores">
+                                                        {% if ind in l_oind %}
+                                                            <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}" checked="True">
+                                                        {% else %}
+                                                            <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}">
+                                                        {% endif %}
+                                                        <label for="ind_{{ind.pk}}">{{ind|truncatechars:70}}</label>
+                                                    </li>
+                                                {% endif %}
+                                            {%endfor%}
                                         {% endif %}
-                                        <label for="ind_{{ind.pk}}">{{ind|truncatechars:70}}</label>
+                                        </ul>
                                     </li>
                                 {% endif %}
-                            {%endfor%}
+                            {% endfor %}
+                        {% else %}
+                            {% if lindicadores %}
+                                {% for ind in lindicadores%}
+                                    {% if ind.factor == f%}
+                                       <li data-grados="{{ind.grados.all|cut:','}}" data-full="{{ind}}" class="lap_indicadores">
+                                            {% if ind in l_oind %}
+                                                <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}" checked="True">
+                                            {% else %}
+                                                <input type="checkbox" id="ind_{{ind.pk}}" name="ind_{{ind.pk}}" value="{{ind.pk}}">
+                                            {% endif %}
+                                            <label for="ind_{{ind.pk}}">{{ind|truncatechars:70}}</label>
+                                        </li>
+                                    {% endif %}
+                                {%endfor%}
+                            {% endif %}
                         {% endif %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <div id="lap_operaciones_l" class="lap_operaciones">Operaciones Mentales</div>
+        <ul id="lap_operaciones_lista">
+            {% for op in operaciones %}
+                <li class="lap_operaciones_items" data-descr="{{op.descripcion}}">
+                    {% if op in  operaciones2%}
+                        <input type="checkbox" id="op_{{op.pk}}" name="op_{{op.pk}}" value="{{op.pk}}" checked="True">
+                    {% else %}
+                        <input type="checkbox" id="op_{{op.pk}}" name="op_{{op.pk}}" value="{{op.pk}}">
                     {% endif %}
-                </ul>
-            </li>
-        {% endfor %}
-    </ul>
-    <hr>
-    <div id="lap_operaciones_l" class="lap_operaciones">Operaciones Mentales</div>
-    <ul id="lap_operaciones_lista">
-        {% for op in operaciones %}
-            <li class="lap_operaciones_items" data-descr="{{op.descripcion}}">
-                {% if op in  operaciones2%}
-                    <input type="checkbox" id="op_{{op.pk}}" name="op_{{op.pk}}" value="{{op.pk}}" checked="True">
-                {% else %}
-                    <input type="checkbox" id="op_{{op.pk}}" name="op_{{op.pk}}" value="{{op.pk}}">
-                {% endif %}
-                <label for="op_{{op.pk}}">{{op|truncatechars:70}}</label>
-            </li>
-        {% endfor %}
-    </ul>
-    <p class="btnInferior">
-        <input class="descarga" id="asociar" type="submit" value="Asociar Indicadores"/>
-    </p>
-    </form>
+                    <label for="op_{{op.pk}}">{{op|truncatechars:70}}</label>
+                </li>
+            {% endfor %}
+        </ul>
+        <p class="btnInferior">
+            <input class="descarga" id="asociar" type="submit" value="Asociar Indicadores"/>
+        </p>
+        </form>
+    {% endif %}
 {% endblock %}
-

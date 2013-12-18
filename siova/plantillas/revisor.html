@@ -16,7 +16,7 @@
             {% regroup proyectos by get_calificacion_display as get_calificacion_display_list %}
             {% for get_calificacion_display in get_calificacion_display_list %}
                 {% if get_calificacion_display.grouper = 'Sin calificar' %}
-                    <p class="calificaciones" id="sprobado_lista" data-conteo="({{get_calificacion_display.list|length}})">{{get_calificacion_display.grouper}}</lis>
+                    <p class="calificaciones" id="sprobado_lista" data-conteo="({{get_calificacion_display.list|length}})">{{get_calificacion_display.grouper}}</p>
                     <div class="listaP" id="sprobado_listaP">
                 {% elif get_calificacion_display.grouper = 'Clasificado' %}
                     <p class="calificaciones" id="aprobado_lista" data-conteo="({{get_calificacion_display.list|length}})">{{get_calificacion_display.grouper}}</p>
