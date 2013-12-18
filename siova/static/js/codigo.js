@@ -1,5 +1,5 @@
 $(document).on("ready", arranque);
-
+var errores_s="";
 function arranque(name) {
     if($("#autores1").val()){
         var string_autores=$("#autores1").val();//En la plantilla el campo autores1 tiene el array de los autores del objeto a modificar
@@ -18,6 +18,11 @@ function arranque(name) {
     $("#id_c_tipo_inter").prop('disabled',true);
     $("#id_c_tipo_rec").prop('disabled',true);
     $("#id_c_nivel_inter").prop('disabled',true);
+    $("#id_c_pro_fase").prop('disabled',true);
+    $("#id_c_pro_prog").prop('disabled',true);
+    $("#id_c_pro_calif").prop('disabled',true);
+    $("#id_c_pro_fecha").prop('disabled',true);
+    $("#id_c_pro_gra").prop('disabled',true);
 
     $("#v_tit").click(function(){
         if($("#v_tit").is(':checked')){
@@ -83,14 +88,56 @@ function arranque(name) {
         }
     });
 
+    $("#v_pfas").click(function(){
+        if($("#v_pfas").is(':checked')){
+            $("#id_c_pro_fase").prop('disabled',false);
+        }else{
+            $("#id_c_pro_fase").prop('disabled',true);
+        }
+    });
+
+    $("#v_ppro").click(function(){
+        if($("#v_ppro").is(':checked')){
+            $("#id_c_pro_prog").prop('disabled',false);
+        }else{
+            $("#id_c_pro_prog").prop('disabled',true);
+        }
+    });
+
+    $("#v_pcal").click(function(){
+        if($("#v_pcal").is(':checked')){
+            $("#id_c_pro_calif").prop('disabled',false);
+        }else{
+            $("#id_c_pro_calif").prop('disabled',true);
+        }
+    });
+
+    $("#v_pfec").click(function(){
+        if($("#v_pfec").is(':checked')){
+            $("#id_c_pro_fecha").prop('disabled',false);
+        }else{
+            $("#id_c_pro_fecha").prop('disabled',true);
+        }
+    });
+
+    $("#v_pgra").click(function(){
+        if($("#v_pgra").is(':checked')){
+            $("#id_c_pro_gra").prop('disabled',false);
+        }else{
+            $("#id_c_pro_gra").prop('disabled',true);
+        }
+    });
+
     // termina
 
     /* Interacciones con JQueryUI*/
     //$("#rcontenidos").accordion({ active: 2 });
     $("#id_c_fecha" ).datepicker({dateFormat:'dd/mm/yy'});
+    $("#id_c_pro_fecha" ).datepicker({dateFormat:'dd/mm/yy'});
     $("#id_lc2_fecha" ).datepicker({dateFormat:'dd/mm/yy'});
+    $("#id_fecha" ).datepicker({dateFormat:'dd/mm/yy'});
 
-
+    /*************Interacciones con AJAX*****************/
     $('#busca').click(function(e) {
         e.preventDefault();
         qu = $('#q').val();
@@ -103,7 +150,12 @@ function arranque(name) {
                     obj=json.slice(0,(json.length/2));
                     esp=json.slice(json.length/2,json.length);
                     $.each(obj, function(key,val){
-                        $("#results1").append("<li class='resultados'><a href='/objeto/"+val.pk+"'>"+esp[key]['fields']['lc1_titulo']+"</a></li>");
+                        if(obj[key]['fields']['proyecto']!=null){
+                            $("#results1").append("<li class='resultados'><a href='/proyecto/"+val.pk+"'>"+esp[key]['fields']['lc1_titulo']+"</a></li>");
+                        }
+                        else{
+                            $("#results1").append("<li class='resultados'><a href='/objeto/"+val.pk+"'>"+esp[key]['fields']['lc1_titulo']+"</a></li>");
+                        }
                     });
                 }else{
                     $("#results1").html('<h3>La búsqueda no arrojó resultados</h3>');
@@ -130,14 +182,32 @@ function arranque(name) {
         if($('#v_tre:checked').val()){v_tre = $('#v_tre:checked').val();}else{v_tre = "False";}
         nin = $('#id_c_nivel_inter').val();
         if($('#v_nin:checked').val()){v_nin = $('#v_nin:checked').val();}else{v_nin = "False";}
-        if((v_tit=="True" & tit.length>0) | (v_tob=="True" & tob.length>0) | (v_idi=="True" & idi.length>0) | (v_nag=="True" & nag.length>0) | (v_fec=="True" & fec.length>0) | (v_tin=="True" & tin.length>0) | (v_tre=="True" & tre.length>0) | (v_nin=="True" & nin.length>0)) {
-            $.getJSON("/busqueda", { tit:tit, v_tit:v_tit, tob:tob, v_tob:v_tob, idi:idi, v_idi:v_idi, nag:nag, v_nag:v_nag, fec:fec, v_fec:v_fec, tin:tin, v_tin:v_tin, tre:tre, v_tre:v_tre, nin:nin, v_nin:v_nin}, function(json){
+        /*****Proyectos*****/
+        pfas = $('#id_c_pro_fase').val();
+        if($('#v_pfas:checked').val()){v_pfas = $('#v_pfas:checked').val();}else{v_pfas = "False";}
+        ppro = $('#id_c_pro_prog').val();
+        if($('#v_ppro:checked').val()){v_ppro = $('#v_ppro:checked').val();}else{v_ppro = "False";}
+        pcal = $('#id_c_pro_calif').val();
+        if($('#v_pcal:checked').val()){v_pcal = $('#v_pcal:checked').val();}else{v_pcal = "False";}
+        pfec = $('#id_c_pro_fecha').val();
+        if($('#v_pfec:checked').val()){v_pfec = $('#v_pfec:checked').val();}else{v_pfec = "False";}
+        pgra = $('#id_c_pro_gra').val();
+        if($('#v_pgra:checked').val()){v_pgra = $('#v_pgra:checked').val();}else{v_pgra = "False";}
+        /*******************/
+        if((v_tit=="True" & tit.length>0) | (v_tob=="True" & tob.length>0) | (v_idi=="True" & idi.length>0) | (v_nag=="True" & nag.length>0) | (v_fec=="True" & fec.length>0) | (v_tin=="True" & tin.length>0) | (v_tre=="True" & tre.length>0) | (v_nin=="True" & nin.length>0) | (v_pfas=="True" & pfas.length>0) | (v_ppro=="True" & ppro.length>0) | (v_pcal=="True" & pcal.length>0) | (v_pfec=="True" & pfec.length>0) | (v_pgra=="True" & pgra.length>0)) {
+            console.log(pgra);
+            $.getJSON("/busqueda", { tit:tit, v_tit:v_tit, tob:tob, v_tob:v_tob, idi:idi, v_idi:v_idi, nag:nag, v_nag:v_nag, fec:fec, v_fec:v_fec, tin:tin, v_tin:v_tin, tre:tre, v_tre:v_tre, nin:nin, v_nin:v_nin, pfas:pfas, v_pfas:v_pfas, ppro:ppro, v_ppro:v_ppro, pcal:pcal, v_pcal:v_pcal, pfec:pfec, v_pfec:v_pfec, pgra:pgra, v_pgra:v_pgra}, function(json){
                 $("#results2").empty();
                 if (json.length != 0) {
                     obj=json.slice(0,(json.length/2));
                     esp=json.slice(json.length/2,json.length);
                     $.each(obj, function(key,val){
-                        $("#results2").append("<a href='/objeto/"+val.pk+"'><li class='resultados'>"+esp[key]['fields']['lc1_titulo']+"</li></a>");
+                        if(obj[key]['fields']['proyecto']!=null){
+                            $("#results2").append("<li class='resultados'><a href='/proyecto/"+val.pk+"'>"+esp[key]['fields']['lc1_titulo']+"</a></li>");
+                        }
+                        else{
+                            $("#results2").append("<li class='resultados'><a href='/objeto/"+val.pk+"'>"+esp[key]['fields']['lc1_titulo']+"</a></li>");
+                        }
                     });
                 }else{
                     $("#results2").html('<h3>La búsqueda no arrojó resultados</h3>');
@@ -147,6 +217,34 @@ function arranque(name) {
             $("#results2").empty();
         }
     });
+    $('.proyectos_lista').click(function(e) {
+        id=e.target.id;
+        s=id.replace(/p_/g,'');
+        $(".proyectos_lista").css({"background-color":"","color":"#055a9b"});
+        $(this).css({"background-color":"#ccc","color":"black"});
+
+        $.getJSON("/ver_proyecto", { q:s }, function(data){
+            $("#proyectos").empty();
+            $("#pro_val").empty();
+            $("#btn_validar").html("<a href='/validar/"+s+"' class='descarga'>Validar</a>");
+            esp=data.slice(0,1);
+            prog=data.slice(1,2);
+            aut=data.slice(2,data.length);
+            $.each( aut, function( key, val ) {
+                $("#proyectos").append("<dt>Autor"+(key+1)+"</dt><dd>"+aut[key]['fields']['nombres']+" "+aut[key]['fields']['apellidos']+" - "+aut[key]['fields']['rol']+"</dd>");
+            });
+            $.each( esp, function( key, val ) {
+                $("#pro_val").html("<p>"+val['fields']['lc1_titulo']+"</p>")
+                $("#proyectos").append("<dt>Programa Académico</dt><dd>"+prog[key]['fields']['nombre']+"</dd>");
+                $("#proyectos").append("<dt>Descripción</dt><dd>"+val['fields']['lc1_descripcion']+"</dd>");
+                $("#proyectos").append("<dt>Población Objetivo</dt><dd>"+val['fields']['lc4_poblacion']+"</dd>");
+                $("#proyectos").append("<dt>Derechos de uso</dt><dd>"+val['fields']['lc5_derechos']+"</dd>");
+                $("#proyectos").append("<dt>Uso Educativo</dt><dd>"+val['fields']['lc6_uso_educativo']+"</dd>");
+            });
+        });
+    });
+
+/****************************************************/
 
     $('#btn_agr').click(function(e) {
         if($("#autores1").val()){
@@ -194,14 +292,14 @@ function arranque(name) {
                         autores_arr.splice(jQuery.inArray(s,autores_arr),1);
                         $('#autores1').val(autores_arr);
                         $("#autors"+e).remove();
-                        console.log("Archivo_autores:  (al eliminar) "+$('#autores1').val());
+                        //console.log("Archivo_autores:  (al eliminar) "+$('#autores1').val());
                     });
                 });
                 $('#au_name').val("");
                 $('#au_last').val("");
                 $('#au_rol').val("Autor");
                 $('#autores1').val(autores_arr);
-                console.log("Archivo_autores previos:  (al agregar) "+$('#autores1').val());
+                //console.log("Archivo_autores previos:  (al agregar) "+$('#autores1').val());
             }
         }else{
             $("#error").html("Debes digitar todos los campos del Autor");
@@ -248,6 +346,103 @@ function arranque(name) {
         $("#busq2").removeClass('submenu_');
         $("#busq2").addClass('submenu');
     });
+
+    /* *******Interactividad(Proyectos)******************/
+
+    $("#sec1_btn").click(function(e){
+        $("#sec1").slideToggle();
+        $("#sec2").slideUp();
+        $("#sec3").slideUp();
+    });
+
+    $("#sec2_btn").click(function(e){
+        $("#sec1").slideUp();
+        $("#sec3").slideUp();
+        $("#sec2").slideToggle();
+    });
+
+    $("#sec3_btn").click(function(e){
+        $("#sec1").slideUp();
+        $("#sec2").slideUp();
+        $("#sec3").slideToggle();
+    });
+
+    $(".sec_formV_par").click(function(e){
+        //console.log("algo");
+        id=e.target.id;
+        s=id.replace(/sec_formV_par/g,'');
+        $("#sec_formV_"+s).slideToggle();
+    });
+
+    $(".sec_formV input").click(function(e){
+        id=e.target.id;
+        calif=e.target.value;
+        s=id.replace(/id_form-/g,'');
+        s1=s.replace(/-valoracion_/g,'');
+        st=s1.substr(0,s1.length-1);
+        st2=calif.substr(0,calif.length-2);
+        num=(Number(st)+1);
+        $("#sec_formV_par"+num).removeClass('sec_formV_par_error calificacion_10 calificacion_7 calificacion_5 calificacion_2');
+        $("#sec_formV_par"+num).addClass('calificacion_'+st2);
+    });
+
+    $("#aprobado_lista").click(function(e){
+        $("#sprobado_listaP").slideUp();
+        $("#rprobado_listaP").slideUp();
+        $("#aprobado_listaP").slideToggle();
+    });
+
+    $("#rprobado_lista").click(function(e){
+        $("#aprobado_listaP").slideUp();
+        $("#sprobado_listaP").slideUp();
+        $("#rprobado_listaP").slideToggle();
+    });
+
+    $("#sprobado_lista").click(function(e){
+        $("#aprobado_listaP").slideUp();
+        $("#rprobado_listaP").slideUp();
+        $("#sprobado_listaP").slideToggle();
+    });
+
+    $(".ind_grados").click(function(e){
+        $(this).next().slideToggle();
+    });
+
+    $(".lap_factores").click(function(e){
+        $(this).next().slideToggle();
+    });
+
+    $(".lap_enunciados").click(function(e){
+        $(this).next().slideToggle();
+    });
+
+    $("#lap_operaciones_l").click(function(e){
+        $(this).next().slideToggle();
+    });
+
+
+    /***********************Errores para el formulario de validación************/
+    var num_parametros=18;
+    if(errores_s.length>0){
+        var errores_arr=errores_s.split(",");
+        for(var i=0; i<errores_arr.length; i++){
+            cadenafinal=errores_arr[i].replace(/u&#39;form-/g,'').replace(/-valoracion&#39;/g,'').replace(/\[/g,'').replace(/\]/g,'');
+            num=(Number(cadenafinal)+1);
+            $("#sec_formV_par"+num).addClass("sec_formV_par_error");
+        }
+        for(var j=0; j<num_parametros; j++){
+            for(var k=0; k<5; k++){
+                if($("#id_form-"+j+"-valoracion_"+k).attr("checked")=="checked"){
+                    calif=$("#id_form-"+j+"-valoracion_"+k).attr("value");
+                    st2=calif.substr(0,calif.length-2);
+                    $("#sec_formV_par"+(j+1)).removeClass('calificacion_10 calificacion_7 calificacion_5 calificacion_2');
+                    $("#sec_formV_par"+(j+1)).addClass('calificacion_'+st2);
+                }
+            }
+        }
+    }
+
+    /***************************************************************/
 }
 
 function validar(ar,nam,las,rol) {

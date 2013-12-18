@@ -5,9 +5,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'siova.views.home', name='home'),
-    # url(r'^siova/', include('siova.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -29,4 +26,11 @@ urlpatterns = patterns('',
     url(r'^editObjeto/objetos/(?P<id>.+)$', 'gestorObjetos.views.downloadEdit'),
     url(r'^admin/gestorObjetos/objeto/(?P<id>.+)/objetos/.+$', 'gestorObjetos.views.download'),
     url(r'^admin/logout/$', 'gestorObjetos.views.redirige'),
+    url(r'^proyecto/$','gestorProyectos.views.Proyecto'),
+    url(r'^revisor/$','gestorProyectos.views_revisor.verProyectos'),
+    url(r'^proyecto/(?P<id_proyecto>\d+)$','gestorProyectos.views.verProyecto'),
+    url(r'^editProyecto/(?P<id_objeto>\d+)$','gestorProyectos.views.editProyecto'),
+    url(r'^asociarProyecto/(?P<id_objeto>\d+)$','gestorProyectos.views.asociarProyecto'),
+    url(r'^validar/(?P<id_proyecto>\d+)$','gestorProyectos.views_validar.validar'),
+    url(r'^ver_proyecto/$','gestorProyectos.views_revisor.ver_proyecto', name='ver_proyecto'),
 )

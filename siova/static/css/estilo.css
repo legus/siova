@@ -46,6 +46,11 @@ footer p
 	margin: 0.2em;
 }
 
+form
+{
+	color:#055a9b;
+}
+
 header
 {
 	background:#055a9b, url("piece.png") no-repeat 98% center;
@@ -70,7 +75,6 @@ ul
 	margin: 0.1em;
 	padding: 0.1em;
 }
-
 
 
 #autores li
@@ -175,6 +179,8 @@ ul
 	width: 100%;
 }
 
+/* ***** FORMULARIOS **** */
+
 #formulario label
 {
 	display: inline-block;
@@ -183,14 +189,14 @@ ul
 	width: 30%;
 }
 
-#formulario input, #formulario textarea, #formulario select
+#formulario input, #formulario textarea, #formulario select, #validar input, #validar textarea, #validar select
 {
 	display: inline-block;
 	margin-bottom: 5px;
 	vertical-align: top;
 }
 
-#formulario .helptext
+#formulario .helptext, #validar .helptext
 {
 	/*border: 1px solid #000;*/
 	color: #055a9b;
@@ -199,6 +205,39 @@ ul
 	margin-bottom: 25px;
 	margin-left: 31%;
 }
+
+#validar label
+{
+	display: inline-block;
+	margin-bottom: 5px;
+	vertical-align: top;
+	width: 20%;
+}
+
+#validar li label
+{
+	display: inline-block;
+	margin-bottom: 5px;
+	vertical-align: middle;
+	width: 98%;
+}
+
+#validar .helptext
+{
+	color: #cc6600;
+	display: block;
+	font-size: 0.8em;
+	margin-bottom: 25px;
+	margin-left: 21%;	
+}
+
+#asociar_form label
+{
+	width: 98%;
+}
+
+/* ***** FORMULARIOS **** */
+
 
 #menu
 {
@@ -247,6 +286,11 @@ ul
 {
 	font-weight: normal;
 }
+/*---Secciones----*/
+
+
+
+/*----------------*/
 
 #submenu1, #submenu2, #busq1, #busq2
 {
@@ -254,6 +298,87 @@ ul
 	display: inline-block;
 	width: 46%;
 }
+
+#validar ul li
+{
+	font-size: 0.8em;
+	display: inline-block;
+	width: 17%;
+}
+
+#acon1, #acon2, #acon3, #acon4, #acon5, #aenf7, #aenf8, #aenf9, #aeva11, #aeva12, #aint14, #apos16, #apos17
+{
+	display: none;
+}
+
+/***********Resaltado de textos fases y calificacion**********/
+
+.aprobado
+{
+	color:#078e00;
+	font-weight: bold;
+	font-size: 1.2em;
+}
+
+.rprobado
+{
+	color:#ff3600;
+	font-weight: bold;
+	font-size: 1.2em;
+}
+
+.calificaciones
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	cursor:pointer;
+	font-weight: bold;
+	font-size: 1em;
+	margin: 0.4em auto;
+	padding: 0.2em;
+	width: 98%;
+}
+
+.calificaciones:before
+{
+	content: "\00BB";
+}
+
+.listaP
+{
+	display: none;
+}
+
+#aprobado_lista
+{
+	color: #078e00;
+}
+
+#sprobado_lista
+{
+	color: #055a9b;
+}
+
+#rprobado_lista
+{
+	color: #ff3600;
+}
+
+.proyectos_lista
+{
+	color: #055a9b;
+	cursor: pointer;
+	margin: 0.3em 0.2em 0.3em 0.7em;
+	padding: 0.2em 0.5em;
+}
+
+.proyectos_lista:hover
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	font-weight: bold;
+}
+/*************************************************************/
 
 .contenido
 {
@@ -393,6 +518,439 @@ ul
 	padding: 0.3em;
 	text-align: left;
 }
+
+/*************Estándares**************/
+
+.enunciados
+{
+	color: #cc6600;
+	font-size: 1em;
+	margin: 0.3em 0 0.3em 0.5em;
+	padding: 0.2em;
+	width: 100%;
+}
+
+.indicadores
+{
+	color: #055a9b;
+	font-size: 0.9em;
+	margin: 0.2em 0 0.2em 1em;
+	padding: 0.2em;
+	width: 90%;
+}
+
+.indicadores::before
+{
+	content: attr(data-grados_);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.8em;
+	text-align: justify;
+	top: 0;
+	display: none;
+	transition:all .5s;
+}
+
+.indicadores:hover::before
+{
+	display: block;
+}
+
+.indicadores::after
+{
+	content: attr(data-full_);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.8em;
+	text-align: justify;
+	top: 0;
+	display: none;
+	transition:all .5s;
+}
+
+.indicadores:hover::after
+{
+	display: block;
+}
+
+.factores
+{
+	color: #cc6600;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0.5em auto;
+	padding: 0.2em;
+	width: 100%;
+}
+
+.operaciones
+{
+	color: #055a9b;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0.5em auto;
+	padding: 0.2em;
+	width: 100%;
+}
+
+.operaciones_items
+{
+	color: #055a9b;
+	font-size: 0.9em;
+	margin: 0.2em 0 0.2em 1em;
+	padding: 0.2em;
+	width: 90%;
+}
+
+.operaciones_items::before
+{
+	content: "\00BB";
+}
+
+.operaciones_items::after
+{
+	content: attr(data-descr);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.8em;
+	text-align: justify;
+	top: 0;
+	display: none;
+	transition:all .5s;
+}
+
+.operaciones_items:hover::after
+{
+	display: block;
+}
+
+
+/*******************En asociar Proyecto***********************/
+
+.lap_enunciados
+{
+	background-color: #ccc;
+	border-radius: 0.3em;
+	color: #cc6600;
+	cursor: pointer;
+	font-size: 1em;
+	margin: 0.3em 0 0.3em 1em;
+	padding: 0.2em 0.4em;
+	width: 94%;
+}
+
+.lap_enunciados::before
+{
+	content: "\00BB";
+	opacity: 0;
+}
+
+.lap_enunciados:hover::before
+{
+	opacity: 1;
+}
+
+.lap_indicadores
+{
+	color: #055a9b;
+	font-size: 1.1em;
+	margin: 0.2em 0 0.2em 1.5em;
+	padding: 0.2em;
+	width: 90%;
+}
+
+/*.lap_indicadores::before
+{
+	content: attr(data-grados);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.8em;
+	padding: 0.1em 0.3em;
+	text-align: justify;
+	top: 80px;
+	display: none;
+	transition:all .5s;
+}
+
+.lap_indicadores:hover::before
+{
+	display: block;
+}*/
+
+.lap_indicadores::after
+{
+	content: attr(data-full);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.9em;
+	padding: 0.2em 0.4em;
+	text-align: justify;
+	top: 0;
+	display: none;
+	transition:all .5s;
+}
+
+.lap_indicadores:hover::after
+{
+	display: block;
+}
+
+.lap_factores
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	color: #cc6600;
+	cursor:pointer;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0.4em auto;
+	padding: 0.2em 0.2em;
+	width: 95%;
+}
+
+.lap_factores::before
+{
+	content: "\00BB";
+	opacity: 0;
+}
+
+.lap_factores:hover::before
+{
+	opacity: 1;
+}
+
+.ie_contenedor
+{
+	display: none;
+}
+
+.ind_contenedor
+{
+	display: none;
+}
+
+.lap_operaciones
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	color: #666;
+	cursor:pointer;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 0.4em auto;
+	padding: 0.2em 0.2em;
+	width: 95%;
+}
+
+.lap_operaciones_items
+{
+	color: #055a9b;
+	font-size: 1.1em;
+	margin: 0.2em 0 0.2em 1.5em;
+	padding: 0.2em;
+	width: 90%;
+}
+
+.lap_operaciones_items::after
+{
+	content: attr(data-descr);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.9em;
+	padding: 0.2em 0.4em;
+	text-align: justify;
+	top: 0;
+	display: none;
+	transition:all .5s;
+}
+
+.lap_operaciones_items:hover::after
+{
+	display: block;
+}
+
+.lap_operaciones::before
+{
+	content: "\00BB";
+	opacity: 0;
+}
+
+.lap_operaciones:hover::before
+{
+	opacity: 1;
+}
+
+
+#lap_operaciones_lista
+{
+	display: none;
+}
+
+/*/*************************************/
+
+/*---Secciones----*/
+
+.seccion
+{
+	border: 1px solid #055a9b;
+	border-radius: 0.2em;
+	margin: 1em 0.2em;
+	padding: 0.2em;
+}
+
+.seccion_btn
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	color: #055a9b;
+	cursor:pointer;
+	font-weight: bold;
+	font-size: 1.2em;
+	margin: 0em auto;
+	padding: 0.2em;
+	width: 98%;
+}
+
+.seccion_btn:hover
+{
+	background-color: #ccc;
+}
+
+.sec_desplegar
+{
+	display: none;
+}
+
+.tipos_parametros
+{
+	border-radius: 0.3em;
+	color: #cc6600;
+	font-weight: bold;
+	font-size: 1.2em;
+	margin: 0.5em auto;
+	padding: 0.2em;
+	width: 100%;
+}
+
+.sec_formV
+{
+	display: none;
+}
+
+
+.sec_formV_par
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	color: #055a9b;
+	cursor:pointer;
+	font-size: 1.1em;
+	margin: 0.2em auto;
+	padding: 0.2em;
+	width: 100%;
+}
+
+.sec_formV_par_error
+{
+	background-color: #fff;
+	border-radius: 0.3em;
+	color: #ff3333;
+	cursor:pointer;
+	font-size: 1.1em;
+	margin: 0.2em auto;
+	padding: 0.2em;
+	width: 100%;
+}
+
+.sec_formV_par::after
+{
+	content: attr(data-descripcion);
+	position: relative;
+	background-color: white;
+	border-radius: 0.5em;
+	color: #666;
+	font-size: 0.8em;
+	text-align: justify;
+	top: 0;
+	display: none;
+	transition:all .5s;
+}
+
+.sec_formV_par:hover::after
+{
+	display: block;
+}
+
+.sec_formV_par::after:hover
+{
+	content: attr(data-descripcion);
+}
+
+.calificaciones::after
+{
+	content: attr(data-conteo);
+	color: #999;
+	font-weight: bold;
+}
+
+.calificacion_10
+{
+	background-color: #b6d490;
+}
+
+.calificacion_10::before
+{
+	font-size: 0.8em;
+	content: "(Totalmente) ";
+}
+
+.calificacion_7
+{
+	background-color: #b6d490;
+}
+
+.calificacion_7::before
+{
+	font-size: 0.8em;
+	content: "(Medianamente) ";
+}
+
+.calificacion_5
+{
+	background-color: #b6d490;
+}
+
+.calificacion_5::before
+{
+	font-size: 0.8em;
+	content: "(Escasamente) ";
+}
+
+.calificacion_2
+{
+	background-color: #b6d490;
+}
+
+.calificacion_2::before
+{
+	font-size: 0.8em;
+	content: "(No Cumple) ";
+}
+
+/*----------------*/
+
 
 .submenu {
 	-moz-box-shadow:inset 0px 1px 0px 0px #fff6af;

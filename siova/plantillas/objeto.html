@@ -7,6 +7,12 @@
 		<li><a class="menusbtn" id="editarObj" href="/editObjeto/{{objeto.pk}}">Editar Objeto</a></li>
 	{% endif %}
 {% endif %}
+{% if usuario.profile.rol == 'rcat' %}
+	<li><a class="menusbtn" href="/proyecto">Proyectos</a></li>
+{% endif %}
+{% if usuario.profile.rol == 'rrev' %}
+	<li><a class="menusbtn" href="/revisor">Proyectos</a></li>
+{% endif %}
 {% endblock %}
 {% block itemMenuUs %}
 	<li class="menusubtn">Bienvenido/a, {{usuario.first_name|capfirst}}&nbsp&nbsp</li>
