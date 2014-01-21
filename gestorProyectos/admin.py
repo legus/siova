@@ -53,7 +53,7 @@ Esto con el fin de modificar las columnas de visualización y los filtros
 """
 class IndicadorAdmin(admin.ModelAdmin):
 	search_fields = ('indicador', 'factor__factor','enunciado__enunciado')
-	list_filter = ('grados__nominacion', 'factor__factor', 'enunciado__enunciado')
+	list_filter = ('factor__ruta_categoria', 'grados__nominacion', 'factor__factor', 'enunciado__enunciado')
 
 """
 Clase que permite sobre-escribir la clase Parametro en la interfaz de administración de django.
