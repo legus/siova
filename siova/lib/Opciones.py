@@ -245,3 +245,8 @@ def get_calif():
 def get_umbral_calificacion():
 	UMBRAL=Decimal('7.0')
 	return UMBRAL
+
+
+def set_download_filename(filename):
+	filename_final = filename.replace(',','').replace(' ','_')
+	return filename_final

@@ -165,7 +165,7 @@ class Objeto(models.Model):
     tipo_obj = models.CharField(help_text='Tipo de Objeto', verbose_name='Tipo de Objeto', max_length=3,choices=opc.get_tipo_obj(),default=opc.get_tipo_obj()[1][0])
 
     """Atributo asociado a la clase :model:'django.core.files' que apunta a la ubicación física del objeto en el sistema de archivos."""
-    archivo = models.FileField(blank=True, null=True, help_text='Archivo a Subir', verbose_name='Archivo', upload_to=mod_archivo.get_file_path, storage=mod_archivo.get_file_storage())
+    archivo = models.FileField(help_text='Archivo a Subir', verbose_name='Archivo', upload_to=mod_archivo.get_file_path)
 
     """Atributo que relaciona uno a uno el objeto con su respectiva especificación LOM"""
     espec_lom = models.OneToOneField(EspecificacionLOM, help_text='Metadatos para el objeto', verbose_name='Metadato')

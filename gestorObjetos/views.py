@@ -453,13 +453,13 @@ def download(request,id):
 				puededescargar=True
 	if request.user.is_authenticated():
 		if puededescargar:
-			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+			return serve_file(request, f.archivo, save_as=opc.set_download_filename(f.espec_lom.lc1_titulo))
 		elif f.repositorio.publico & f.publicado:
-			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+			return serve_file(request, f.archivo, save_as=opc.set_download_filename(f.espec_lom.lc1_titulo))
 		else:
 			return HttpResponseRedirect('/')
 	elif f.repositorio.publico & f.publicado:
-		return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		return serve_file(request, f.archivo, save_as=opc.set_download_filename(f.espec_lom.lc1_titulo))
 	else:
 		return HttpResponseRedirect('/')
 
@@ -478,13 +478,13 @@ def downloadEdit(request, id):
 				puededescargar=True
 	if request.user.is_authenticated():
 		if puededescargar:
-			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+			return serve_file(request, f.archivo, save_as=opc.set_download_filename(f.espec_lom.lc1_titulo))
 		elif f.repositorio.publico & f.publicado:
-			return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+			return serve_file(request, f.archivo, save_as=opc.set_download_filename(f.espec_lom.lc1_titulo))
 		else:
 			return HttpResponseRedirect('/')
 	elif f.repositorio.publico & f.publicado:
-		return serve_file(request, f.archivo, save_as=f.espec_lom.lc1_titulo)
+		return serve_file(request, f.archivo, save_as=opc.set_download_filename(f.espec_lom.lc1_titulo))
 	else:
 		return HttpResponseRedirect('/')
 
